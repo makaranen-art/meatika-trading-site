@@ -71,6 +71,85 @@
     return ((data && data.pages) || []).find(p => p.id === id) || null;
   }
 
-  window.MTHSite = { escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml, renderTicker, loadData, findPage };
+  /* ---- Page content blocks (photo / video / text) ----
+     A page can carry a free-form "blocks" list in addition to its
+     sections/cards — this is what lets a page work either as a simple
+     content page (just photos/video/text, no cards) or a hybrid of both.
+     Each block renders both languages inline (.i18n-en / .i18n-km) and
+     CSS (driven by body.km, already toggled by applyLang) shows the
+     right one — no extra JS wiring needed when the language switches. */
+
+  function textBlockParagraphs(text){
+    const t = String(text == null ? '' : text).trim();
+    if(!t) return '';
+    return t.split(/\n{2,}/).map(p => `<p>${escapeHtml(p).replace(/\n/g,'<br>')}</p>`).join('');
+  }
+
+  /* Turns a stored video reference into an inline embed. Supports an
+     uploaded video file, a pasted YouTube/Vimeo/Facebook link (converted
+     to an embeddable iframe), or any other URL (shown as a plain link). */
+  function videoEmbedHtml(video){
+    if(!video) return '';
+    if(video.type === 'file' && video.file){
+      return `<div class="block-video"><video controls preload="metadata" src="${escapeHtml(video.file)}"></video></div>`;
+    }
+    const url = (video.url || '').trim();
+    if(!url) return '';
+
+    let m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/i);
+    if(m){
+      return `<div class="block-video"><iframe src="https://www.youtube.com/embed/${m[1]}" title="Video" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    }
+    m = url.match(/vimeo\.com\/(\d+)/i);
+    if(m){
+      return `<div class="block-video"><iframe src="https://player.vimeo.com/video/${m[1]}" title="Video" loading="lazy" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`;
+    }
+    if(/facebook\.com|fb\.watch/i.test(url)){
+      return `<div class="block-video"><iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0" title="Video" loading="lazy" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+    }
+    return `<p class="block-video-link"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">▶ Watch video</a></p>`;
+  }
+
+  function captionHtml(caption, tag){
+    const cap = caption || {};
+    if(!cap.en && !cap.km) return '';
+    const en = escapeHtml(cap.en || '');
+    const km = escapeHtml(cap.km || cap.en || '');
+    return `<${tag} class="block-caption i18n-en">${en}</${tag}><${tag} class="block-caption i18n-km">${km}</${tag}>`;
+  }
+
+  function blockHtml(block){
+    if(!block || !block.type) return '';
+
+    if(block.type === 'text'){
+      const text = block.text || {};
+      const en = textBlockParagraphs(text.en);
+      const km = textBlockParagraphs(text.km || text.en);
+      if(!en && !km) return '';
+      return `<div class="block block-text"><div class="i18n-en">${en}</div><div class="i18n-km">${km}</div></div>`;
+    }
+
+    if(block.type === 'photo'){
+      if(!block.image) return '';
+      return `<figure class="block block-photo"><img src="${escapeHtml(block.image)}" alt="" loading="lazy">${captionHtml(block.caption, 'figcaption')}</figure>`;
+    }
+
+    if(block.type === 'video'){
+      const embed = videoEmbedHtml(block.video);
+      if(!embed) return '';
+      return `<div class="block block-video-wrap">${embed}${captionHtml(block.caption, 'p')}</div>`;
+    }
+
+    return '';
+  }
+
+  function blocksHtml(blocks){
+    return (blocks || []).map(blockHtml).join('');
+  }
+
+  window.MTHSite = {
+    escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
+    renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml
+  };
 
 })(window);
