@@ -49,7 +49,7 @@
           "icon": "check",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": true,
+          "wide": false,
           "linkType": "page"
         },
         {
@@ -63,7 +63,7 @@
           "icon": "star",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": true,
+          "wide": false,
           "linkType": "url"
         },
         {
