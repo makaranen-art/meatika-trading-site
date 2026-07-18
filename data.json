@@ -1,10 +1,30 @@
 {
   "ticker": [
-    { "label": "INVESTIZO", "text": "$10 BONUS ON SIGNUP", "up": false },
-    { "label": "LITEFINANCE", "text": "LEVERAGE UP TO 1:1000", "up": true },
-    { "label": "OKX", "text": "SPOT & FUTURES ACCESS", "up": false },
-    { "label": "BINANCE", "text": "GLOBAL LIQUIDITY", "up": true },
-    { "label": "MEATIKA", "text": "JOIN THE NETWORK", "up": false }
+    {
+      "label": "INVESTIZO",
+      "text": "$10 BONUS ON SIGNUP",
+      "up": false
+    },
+    {
+      "label": "LITEFINANCE",
+      "text": "LEVERAGE UP TO 1:1000",
+      "up": true
+    },
+    {
+      "label": "OKX",
+      "text": "SPOT & FUTURES ACCESS",
+      "up": false
+    },
+    {
+      "label": "BINANCE",
+      "text": "GLOBAL LIQUIDITY",
+      "up": true
+    },
+    {
+      "label": "MEATIKA",
+      "text": "JOIN THE NETWORK",
+      "up": false
+    }
   ],
   "hero": {
     "en": "The premium forex & crypto partnership network in Cambodia. Join our channels and partners.",
@@ -13,7 +33,10 @@
   "sections": [
     {
       "id": "forex",
-      "label": { "en": "Forex Partners", "km": "ដៃគូ Forex" },
+      "label": {
+        "en": "Forex Partners",
+        "km": "ដៃគូ Forex"
+      },
       "cards": [
         {
           "id": "investizo",
@@ -58,7 +81,10 @@
     },
     {
       "id": "community",
-      "label": { "en": "Community", "km": "សហគមន៍" },
+      "label": {
+        "en": "Community",
+        "km": "សហគមន៍"
+      },
       "cards": [
         {
           "id": "telegram",
@@ -90,7 +116,10 @@
     },
     {
       "id": "crypto",
-      "label": { "en": "Crypto Partnership", "km": "ភាពជាដៃគូគ្រីបតូ" },
+      "label": {
+        "en": "Crypto Partnership",
+        "km": "ភាពជាដៃគូគ្រីបតូ"
+      },
       "cards": [
         {
           "id": "okx",
@@ -122,7 +151,10 @@
     },
     {
       "id": "support",
-      "label": { "en": "Support Team", "km": "ក្រុមគាំទ្រ" },
+      "label": {
+        "en": "Support Team",
+        "km": "ក្រុមគាំទ្រ"
+      },
       "cards": [
         {
           "id": "support",
@@ -134,6 +166,19 @@
           "link": "https://t.me/MeatikaSupport",
           "icon": "paperplane",
           "color": "#2a2418",
+          "iconColor": "#d4af37",
+          "wide": true
+        },
+        {
+          "id": "card-1784386607767",
+          "title": "Meatika Affiliate Telegram",
+          "desc": {
+            "en": "sdsd",
+            "km": "sds"
+          },
+          "link": "https://",
+          "icon": "star",
+          "color": "#24262b",
           "iconColor": "#d4af37",
           "wide": true
         }
