@@ -170,15 +170,6 @@
   .card-body p{
     font-size:12px; color:var(--muted); line-height:1.5; margin:0;
   }
-  .card-detail{
-    display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease;
-  }
-  .card-detail-inner{ overflow:hidden; }
-  .card.open .card-detail{ grid-template-rows:1fr; }
-  .card-detail p{
-    font-size:11.5px; color:var(--green-300); padding-top:8px;
-    border-top:1px dashed var(--ink-600); margin-top:8px;
-  }
 
   .card-actions{ display:flex; gap:8px; margin-top:2px; }
   body.view-list .card-actions{ margin-top:6px; }
@@ -188,7 +179,6 @@
     color:var(--muted); display:flex; align-items:center; justify-content:center;
     cursor:pointer; text-decoration:none; transition:.15s ease;
   }
-  .card-actions button:hover{ color:var(--gold-300); border-color:var(--gold-500); }
   .card-actions a:hover{ color:var(--green-300); border-color:var(--green-500); }
   .card-actions svg{ width:13px; height:13px; }
 
@@ -209,24 +199,14 @@
     transition:.25s ease; font-family:'Inter',sans-serif;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .section[hidden]{ display:none; }
 </style>
 </head>
 <body>
 
   <div class="ticker-wrap">
-    <div class="ticker" id="ticker">
-      <span><b>INVESTIZO</b> · $10 BONUS ON SIGNUP</span>
-      <span><b>LITEFINANCE</b> · LEVERAGE UP TO 1:1000 <span class="up">▲</span></span>
-      <span><b>OKX</b> · SPOT &amp; FUTURES ACCESS</span>
-      <span><b>BINANCE</b> · GLOBAL LIQUIDITY <span class="up">▲</span></span>
-      <span><b>MEATIKA</b> · JOIN THE NETWORK</span>
-      <!-- duplicate for seamless loop -->
-      <span><b>INVESTIZO</b> · $10 BONUS ON SIGNUP</span>
-      <span><b>LITEFINANCE</b> · LEVERAGE UP TO 1:1000 <span class="up">▲</span></span>
-      <span><b>OKX</b> · SPOT &amp; FUTURES ACCESS</span>
-      <span><b>BINANCE</b> · GLOBAL LIQUIDITY <span class="up">▲</span></span>
-      <span><b>MEATIKA</b> · JOIN THE NETWORK</span>
-    </div>
+    <div class="ticker" id="ticker"><!-- filled from data.json --></div>
   </div>
 
   <div class="page">
@@ -259,171 +239,18 @@
         <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" class="logo-img" id="logoImg">
       </div>
       <h1 class="sr-only">Meatika Trading</h1>
-      <p data-en="The premium forex &amp; crypto partnership network in Cambodia. Join our channels and partners." data-km="បណ្តាញដៃគូហ្វរិច និងគ្រីបតូគុណភាពខ្ពស់នៅកម្ពុជា។ ចូលរួមឆានែល និងដៃគូរបស់យើង។">The premium forex &amp; crypto partnership network in Cambodia. Join our channels and partners.</p>
+      <p id="heroText" data-en="" data-km="">Loading…</p>
     </div>
 
-    <!-- FOREX PARTNERS -->
-    <div class="section">
-      <div class="section-label" data-en="Forex Partners" data-km="ដៃគូ Forex">Forex Partners</div>
-      <div class="cards">
-
-        <div class="card">
-          <div class="avatar" style="background:#24262b;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="m3 21 6-6 4 4 8-9" stroke="#c7ccd6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>Investizo</h3>
-            <p data-en="Trusted global forex broker with competitive conditions and multi-market access." data-km="ឈ្មួញកណ្តាល Forex ដែលទុកចិត្តបាន មានលក្ខខណ្ឌប្រកួតប្រជែង និងទីផ្សារជាច្រើន។">Trusted global forex broker with competitive conditions and multi-market access.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://investizo.net/?pid=953004&cid=17754" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="avatar" style="background:#2a2418;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 14.5 8.5 21 9l-5 4.5L17.5 20 12 16.5 6.5 20 8 13.5 3 9l6.5-.5Z" fill="#d4af37"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>LiteFinance</h3>
-            <p data-en="Globally recognized broker offering fast execution and low spreads." data-km="ឈ្មួញកណ្តាលដែលទទួលស្គាល់អន្តរជាតិ ជាមួយការប្រតិបត្តិលឿន និងអេស្ព្រេដទាប។">Globally recognized broker offering fast execution and low spreads.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://www.litefinance-kh.com/?uid=751038299" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="card wide">
-          <div class="avatar" style="background:#24262b;">
-            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#c7ccd6"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>GTC FX</h3>
-            <p data-en="Multi-asset broker with institutional-grade tech and competitive pricing." data-km="ឈ្មួញកណ្តាលពហុទ្រព្យ ជាមួយបច្ចេកវិទ្យាកម្រិតស្ថាប័ន និងតម្លៃប្រកួតប្រជែង។">Multi-asset broker with institutional-grade tech and competitive pricing.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://web.mygtc.app/login/register?ref=130111321" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- COMMUNITY -->
-    <div class="section">
-      <div class="section-label" data-en="Community" data-km="សហគមន៍">Community</div>
-      <div class="cards">
-
-        <div class="card">
-          <div class="avatar" style="background:#2a2418;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="m2 12 19-8-7 19-3-8-9-3Z" fill="#d4af37"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>Meatika Trading Telegram</h3>
-            <p data-en="Daily market updates, trading signals, and educational content." data-km="ព័ត៌មានទីផ្សារប្រចាំថ្ងៃ សញ្ញាជួញដូរ និងខ្លឹមសារអប់រំ។">Daily market updates, trading signals, and educational content.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://t.me/MeatikaTrading" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="avatar" style="background:#24262b;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.1 2 11.2c0 2.9 1.5 5.5 3.8 7.2V22l3.5-1.9c.9.2 1.8.4 2.7.4 5.5 0 10-4.1 10-9.2S17.5 2 12 2Z" fill="#c7ccd6"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>Meatika Trading Facebook</h3>
-            <p data-en="Market insights, trading tips, and the latest MTH updates." data-km="ការយល់ដឹងអំពីទីផ្សារ គន្លឹះជួញដូរ និងព័ត៌មានថ្មីៗពី MTH។">Market insights, trading tips, and the latest MTH updates.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://www.facebook.com/MeatikaTrading" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- CRYPTO PARTNERSHIP -->
-    <div class="section">
-      <div class="section-label" data-en="Crypto Partnership" data-km="ភាពជាដៃគូគ្រីបតូ">Crypto Partnership</div>
-      <div class="cards">
-
-        <div class="card">
-          <div class="avatar" style="background:#24262b;">
-            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#dee2ea"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>OKX</h3>
-            <p data-en="Trade spot and futures with deep liquidity and low fees." data-km="ជួញដូរ Spot និង Futures ជាមួយសាច់ប្រាក់ងាយស្រួល និងកម្រៃទាប។">Trade spot and futures with deep liquidity and low fees.</p>
-          </div>
-          <div class="card-actions">
-            <a href="#" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="avatar" style="background:#24262b;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 15 6 12 9 9 6Z" fill="#dee2ea"/><path d="M5 10 8 13 5 16 2 13Z" fill="#dee2ea"/><path d="M19 10 22 13 19 16 16 13Z" fill="#dee2ea"/><path d="M12 15 15 18 12 21 9 18Z" fill="#dee2ea"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>Binance</h3>
-            <p data-en="World's largest exchange for spot, futures, and staking." data-km="ការផ្លាស់ប្តូរធំបំផុតលើពិភពលោក សម្រាប់ Spot, Futures និង Staking។">World's largest exchange for spot, futures, and staking.</p>
-          </div>
-          <div class="card-actions">
-            <a href="#" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- SUPPORT TEAM -->
-    <div class="section">
-      <div class="section-label" data-en="Support Team" data-km="ក្រុមគាំទ្រ">Support Team</div>
-      <div class="cards">
-
-        <div class="card wide">
-          <div class="avatar" style="background:#2a2418;">
-            <svg viewBox="0 0 24 24" fill="none"><path d="m2 12 19-8-7 19-3-8-9-3Z" fill="#d4af37"/></svg>
-          </div>
-          <div class="card-body">
-            <h3>Meatika Trading Support</h3>
-            <p data-en="Help with account inquiries, trading guidance, and technical support." data-km="ជំនួយអំពីគណនី ការណែនាំជួញដូរ និងជំនួយបច្ចេកទេស។">Help with account inquiries, trading guidance, and technical support.</p>
-          </div>
-          <div class="card-actions">
-            <a href="https://t.me/MeatikaSupport" target="_blank" title="Open link">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
+    <div id="sections"><!-- sections + cards filled from data.json --></div>
 
     <footer data-en="Powered by Meatika Trading Network" data-km="ដំណើរការដោយបណ្តាញ Meatika Trading">Powered by Meatika Trading Network</footer>
   </div>
 
   <div class="toast" id="toast">Link copied</div>
 
+  <script src="assets/icons.js"></script>
   <script>
-    function toggleCard(btn){
-      btn.closest('.card').classList.toggle('open');
-    }
-
     const gridBtn = document.getElementById('gridBtn');
     const listBtn = document.getElementById('listBtn');
     gridBtn.addEventListener('click', ()=>{
@@ -443,17 +270,12 @@
       langLabel.textContent = isKhmer ? 'ខ្មែរ' : 'EN';
       langBtn.title = isKhmer ? 'Switch to English' : 'Switch to Khmer';
       document.querySelectorAll('[data-en]').forEach(el=>{
-        el.textContent = isKhmer ? el.getAttribute('data-km') : el.getAttribute('data-en');
+        const en = el.getAttribute('data-en'), km = el.getAttribute('data-km');
+        if(en) el.textContent = isKhmer ? (km || en) : en;
       });
     }
     let savedLang = false;
     try{ savedLang = localStorage.getItem('mth-lang') === 'km'; }catch(e){ /* storage unavailable */ }
-    applyLang(savedLang);
-    langBtn.addEventListener('click', ()=>{
-      const nowKhmer = !document.body.classList.contains('km');
-      applyLang(nowKhmer);
-      try{ localStorage.setItem('mth-lang', nowKhmer ? 'km' : 'en'); }catch(e){ /* storage unavailable */ }
-    });
 
     const themeBtn = document.getElementById('themeBtn');
     const moonIcon = document.getElementById('themeIconMoon');
@@ -492,6 +314,71 @@
       toast.classList.add('show');
       setTimeout(()=> toast.classList.remove('show'), 1800);
     }
+
+    /* ---- Render everything from data.json ---- */
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function renderTicker(items){
+      const el = document.getElementById('ticker');
+      const one = items.map(t => `<span><b>${escapeHtml(t.label)}</b> · ${escapeHtml(t.text)}${t.up ? ' <span class="up">▲</span>' : ''}</span>`).join('');
+      el.innerHTML = one + one; // duplicate for seamless loop
+    }
+
+    function cardHtml(card){
+      const iconSvg = window.mthIconSvg(card.icon, card.iconColor);
+      const wideClass = card.wide ? ' wide' : '';
+      return `
+        <div class="card${wideClass}">
+          <div class="avatar" style="background:${escapeHtml(card.color || '#24262b')};">
+            <svg viewBox="0 0 24 24" fill="none">${iconSvg}</svg>
+          </div>
+          <div class="card-body">
+            <h3>${escapeHtml(card.title)}</h3>
+            <p data-en="${escapeHtml(card.desc.en)}" data-km="${escapeHtml(card.desc.km || card.desc.en)}">${escapeHtml(card.desc.en)}</p>
+          </div>
+          <div class="card-actions">
+            <a href="${escapeHtml(card.link)}" target="_blank" rel="noopener" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>`;
+    }
+
+    function sectionHtml(section){
+      if(!section.cards || !section.cards.length) return '';
+      const cards = section.cards.map(cardHtml).join('');
+      return `
+        <div class="section">
+          <div class="section-label" data-en="${escapeHtml(section.label.en)}" data-km="${escapeHtml(section.label.km || section.label.en)}">${escapeHtml(section.label.en)}</div>
+          <div class="cards">${cards}</div>
+        </div>`;
+    }
+
+    async function init(){
+      let data;
+      try{
+        const res = await fetch('data.json?_=' + Date.now());
+        data = await res.json();
+      }catch(e){
+        document.getElementById('sections').innerHTML = '<p style="text-align:center;color:var(--muted);">Content failed to load.</p>';
+        return;
+      }
+
+      renderTicker(data.ticker || []);
+
+      const heroEl = document.getElementById('heroText');
+      heroEl.setAttribute('data-en', data.hero.en);
+      heroEl.setAttribute('data-km', data.hero.km || data.hero.en);
+      heroEl.textContent = data.hero.en;
+
+      document.getElementById('sections').innerHTML =
+        (data.sections || []).map(sectionHtml).join('');
+
+      applyLang(savedLang);
+    }
+    init();
   </script>
 
 </body>

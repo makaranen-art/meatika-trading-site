@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meatika Trading — Admin</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-900:#1b2753; --ink-800:#242d4f; --ink-700:#323b60; --ink-600:#454d6e;
+    --gold-500:#d4af37; --gold-300:#f4d980;
+    --paper:#f2f2f8; --muted:#a8b2cc;
+    --ok:#4fd18b; --bad:#ff6b6b;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:linear-gradient(180deg,var(--ink-900) 0%,#2a1233 100%);
+    color:var(--paper); font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+  }
+  .wrap{ max-width:760px; margin:0 auto; padding:28px 18px 60px; }
+  h1{ font-family:'Space Grotesk',sans-serif; font-size:22px; margin:0 0 4px; }
+  .sub{ color:var(--muted); font-size:13px; margin:0 0 28px; }
+  a{ color:var(--gold-300); }
+
+  /* ---- Login screen ---- */
+  .login-box{
+    max-width:360px; margin:80px auto 0; background:var(--ink-800);
+    border:1px solid var(--ink-600); border-radius:var(--radius); padding:28px;
+    text-align:center;
+  }
+  .login-box input{ width:100%; margin:16px 0; }
+  .lock-icon{ color:var(--gold-300); }
+
+  /* ---- Form basics ---- */
+  label{ display:block; font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:600; letter-spacing:.02em; }
+  input[type=text], input[type=password], input[type=url], textarea, select{
+    width:100%; background:var(--ink-700); border:1px solid var(--ink-600); color:var(--paper);
+    border-radius:8px; padding:9px 11px; font-size:13.5px; font-family:inherit;
+  }
+  input:focus, textarea:focus, select:focus{ outline:2px solid var(--gold-500); outline-offset:1px; }
+  textarea{ resize:vertical; min-height:52px; }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .field{ margin-bottom:10px; }
+  .checkbox-row{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  .checkbox-row input{ width:auto; }
+
+  button{
+    font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer;
+    border-radius:8px; border:1px solid var(--ink-600); background:var(--ink-700);
+    color:var(--paper); padding:9px 16px; transition:.15s ease;
+  }
+  button:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  button.primary{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+  button.primary:hover{ background:var(--gold-300); color:var(--ink-900); }
+  button.danger:hover{ border-color:var(--bad); color:var(--bad); }
+  button.small{ padding:5px 10px; font-size:12px; }
+  button:disabled{ opacity:.5; cursor:not-allowed; }
+
+  /* ---- Panels ---- */
+  .panel{
+    background:var(--ink-800); border:1px solid var(--ink-600); border-radius:var(--radius);
+    padding:18px; margin-bottom:18px;
+  }
+  .panel > h2{ font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 14px; display:flex; align-items:center; justify-content:space-between; }
+  details.panel summary{ cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; }
+  details.panel[open] summary{ margin-bottom:14px; }
+
+  .section-card{
+    border:1px dashed var(--ink-600); border-radius:10px; padding:14px; margin-bottom:14px;
+  }
+  .section-card > .row2{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .section-card > .row2 h3{ font-size:14px; margin:0; }
+
+  .card-item{
+    background:var(--ink-700); border:1px solid var(--ink-600); border-radius:8px; padding:12px; margin-bottom:10px;
+  }
+  .card-item .row2{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .icon-preview{
+    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .icon-preview svg{ width:16px; height:16px; }
+  .icon-row{ display:flex; align-items:center; gap:8px; }
+  .icon-row select{ flex:1; }
+  .color-input{ width:44px !important; padding:2px !important; height:34px; }
+
+  .ticker-item{ display:flex; gap:8px; margin-bottom:8px; align-items:center; }
+  .ticker-item input[type=text]{ flex:1; }
+
+  .status{ font-size:12.5px; margin-top:10px; min-height:16px; }
+  .status.ok{ color:var(--ok); }
+  .status.bad{ color:var(--bad); }
+  .status.pending{ color:var(--gold-300); }
+
+  .helptext{ font-size:12px; color:var(--muted); line-height:1.6; }
+  .helptext code{ background:var(--ink-900); padding:1px 5px; border-radius:4px; font-size:11px; }
+  .helptext ol{ padding-left:18px; margin:6px 0; }
+
+  .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
+  .toolbar .spacer{ flex:1; }
+  .save-bar{
+    position:sticky; bottom:0; background:var(--ink-900); border-top:1px solid var(--ink-600);
+    padding:14px 0; margin-top:20px; display:flex; gap:12px; align-items:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ LOGIN ============ -->
+  <div id="loginScreen">
+    <div class="login-box">
+      <div class="lock-icon">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8"/></svg>
+      </div>
+      <h1>Admin sign in</h1>
+      <p class="sub">Meatika Trading content editor</p>
+      <input type="password" id="pwInput" placeholder="Admin password" autocomplete="off">
+      <button class="primary" id="pwSubmit" style="width:100%;">Sign in</button>
+      <div class="status bad" id="pwStatus"></div>
+    </div>
+  </div>
+
+  <!-- ============ ADMIN APP (hidden until unlocked) ============ -->
+  <div id="app" style="display:none;">
+    <h1>Meatika Trading — Content Admin</h1>
+    <p class="sub">Edit the site's links, text, and cards below, then save. Changes go live within a minute or two after saving.</p>
+
+    <details class="panel" id="connPanel">
+      <summary>GitHub connection</summary>
+      <div class="row">
+        <div class="field"><label>Repo owner (GitHub username)</label><input type="text" id="ghOwner" placeholder="e.g. your-username"></div>
+        <div class="field"><label>Repository name</label><input type="text" id="ghRepo" placeholder="e.g. meatika-github-repo"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Branch</label><input type="text" id="ghBranch" value="main"></div>
+        <div class="field"><label>File path</label><input type="text" id="ghPath" value="data.json"></div>
+      </div>
+      <div class="field">
+        <label>GitHub Personal Access Token (needed to save)</label>
+        <input type="password" id="ghToken" placeholder="ghp_..." autocomplete="off">
+      </div>
+      <div class="checkbox-row" style="margin-bottom:10px;">
+        <input type="checkbox" id="rememberToken"><label for="rememberToken" style="margin:0;">Remember these settings on this device</label>
+      </div>
+      <div class="helptext">
+        <strong>Where to get a token:</strong>
+        <ol>
+          <li>Go to <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+          <li>Set <strong>Repository access</strong> to "Only select repositories" → choose this repo.</li>
+          <li>Under <strong>Permissions → Repository permissions</strong>, set "Contents" to <strong>Read and write</strong>.</li>
+          <li>Generate the token and paste it above. Treat it like a password — anyone with it can edit the site.</li>
+        </ol>
+        This page is public (the repo is public), so the password screen only keeps casual visitors out — the token is what actually protects saving. Don't share your token, and revoke it on GitHub if you ever suspect it leaked.
+      </div>
+      <div class="toolbar" style="margin-top:12px;">
+        <button class="primary" id="loadBtn">Load current content</button>
+        <span class="status" id="loadStatus"></span>
+      </div>
+    </details>
+
+    <div id="editor" style="display:none;">
+
+      <div class="panel">
+        <h2>Ticker (top scrolling bar)</h2>
+        <div id="tickerList"></div>
+        <button class="small" id="addTicker">+ Add ticker item</button>
+      </div>
+
+      <div class="panel">
+        <h2>Hero text</h2>
+        <div class="field"><label>English</label><textarea id="heroEn"></textarea></div>
+        <div class="field"><label>Khmer</label><textarea id="heroKm"></textarea></div>
+      </div>
+
+      <div class="panel">
+        <h2>Sections & cards</h2>
+        <div id="sectionsList"></div>
+        <button id="addSection">+ Add section</button>
+      </div>
+
+      <div class="save-bar">
+        <button class="primary" id="saveBtn">Save changes</button>
+        <button id="previewBtn">Preview JSON</button>
+        <span class="status" id="saveStatus"></span>
+      </div>
+
+      <textarea id="jsonPreview" style="display:none;width:100%;min-height:240px;font-family:'JetBrains Mono',monospace;font-size:11.5px;"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script src="assets/icons.js"></script>
+<script>
+/* =========================================================
+   1) PASSWORD GATE
+   This is a soft gate only (this repo is public, so the code
+   here is visible to anyone who looks). Real protection is the
+   GitHub token below, which only someone you trust should have.
+   To change the password: open a browser console on this page and run
+     crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPassword'))
+       .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
+   then paste the printed hash below.
+   Default password is: ChangeMe123  — change this before publishing.
+========================================================= */
+const ADMIN_PASSWORD_HASH = '08a3d2dc7693d7166eef51ec0194ae6009c7636af128d4a208a14d1b5293c3cd';
+
+async function sha256Hex(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+document.getElementById('pwSubmit').addEventListener('click', doLogin);
+document.getElementById('pwInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+
+async function doLogin(){
+  const val = document.getElementById('pwInput').value;
+  const hash = await sha256Hex(val);
+  const statusEl = document.getElementById('pwStatus');
+  if(hash === ADMIN_PASSWORD_HASH){
+    sessionStorage.setItem('mth-admin-ok', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    restoreConnSettings();
+  } else {
+    statusEl.textContent = 'Wrong password.';
+  }
+}
+
+if(sessionStorage.getItem('mth-admin-ok') === '1'){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+/* =========================================================
+   2) GITHUB CONNECTION SETTINGS
+========================================================= */
+function restoreConnSettings(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('mth-admin-conn') || 'null');
+    if(saved){
+      document.getElementById('ghOwner').value = saved.owner || '';
+      document.getElementById('ghRepo').value = saved.repo || '';
+      document.getElementById('ghBranch').value = saved.branch || 'main';
+      document.getElementById('ghPath').value = saved.path || 'data.json';
+      document.getElementById('ghToken').value = saved.token || '';
+      document.getElementById('rememberToken').checked = true;
+    }
+  }catch(e){ /* ignore */ }
+}
+
+function currentConn(){
+  return {
+    owner: document.getElementById('ghOwner').value.trim(),
+    repo: document.getElementById('ghRepo').value.trim(),
+    branch: document.getElementById('ghBranch').value.trim() || 'main',
+    path: document.getElementById('ghPath').value.trim() || 'data.json',
+    token: document.getElementById('ghToken').value.trim()
+  };
+}
+
+function maybePersistConn(){
+  if(document.getElementById('rememberToken').checked){
+    localStorage.setItem('mth-admin-conn', JSON.stringify(currentConn()));
+  } else {
+    localStorage.removeItem('mth-admin-conn');
+  }
+}
+
+let currentSha = null; // GitHub blob sha of the loaded file, needed to save
+
+document.getElementById('loadBtn').addEventListener('click', async () => {
+  const conn = currentConn();
+  const statusEl = document.getElementById('loadStatus');
+  if(!conn.owner || !conn.repo){
+    statusEl.textContent = 'Enter the repo owner and name first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  statusEl.textContent = 'Loading…';
+  statusEl.className = 'status pending';
+  try{
+    const url = `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(conn.path)}?ref=${encodeURIComponent(conn.branch)}`;
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    if(conn.token) headers['Authorization'] = `Bearer ${conn.token}`;
+    const res = await fetch(url, { headers });
+    if(!res.ok){
+      throw new Error(res.status === 404 ? 'File not found — check owner/repo/branch/path.' : `GitHub error (${res.status})`);
+    }
+    const json = await res.json();
+    currentSha = json.sha;
+    const content = decodeURIComponent(escape(atob(json.content.replace(/\n/g,''))));
+    state = JSON.parse(content);
+    renderEditor();
+    document.getElementById('editor').style.display = 'block';
+    document.getElementById('connPanel').removeAttribute('open');
+    statusEl.textContent = 'Loaded.';
+    statusEl.className = 'status ok';
+    maybePersistConn();
+  }catch(e){
+    statusEl.textContent = e.message || 'Failed to load.';
+    statusEl.className = 'status bad';
+  }
+});
+
+/* =========================================================
+   3) EDITOR STATE + RENDERING
+========================================================= */
+let state = null;
+
+function renderEditor(){
+  renderTickerList();
+  document.getElementById('heroEn').value = state.hero.en || '';
+  document.getElementById('heroKm').value = state.hero.km || '';
+  renderSections();
+}
+
+/* ---- Ticker ---- */
+function renderTickerList(){
+  const wrap = document.getElementById('tickerList');
+  wrap.innerHTML = '';
+  (state.ticker || []).forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'ticker-item';
+    row.innerHTML = `
+      <input type="text" data-f="label" placeholder="Label (e.g. OKX)" value="${escAttr(item.label)}">
+      <input type="text" data-f="text" placeholder="Message" value="${escAttr(item.text)}">
+      <label class="checkbox-row"><input type="checkbox" data-f="up" ${item.up ? 'checked' : ''}> ▲</label>
+      <button class="small danger" data-act="remove">✕</button>
+    `;
+    row.querySelectorAll('input[data-f]').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const f = inp.getAttribute('data-f');
+        state.ticker[idx][f] = inp.type === 'checkbox' ? inp.checked : inp.value;
+      });
+    });
+    row.querySelector('[data-act=remove]').addEventListener('click', () => {
+      state.ticker.splice(idx, 1);
+      renderTickerList();
+    });
+    wrap.appendChild(row);
+  });
+}
+document.getElementById('addTicker').addEventListener('click', () => {
+  state.ticker = state.ticker || [];
+  state.ticker.push({ label: 'NEW', text: 'Message here', up: false });
+  renderTickerList();
+});
+
+/* ---- Hero ---- */
+document.getElementById('heroEn').addEventListener('input', e => { state.hero.en = e.target.value; });
+document.getElementById('heroKm').addEventListener('input', e => { state.hero.km = e.target.value; });
+
+/* ---- Sections & cards ---- */
+const ICON_KEYS = Object.keys(window.MTH_ICONS || {});
+
+function iconOptions(selected){
+  return ICON_KEYS.map(k => `<option value="${k}" ${k===selected?'selected':''}>${k}</option>`).join('');
+}
+
+function renderSections(){
+  const wrap = document.getElementById('sectionsList');
+  wrap.innerHTML = '';
+  (state.sections || []).forEach((section, sIdx) => {
+    const sec = document.createElement('div');
+    sec.className = 'section-card';
+    sec.innerHTML = `
+      <div class="row2">
+        <h3>Section</h3>
+        <div>
+          <button class="small" data-act="up">↑</button>
+          <button class="small" data-act="down">↓</button>
+          <button class="small danger" data-act="remove">Remove section</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Label (English)</label><input type="text" data-f="label-en" value="${escAttr(section.label.en)}"></div>
+        <div class="field"><label>Label (Khmer)</label><input type="text" data-f="label-km" value="${escAttr(section.label.km || '')}"></div>
+      </div>
+      <div class="cardsHolder"></div>
+      <button class="small" data-act="addCard">+ Add card to this section</button>
+    `;
+    sec.querySelector('[data-f="label-en"]').addEventListener('input', e => section.label.en = e.target.value);
+    sec.querySelector('[data-f="label-km"]').addEventListener('input', e => section.label.km = e.target.value);
+    sec.querySelector('[data-act="remove"]').addEventListener('click', () => {
+      if(confirm('Remove this whole section and its cards?')){ state.sections.splice(sIdx,1); renderSections(); }
+    });
+    sec.querySelector('[data-act="up"]').addEventListener('click', () => {
+      if(sIdx > 0){ [state.sections[sIdx-1], state.sections[sIdx]] = [state.sections[sIdx], state.sections[sIdx-1]]; renderSections(); }
+    });
+    sec.querySelector('[data-act="down"]').addEventListener('click', () => {
+      if(sIdx < state.sections.length-1){ [state.sections[sIdx+1], state.sections[sIdx]] = [state.sections[sIdx], state.sections[sIdx+1]]; renderSections(); }
+    });
+    sec.querySelector('[data-act="addCard"]').addEventListener('click', () => {
+      section.cards = section.cards || [];
+      section.cards.push({ id: 'card-'+Date.now(), title: 'New card', desc:{en:'',km:''}, link:'https://', icon:'star', color:'#24262b', iconColor:'#d4af37', wide:false });
+      renderSections();
+    });
+
+    const cardsHolder = sec.querySelector('.cardsHolder');
+    (section.cards || []).forEach((card, cIdx) => {
+      cardsHolder.appendChild(renderCard(section, card, sIdx, cIdx));
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+function renderCard(section, card, sIdx, cIdx){
+  const el = document.createElement('div');
+  el.className = 'card-item';
+  el.innerHTML = `
+    <div class="row2">
+      <div class="icon-row">
+        <div class="icon-preview" data-preview style="background:${escAttr(card.color)};"></div>
+        <select data-f="icon">${iconOptions(card.icon)}</select>
+        <input type="color" class="color-input" data-f="color" value="${normalizeColor(card.color)}" title="Background color">
+        <input type="color" class="color-input" data-f="iconColor" value="${normalizeColor(card.iconColor)}" title="Icon color">
+      </div>
+      <button class="small danger" data-act="removeCard">Remove</button>
+    </div>
+    <div class="field"><label>Title</label><input type="text" data-f="title" value="${escAttr(card.title)}"></div>
+    <div class="row">
+      <div class="field"><label>Description (English)</label><textarea data-f="desc-en">${escText(card.desc.en)}</textarea></div>
+      <div class="field"><label>Description (Khmer)</label><textarea data-f="desc-km">${escText(card.desc.km || '')}</textarea></div>
+    </div>
+    <div class="field"><label>Link URL</label><input type="url" data-f="link" value="${escAttr(card.link)}"></div>
+    <label class="checkbox-row"><input type="checkbox" data-f="wide" ${card.wide?'checked':''}> Full-width card</label>
+  `;
+
+  function updatePreview(){
+    const preview = el.querySelector('[data-preview]');
+    preview.style.background = card.color;
+    preview.innerHTML = `<svg viewBox="0 0 24 24" fill="none">${window.mthIconSvg(card.icon, card.iconColor)}</svg>`;
+  }
+  updatePreview();
+
+  el.querySelector('[data-f="icon"]').addEventListener('change', e => { card.icon = e.target.value; updatePreview(); });
+  el.querySelector('[data-f="color"]').addEventListener('input', e => { card.color = e.target.value; updatePreview(); });
+  el.querySelector('[data-f="iconColor"]').addEventListener('input', e => { card.iconColor = e.target.value; updatePreview(); });
+  el.querySelector('[data-f="title"]').addEventListener('input', e => card.title = e.target.value);
+  el.querySelector('[data-f="desc-en"]').addEventListener('input', e => card.desc.en = e.target.value);
+  el.querySelector('[data-f="desc-km"]').addEventListener('input', e => card.desc.km = e.target.value);
+  el.querySelector('[data-f="link"]').addEventListener('input', e => card.link = e.target.value);
+  el.querySelector('[data-f="wide"]').addEventListener('change', e => card.wide = e.target.checked);
+  el.querySelector('[data-act="removeCard"]').addEventListener('click', () => {
+    section.cards.splice(cIdx, 1);
+    renderSections();
+  });
+
+  return el;
+}
+
+document.getElementById('addSection').addEventListener('click', () => {
+  state.sections = state.sections || [];
+  state.sections.push({ id: 'section-'+Date.now(), label:{en:'New section',km:''}, cards: [] });
+  renderSections();
+});
+
+/* ---- helpers ---- */
+function escAttr(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escText(s){ return escAttr(s); }
+function normalizeColor(c){
+  if(/^#[0-9a-fA-F]{6}$/.test(c || '')) return c;
+  return '#24262b';
+}
+
+/* =========================================================
+   4) SAVE TO GITHUB
+========================================================= */
+document.getElementById('previewBtn').addEventListener('click', () => {
+  const ta = document.getElementById('jsonPreview');
+  const showing = ta.style.display !== 'none';
+  if(showing){ ta.style.display = 'none'; }
+  else{ ta.value = JSON.stringify(state, null, 2); ta.style.display = 'block'; }
+});
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const conn = currentConn();
+  const statusEl = document.getElementById('saveStatus');
+  if(!conn.token){
+    statusEl.textContent = 'Add your GitHub token in the connection panel first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  if(!currentSha){
+    statusEl.textContent = 'Load the current content before saving.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  statusEl.textContent = 'Saving…';
+  statusEl.className = 'status pending';
+  try{
+    const jsonStr = JSON.stringify(state, null, 2);
+    const b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+    const url = `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(conn.path)}`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${conn.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update site content via admin panel',
+        content: b64,
+        sha: currentSha,
+        branch: conn.branch
+      })
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.message || `GitHub error (${res.status})`);
+    }
+    const json = await res.json();
+    currentSha = json.content.sha;
+    statusEl.textContent = 'Saved. The live site will update within a minute or two.';
+    statusEl.className = 'status ok';
+    maybePersistConn();
+  }catch(e){
+    statusEl.textContent = e.message || 'Failed to save.';
+    statusEl.className = 'status bad';
+  }
+});
+</script>
+</body>
+</html>
