@@ -62,7 +62,6 @@
   }
   ::selection{background:var(--gold-500); color:var(--ink-900);}
 
-  /* ---- Ticker tape (signature element) ---- */
   .ticker-wrap{
     width:100%;
     background:var(--ink-800);
@@ -90,44 +89,40 @@
     padding:22px 18px 40px;
   }
 
-  /* ---- Top bar ---- */
   .topbar{
     display:flex; align-items:center; justify-content:space-between;
     margin-bottom:26px;
   }
-  .topbar-actions{ display:flex; gap:8px; }
+  .topbar-actions{ display:flex; gap:8px; align-items:center; }
   .icon-btn{
     width:34px; height:34px; border-radius:10px;
     background:var(--ink-800); border:1px solid var(--ink-600);
     color:var(--muted); display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:.15s ease;
+    cursor:pointer; transition:.15s ease; text-decoration:none;
   }
   .icon-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
-  .icon-btn.active{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
   .icon-btn svg{ width:16px; height:16px; }
   .lang-btn{ width:auto; padding:0 9px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; letter-spacing:0.03em; }
+  .back-btn{ width:auto; padding:0 12px; gap:6px; font-size:12.5px; font-weight:600; }
 
-  /* ---- Hero ---- */
-  .hero{ text-align:center; margin-bottom:34px; position:relative; }
+  .hero{ text-align:center; margin-bottom:30px; }
   .logo-mark{
-    width:100%; max-width:320px; margin:0 auto 14px;
+    width:100%; max-width:200px; margin:0 auto 18px;
     display:flex; align-items:center; justify-content:center;
-    position:relative;
-    padding:10px 8px;
+    padding:8px;
     background:radial-gradient(circle, rgba(212,175,55,0.12), transparent 70%);
     border-radius:16px;
   }
   .logo-img{ width:100%; height:auto; display:block; filter:drop-shadow(0 6px 18px rgba(212,175,55,0.25)); }
-  .sr-only{
-    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  .page-title{
+    font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700;
+    margin:0 0 10px; color:var(--paper);
   }
   .hero p{
     color:var(--muted); font-size:13.5px; line-height:1.6;
-    margin:0 auto; max-width:320px;
+    margin:0 auto; max-width:340px;
   }
 
-  /* ---- Section ---- */
   .section{ margin-bottom:28px; }
   .section-label{
     display:flex; align-items:center; gap:10px;
@@ -182,7 +177,6 @@
   .card-actions a:hover{ color:var(--green-300); border-color:var(--green-500); }
   .card-actions svg{ width:13px; height:13px; }
 
-  /* wide card for single-column standalone entries */
   .card.wide{ grid-column:1 / -1; flex-direction:row; align-items:flex-start; }
 
   footer{
@@ -192,13 +186,7 @@
     color:var(--ink-600); text-transform:uppercase;
   }
 
-  .toast{
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:var(--gold-500); color:var(--ink-900); font-weight:600; font-size:13px;
-    padding:10px 18px; border-radius:10px; opacity:0; pointer-events:none;
-    transition:.25s ease; font-family:'Inter',sans-serif;
-  }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .not-found{ text-align:center; color:var(--muted); font-size:13.5px; padding:40px 10px; }
 
   .section[hidden]{ display:none; }
 </style>
@@ -212,6 +200,10 @@
   <div class="page">
 
     <div class="topbar">
+      <a class="icon-btn back-btn" href="index.html" title="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-en="Home" data-km="ទំព័រដើម">Home</span>
+      </a>
       <div class="topbar-actions">
         <button class="icon-btn lang-btn" id="langBtn" title="Switch to Khmer">
           <span id="langLabel">EN</span>
@@ -221,25 +213,14 @@
           <svg viewBox="0 0 24 24" fill="none" id="themeIconSun" style="display:none;"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
       </div>
-      <div class="topbar-actions">
-        <button class="icon-btn active" id="gridBtn" title="Grid view">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor"/></svg>
-        </button>
-        <button class="icon-btn" id="listBtn" title="List view">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="11" width="18" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="17" width="18" height="3" rx="1.2" fill="currentColor"/></svg>
-        </button>
-        <button class="icon-btn" id="shareBtn" title="Share this page">
-          <svg viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="2.5" fill="currentColor"/><circle cx="6" cy="12" r="2.5" fill="currentColor"/><circle cx="18" cy="19" r="2.5" fill="currentColor"/><path d="M8.2 10.8 15.8 6.2M8.2 13.2l7.6 4.6" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
-      </div>
     </div>
 
     <div class="hero">
       <div class="logo-mark">
         <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" class="logo-img" id="logoImg">
       </div>
-      <h1 class="sr-only">Meatika Trading</h1>
-      <p id="heroText" data-en="" data-km="">Loading…</p>
+      <h1 class="page-title" id="pageTitle">Loading…</h1>
+      <p id="heroText" data-en="" data-km=""></p>
     </div>
 
     <div id="sections"><!-- sections + cards filled from data.json --></div>
@@ -247,22 +228,9 @@
     <footer data-en="Powered by Meatika Trading Network" data-km="ដំណើរការដោយបណ្តាញ Meatika Trading">Powered by Meatika Trading Network</footer>
   </div>
 
-  <div class="toast" id="toast">Link copied</div>
-
   <script src="assets/icons.js"></script>
   <script src="assets/site.js"></script>
   <script>
-    const gridBtn = document.getElementById('gridBtn');
-    const listBtn = document.getElementById('listBtn');
-    gridBtn.addEventListener('click', ()=>{
-      document.body.classList.remove('view-list');
-      gridBtn.classList.add('active'); listBtn.classList.remove('active');
-    });
-    listBtn.addEventListener('click', ()=>{
-      document.body.classList.add('view-list');
-      listBtn.classList.add('active'); gridBtn.classList.remove('active');
-    });
-
     const langBtn = document.getElementById('langBtn');
     const langLabel = document.getElementById('langLabel');
     function applyLang(isKhmer){
@@ -303,42 +271,47 @@
       try{ localStorage.setItem('mth-theme', nowLight ? 'light' : 'dark'); }catch(e){ /* storage unavailable */ }
     });
 
-    const shareBtn = document.getElementById('shareBtn');
-    const toast = document.getElementById('toast');
-    shareBtn.addEventListener('click', async ()=>{
-      const shareData = { title:'Meatika Trading', text:'Forex & crypto partnership network', url: location.href };
-      try{
-        if(navigator.share){ await navigator.share(shareData); }
-        else{
-          await navigator.clipboard.writeText(location.href);
-          showToast('Link copied');
-        }
-      }catch(e){ /* user cancelled share, ignore */ }
-    });
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=> toast.classList.remove('show'), 1800);
-    }
-
-    /* ---- Render everything from data.json (shared with page.html via assets/site.js) ---- */
     async function init(){
+      const params = new URLSearchParams(location.search);
+      const pageId = params.get('id');
+
       let data;
       try{
         data = await MTHSite.loadData();
       }catch(e){
-        document.getElementById('sections').innerHTML = '<p style="text-align:center;color:var(--muted);">Content failed to load.</p>';
+        document.getElementById('sections').innerHTML = '<p class="not-found">Content failed to load.</p>';
         return;
       }
 
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
 
-      const heroEl = document.getElementById('heroText');
-      heroEl.setAttribute('data-en', data.hero.en);
-      heroEl.setAttribute('data-km', data.hero.km || data.hero.en);
-      heroEl.textContent = data.hero.en;
+      const page = pageId ? MTHSite.findPage(data, pageId) : null;
+      if(!page){
+        document.getElementById('pageTitle').textContent = 'Page not found';
+        document.getElementById('heroText').style.display = 'none';
+        document.getElementById('sections').innerHTML = '<p class="not-found" data-en="This page doesn\'t exist or may have been removed." data-km="ទំព័រនេះមិនមាន ឬប្រហែលជាត្រូវបានលុបចោល។">This page doesn\'t exist or may have been removed.</p>';
+        applyLang(savedLang);
+        return;
+      }
 
-      document.getElementById('sections').innerHTML = MTHSite.sectionsHtml(data.sections || []);
+      document.title = (page.title && page.title.en ? page.title.en : 'Page') + ' — Meatika Trading';
+
+      const titleEl = document.getElementById('pageTitle');
+      titleEl.setAttribute('data-en', (page.title && page.title.en) || '');
+      titleEl.setAttribute('data-km', (page.title && page.title.km) || (page.title && page.title.en) || '');
+      titleEl.textContent = (page.title && page.title.en) || '';
+
+      const heroEl = document.getElementById('heroText');
+      const heroText = page.hero || {};
+      if(heroText.en){
+        heroEl.setAttribute('data-en', heroText.en);
+        heroEl.setAttribute('data-km', heroText.km || heroText.en);
+        heroEl.textContent = heroText.en;
+      } else {
+        heroEl.style.display = 'none';
+      }
+
+      document.getElementById('sections').innerHTML = MTHSite.sectionsHtml(page.sections || []);
 
       applyLang(savedLang);
     }

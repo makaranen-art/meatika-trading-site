@@ -165,6 +165,37 @@
     <div id="editor" style="display:none;">
 
       <div class="panel">
+        <h2>Branding — logo & favicon</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Upload a new logo or favicon image — any size or shape is fine, it's automatically resized and
+          centered to match the site's current logo/favicon dimensions so it always displays cleanly.
+          This saves straight to the repo when you click <strong>Save logo & favicon</strong> below (uses the
+          same GitHub connection as above), separately from the content Save button.
+        </p>
+        <div class="row">
+          <div class="field">
+            <label>Logo — dark theme (shown on the dark background)</label>
+            <img id="logoDarkPreview" src="assets/mth-logo-white.png" alt="" style="max-width:160px;max-height:80px;display:block;margin-bottom:8px;background:#1b2753;border-radius:8px;padding:8px;">
+            <input type="file" id="logoDarkInput" accept="image/png,image/jpeg,image/webp">
+          </div>
+          <div class="field">
+            <label>Logo — light theme (shown on the light background)</label>
+            <img id="logoLightPreview" src="assets/mth-logo.png" alt="" style="max-width:160px;max-height:80px;display:block;margin-bottom:8px;background:#f7f4ec;border-radius:8px;padding:8px;">
+            <input type="file" id="logoLightInput" accept="image/png,image/jpeg,image/webp">
+          </div>
+        </div>
+        <div class="field" style="margin-top:4px;">
+          <label>Favicon (square image recommended — every size the site needs is generated automatically)</label>
+          <img id="faviconPreview" src="assets/favicon-32x32.png" alt="" style="width:32px;height:32px;display:block;margin-bottom:8px;border-radius:4px;">
+          <input type="file" id="faviconInput" accept="image/png,image/jpeg,image/webp">
+        </div>
+        <div class="toolbar" style="margin-top:14px;">
+          <button class="primary" id="saveBrandingBtn">Save logo & favicon</button>
+          <span class="status" id="brandingStatus"></span>
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Ticker (top scrolling bar)</h2>
         <div id="tickerList"></div>
         <button class="small" id="addTicker">+ Add ticker item</button>
@@ -180,6 +211,18 @@
         <h2>Sections & cards</h2>
         <div id="sectionsList"></div>
         <button id="addSection">+ Add section</button>
+      </div>
+
+      <div class="panel">
+        <h2>Pages</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Create standalone pages with their own title, intro text, and sections/cards — useful when a card
+          should open more detail inside the site instead of an external link. Each page works exactly like
+          the homepage above. Once a page exists, open any card below and set its <strong>Link type</strong>
+          to "Internal page" to point to it.
+        </p>
+        <div id="pagesList"></div>
+        <button id="addPage">+ Add page</button>
       </div>
 
       <div class="save-bar">
@@ -312,11 +355,24 @@ document.getElementById('loadBtn').addEventListener('click', async () => {
 ========================================================= */
 let state = null;
 
+let renderHomeSections = () => {};
+
 function renderEditor(){
   renderTickerList();
   document.getElementById('heroEn').value = state.hero.en || '';
   document.getElementById('heroKm').value = state.hero.km || '';
-  renderSections();
+  state.pages = state.pages || [];
+  renderHomeSections = makeSectionsRenderer(document.getElementById('sectionsList'), state.sections);
+  renderHomeSections();
+  renderPages();
+}
+
+/* Re-renders every sections list in the app (home + every page). Needed
+   whenever a page is added/removed, since card "link to page" dropdowns
+   everywhere need to reflect the current page list. */
+function renderAll(){
+  renderHomeSections();
+  renderPages();
 }
 
 /* ---- Ticker ---- */
@@ -362,55 +418,75 @@ function iconOptions(selected){
   return ICON_KEYS.map(k => `<option value="${k}" ${k===selected?'selected':''}>${k}</option>`).join('');
 }
 
-function renderSections(){
-  const wrap = document.getElementById('sectionsList');
-  wrap.innerHTML = '';
-  (state.sections || []).forEach((section, sIdx) => {
-    const sec = document.createElement('div');
-    sec.className = 'section-card';
-    sec.innerHTML = `
-      <div class="row2">
-        <h3>Section</h3>
-        <div>
-          <button class="small" data-act="up">↑</button>
-          <button class="small" data-act="down">↓</button>
-          <button class="small danger" data-act="remove">Remove section</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Label (English)</label><input type="text" data-f="label-en" value="${escAttr(section.label.en)}"></div>
-        <div class="field"><label>Label (Khmer)</label><input type="text" data-f="label-km" value="${escAttr(section.label.km || '')}"></div>
-      </div>
-      <div class="cardsHolder"></div>
-      <button class="small" data-act="addCard">+ Add card to this section</button>
-    `;
-    sec.querySelector('[data-f="label-en"]').addEventListener('input', e => section.label.en = e.target.value);
-    sec.querySelector('[data-f="label-km"]').addEventListener('input', e => section.label.km = e.target.value);
-    sec.querySelector('[data-act="remove"]').addEventListener('click', () => {
-      if(confirm('Remove this whole section and its cards?')){ state.sections.splice(sIdx,1); renderSections(); }
-    });
-    sec.querySelector('[data-act="up"]').addEventListener('click', () => {
-      if(sIdx > 0){ [state.sections[sIdx-1], state.sections[sIdx]] = [state.sections[sIdx], state.sections[sIdx-1]]; renderSections(); }
-    });
-    sec.querySelector('[data-act="down"]').addEventListener('click', () => {
-      if(sIdx < state.sections.length-1){ [state.sections[sIdx+1], state.sections[sIdx]] = [state.sections[sIdx], state.sections[sIdx+1]]; renderSections(); }
-    });
-    sec.querySelector('[data-act="addCard"]').addEventListener('click', () => {
-      section.cards = section.cards || [];
-      section.cards.push({ id: 'card-'+Date.now(), title: 'New card', desc:{en:'',km:''}, link:'https://', icon:'star', color:'#24262b', iconColor:'#d4af37', wide:false });
-      renderSections();
-    });
-
-    const cardsHolder = sec.querySelector('.cardsHolder');
-    (section.cards || []).forEach((card, cIdx) => {
-      cardsHolder.appendChild(renderCard(section, card, sIdx, cIdx));
-    });
-
-    wrap.appendChild(sec);
-  });
+function newCard(){
+  return { id: 'card-'+Date.now(), title: 'New card', desc:{en:'',km:''}, linkType:'url', link:'https://', pageId:'', icon:'star', color:'#24262b', iconColor:'#d4af37', wide:false };
 }
 
-function renderCard(section, card, sIdx, cIdx){
+/* Generic: renders a "sections & cards" editor into wrapEl, backed by
+   sectionsArr (either state.sections for the homepage, or a page's own
+   .sections array). Used identically for the homepage and for every page,
+   so a new page or subpage works exactly the same way as the home section
+   editor. */
+function makeSectionsRenderer(wrapEl, sectionsArr){
+  function render(){
+    wrapEl.innerHTML = '';
+    sectionsArr.forEach((section, sIdx) => {
+      const sec = document.createElement('div');
+      sec.className = 'section-card';
+      sec.innerHTML = `
+        <div class="row2">
+          <h3>Section</h3>
+          <div>
+            <button class="small" data-act="up">↑</button>
+            <button class="small" data-act="down">↓</button>
+            <button class="small danger" data-act="remove">Remove section</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Label (English)</label><input type="text" data-f="label-en" value="${escAttr(section.label.en)}"></div>
+          <div class="field"><label>Label (Khmer)</label><input type="text" data-f="label-km" value="${escAttr(section.label.km || '')}"></div>
+        </div>
+        <div class="cardsHolder"></div>
+        <button class="small" data-act="addCard">+ Add card to this section</button>
+      `;
+      sec.querySelector('[data-f="label-en"]').addEventListener('input', e => section.label.en = e.target.value);
+      sec.querySelector('[data-f="label-km"]').addEventListener('input', e => section.label.km = e.target.value);
+      sec.querySelector('[data-act="remove"]').addEventListener('click', () => {
+        if(confirm('Remove this whole section and its cards?')){ sectionsArr.splice(sIdx,1); render(); }
+      });
+      sec.querySelector('[data-act="up"]').addEventListener('click', () => {
+        if(sIdx > 0){ [sectionsArr[sIdx-1], sectionsArr[sIdx]] = [sectionsArr[sIdx], sectionsArr[sIdx-1]]; render(); }
+      });
+      sec.querySelector('[data-act="down"]').addEventListener('click', () => {
+        if(sIdx < sectionsArr.length-1){ [sectionsArr[sIdx+1], sectionsArr[sIdx]] = [sectionsArr[sIdx], sectionsArr[sIdx+1]]; render(); }
+      });
+      sec.querySelector('[data-act="addCard"]').addEventListener('click', () => {
+        section.cards = section.cards || [];
+        section.cards.push(newCard());
+        render();
+      });
+
+      const cardsHolder = sec.querySelector('.cardsHolder');
+      (section.cards || []).forEach((card, cIdx) => {
+        cardsHolder.appendChild(renderCard(section, card, cIdx, render));
+      });
+
+      wrapEl.appendChild(sec);
+    });
+  }
+  return render;
+}
+
+/* Options for the "Linked page" dropdown on a card. */
+function pageOptions(selected){
+  const opts = (state.pages || []).map(p =>
+    `<option value="${escAttr(p.id)}" ${p.id===selected?'selected':''}>${escAttr((p.title && p.title.en) || p.id)}</option>`
+  ).join('');
+  return opts + `<option value="__new__">+ Create new page…</option>`;
+}
+
+function renderCard(section, card, cIdx, onChange){
+  card.linkType = card.linkType === 'page' ? 'page' : 'url';
   const el = document.createElement('div');
   el.className = 'card-item';
   el.innerHTML = `
@@ -428,7 +504,15 @@ function renderCard(section, card, sIdx, cIdx){
       <div class="field"><label>Description (English)</label><textarea data-f="desc-en">${escText(card.desc.en)}</textarea></div>
       <div class="field"><label>Description (Khmer)</label><textarea data-f="desc-km">${escText(card.desc.km || '')}</textarea></div>
     </div>
-    <div class="field"><label>Link URL</label><input type="url" data-f="link" value="${escAttr(card.link)}"></div>
+    <div class="field">
+      <label>Link type</label>
+      <select data-f="linkType">
+        <option value="url">External URL</option>
+        <option value="page">Internal page</option>
+      </select>
+    </div>
+    <div class="field" data-link-url><label>Link URL</label><input type="url" data-f="link" value="${escAttr(card.link)}"></div>
+    <div class="field" data-link-page style="display:none;"><label>Linked page</label><select data-f="pageId">${pageOptions(card.pageId)}</select></div>
     <label class="checkbox-row"><input type="checkbox" data-f="wide" ${card.wide?'checked':''}> Full-width card</label>
   `;
 
@@ -437,7 +521,13 @@ function renderCard(section, card, sIdx, cIdx){
     preview.style.background = card.color;
     preview.innerHTML = `<svg viewBox="0 0 24 24" fill="none">${window.mthIconSvg(card.icon, card.iconColor)}</svg>`;
   }
+  function updateLinkFields(){
+    el.querySelector('[data-link-url]').style.display = card.linkType === 'url' ? '' : 'none';
+    el.querySelector('[data-link-page]').style.display = card.linkType === 'page' ? '' : 'none';
+  }
   updatePreview();
+  el.querySelector('[data-f="linkType"]').value = card.linkType;
+  updateLinkFields();
 
   el.querySelector('[data-f="icon"]').addEventListener('change', e => { card.icon = e.target.value; updatePreview(); });
   el.querySelector('[data-f="color"]').addEventListener('input', e => { card.color = e.target.value; updatePreview(); });
@@ -447,9 +537,26 @@ function renderCard(section, card, sIdx, cIdx){
   el.querySelector('[data-f="desc-km"]').addEventListener('input', e => card.desc.km = e.target.value);
   el.querySelector('[data-f="link"]').addEventListener('input', e => card.link = e.target.value);
   el.querySelector('[data-f="wide"]').addEventListener('change', e => card.wide = e.target.checked);
+  el.querySelector('[data-f="linkType"]').addEventListener('change', e => {
+    card.linkType = e.target.value;
+    updateLinkFields();
+  });
+  el.querySelector('[data-f="pageId"]').addEventListener('change', e => {
+    if(e.target.value === '__new__'){
+      const title = (prompt('Title for the new page (English):', 'New page') || '').trim();
+      if(!title){ e.target.value = card.pageId || ''; return; }
+      const id = slugify(title) + '-' + Date.now().toString(36);
+      state.pages = state.pages || [];
+      state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, sections: [] });
+      card.pageId = id;
+      renderAll();
+    } else {
+      card.pageId = e.target.value;
+    }
+  });
   el.querySelector('[data-act="removeCard"]').addEventListener('click', () => {
     section.cards.splice(cIdx, 1);
-    renderSections();
+    onChange();
   });
 
   return el;
@@ -458,16 +565,276 @@ function renderCard(section, card, sIdx, cIdx){
 document.getElementById('addSection').addEventListener('click', () => {
   state.sections = state.sections || [];
   state.sections.push({ id: 'section-'+Date.now(), label:{en:'New section',km:''}, cards: [] });
-  renderSections();
+  renderHomeSections();
+});
+
+/* ---- Pages ---- */
+function renderPages(){
+  const wrap = document.getElementById('pagesList');
+  wrap.innerHTML = '';
+  (state.pages || []).forEach((page, pIdx) => {
+    page.title = page.title || {en:'',km:''};
+    page.hero = page.hero || {en:'',km:''};
+    page.sections = page.sections || [];
+
+    const el = document.createElement('details');
+    el.className = 'section-card';
+    el.innerHTML = `
+      <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <strong>${escAttr(page.title.en || 'Untitled page')}</strong>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">page.html?id=${escAttr(page.id)}</span>
+      </summary>
+      <div style="margin-top:14px;">
+        <div class="row">
+          <div class="field"><label>Page title (English)</label><input type="text" data-f="title-en" value="${escAttr(page.title.en)}"></div>
+          <div class="field"><label>Page title (Khmer)</label><input type="text" data-f="title-km" value="${escAttr(page.title.km)}"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Intro text (English)</label><textarea data-f="hero-en">${escText(page.hero.en)}</textarea></div>
+          <div class="field"><label>Intro text (Khmer)</label><textarea data-f="hero-km">${escText(page.hero.km)}</textarea></div>
+        </div>
+        <div class="pageSectionsHolder"></div>
+        <button class="small" data-act="addSectionToPage">+ Add section to this page</button>
+        <div style="margin-top:14px;"><button class="small danger" data-act="removePage">Remove this page</button></div>
+      </div>
+    `;
+    el.querySelector('[data-f="title-en"]').addEventListener('input', e => {
+      page.title.en = e.target.value;
+      el.querySelector('summary strong').textContent = page.title.en || 'Untitled page';
+    });
+    el.querySelector('[data-f="title-km"]').addEventListener('input', e => page.title.km = e.target.value);
+    el.querySelector('[data-f="hero-en"]').addEventListener('input', e => page.hero.en = e.target.value);
+    el.querySelector('[data-f="hero-km"]').addEventListener('input', e => page.hero.km = e.target.value);
+    el.querySelector('[data-act="removePage"]').addEventListener('click', () => {
+      if(confirm('Remove this page? Any cards linking to it will show "Page not found" until you point them elsewhere.')){
+        state.pages.splice(pIdx, 1);
+        renderAll();
+      }
+    });
+
+    const holder = el.querySelector('.pageSectionsHolder');
+    const renderThisPage = makeSectionsRenderer(holder, page.sections);
+    renderThisPage();
+    el.querySelector('[data-act="addSectionToPage"]').addEventListener('click', () => {
+      page.sections.push({ id: 'section-'+Date.now(), label:{en:'New section',km:''}, cards: [] });
+      renderThisPage();
+    });
+
+    wrap.appendChild(el);
+  });
+}
+
+document.getElementById('addPage').addEventListener('click', () => {
+  const title = (prompt('Title for the new page (English):', 'New page') || '').trim();
+  if(!title) return;
+  const id = slugify(title) + '-' + Date.now().toString(36);
+  state.pages = state.pages || [];
+  state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, sections: [] });
+  renderAll();
 });
 
 /* ---- helpers ---- */
 function escAttr(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escText(s){ return escAttr(s); }
+function slugify(s){
+  return String(s || 'page').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-+|-+$)/g,'') || 'page';
+}
 function normalizeColor(c){
   if(/^#[0-9a-fA-F]{6}$/.test(c || '')) return c;
   return '#24262b';
 }
+
+/* =========================================================
+   BRANDING: logo + favicon upload, resize, and save to GitHub
+   Independent of the data.json state above — these are binary
+   image files saved to their own paths in the repo.
+========================================================= */
+const LOGO_W = 1200, LOGO_H = 776; // matches the site's current logo asset dimensions
+const pendingAssets = {}; // repoPath -> base64 PNG content (no data: prefix)
+
+function loadImageFile(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Could not read that image file.'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/* Fit-contain the source image onto a transparent w×h canvas, centered.
+   This is what keeps any uploaded logo/favicon looking clean and consistent
+   inside the site's fixed-size logo box and icon slots, regardless of the
+   original file's dimensions or aspect ratio. */
+function fitContainCanvas(img, w, h){
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const scale = Math.min(w / img.width, h / img.height);
+  const dw = img.width * scale, dh = img.height * scale;
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  return canvas;
+}
+
+function canvasToBase64Png(canvas){
+  return new Promise(resolve => {
+    canvas.toBlob(blob => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.readAsDataURL(blob);
+    }, 'image/png');
+  });
+}
+
+function base64ToBytes(base64){
+  const bin = atob(base64);
+  const bytes = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+function bytesToBase64(bytes){
+  let bin = '';
+  for(let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+/* Minimal ICO container: 6-byte header + one 16-byte directory entry per
+   image + the raw PNG bytes for each. This "PNG-in-ICO" format has been
+   supported by Windows, browsers, and OSes since Vista, and keeps the code
+   dependency-free. */
+function buildIco(entries){
+  const count = entries.length;
+  const dirEntrySize = 16;
+  let offset = 6 + dirEntrySize * count;
+  const header = new Uint8Array([0, 0, 1, 0, count & 0xff, (count >> 8) & 0xff]);
+  const dir = new Uint8Array(dirEntrySize * count);
+  const chunks = [header, dir];
+  entries.forEach((e, i) => {
+    const base = i * dirEntrySize;
+    const dim = e.size >= 256 ? 0 : e.size; // 0 means 256px per the ICO spec
+    dir[base + 0] = dim; dir[base + 1] = dim;
+    dir[base + 4] = 1; // color planes
+    dir[base + 6] = 32; // bits per pixel
+    const len = e.png.length;
+    dir[base + 8]  = len & 0xff;
+    dir[base + 9]  = (len >> 8) & 0xff;
+    dir[base + 10] = (len >> 16) & 0xff;
+    dir[base + 11] = (len >> 24) & 0xff;
+    dir[base + 12] = offset & 0xff;
+    dir[base + 13] = (offset >> 8) & 0xff;
+    dir[base + 14] = (offset >> 16) & 0xff;
+    dir[base + 15] = (offset >> 24) & 0xff;
+    offset += len;
+    chunks.push(e.png);
+  });
+  const out = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0));
+  let pos = 0;
+  chunks.forEach(c => { out.set(c, pos); pos += c.length; });
+  return out;
+}
+
+async function handleLogoUpload(file, repoPath, previewEl){
+  const statusEl = document.getElementById('brandingStatus');
+  try{
+    const img = await loadImageFile(file);
+    const canvas = fitContainCanvas(img, LOGO_W, LOGO_H);
+    pendingAssets[repoPath] = await canvasToBase64Png(canvas);
+    previewEl.src = canvas.toDataURL('image/png');
+    statusEl.textContent = 'Ready to save — click "Save logo & favicon".';
+    statusEl.className = 'status pending';
+  }catch(e){
+    statusEl.textContent = e.message || 'Could not process that image.';
+    statusEl.className = 'status bad';
+  }
+}
+document.getElementById('logoDarkInput').addEventListener('change', e => {
+  if(e.target.files[0]) handleLogoUpload(e.target.files[0], 'assets/mth-logo-white.png', document.getElementById('logoDarkPreview'));
+});
+document.getElementById('logoLightInput').addEventListener('change', e => {
+  if(e.target.files[0]) handleLogoUpload(e.target.files[0], 'assets/mth-logo.png', document.getElementById('logoLightPreview'));
+});
+
+async function handleFaviconUpload(file){
+  const statusEl = document.getElementById('brandingStatus');
+  try{
+    const img = await loadImageFile(file);
+    const pngBySize = {};
+    for(const size of [16, 32, 48]){
+      const canvas = fitContainCanvas(img, size, size);
+      const base64 = await canvasToBase64Png(canvas);
+      pendingAssets[`assets/favicon-${size}x${size}.png`] = base64;
+      pngBySize[size] = base64ToBytes(base64);
+    }
+    const appleCanvas = fitContainCanvas(img, 180, 180);
+    pendingAssets['assets/apple-touch-icon.png'] = await canvasToBase64Png(appleCanvas);
+
+    const icoBytes = buildIco([16, 32, 48].map(size => ({ size, png: pngBySize[size] })));
+    pendingAssets['favicon.ico'] = bytesToBase64(icoBytes);
+
+    document.getElementById('faviconPreview').src = fitContainCanvas(img, 32, 32).toDataURL('image/png');
+    statusEl.textContent = 'Ready to save — click "Save logo & favicon".';
+    statusEl.className = 'status pending';
+  }catch(e){
+    statusEl.textContent = e.message || 'Could not process that image.';
+    statusEl.className = 'status bad';
+  }
+}
+document.getElementById('faviconInput').addEventListener('change', e => {
+  if(e.target.files[0]) handleFaviconUpload(e.target.files[0]);
+});
+
+document.getElementById('saveBrandingBtn').addEventListener('click', async () => {
+  const conn = currentConn();
+  const statusEl = document.getElementById('brandingStatus');
+  if(!conn.token || !conn.owner || !conn.repo){
+    statusEl.textContent = 'Fill in the GitHub connection details above first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  const paths = Object.keys(pendingAssets);
+  if(!paths.length){
+    statusEl.textContent = 'Choose a new logo or favicon image first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  statusEl.className = 'status pending';
+  try{
+    for(const path of paths){
+      statusEl.textContent = `Saving ${path}…`;
+      let sha;
+      const getRes = await fetch(
+        `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(conn.branch)}`,
+        { headers: { 'Accept': 'application/vnd.github+json', 'Authorization': `Bearer ${conn.token}` } }
+      );
+      if(getRes.ok) sha = (await getRes.json()).sha;
+
+      const putRes = await fetch(`https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(path)}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `Bearer ${conn.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Update ${path} via admin panel`,
+          content: pendingAssets[path],
+          sha,
+          branch: conn.branch
+        })
+      });
+      if(!putRes.ok){
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(`${path}: ${err.message || putRes.status}`);
+      }
+    }
+    paths.forEach(p => delete pendingAssets[p]);
+    statusEl.textContent = 'Saved. The live site will update within a minute or two.';
+    statusEl.className = 'status ok';
+  }catch(e){
+    statusEl.textContent = e.message || 'Failed to save branding.';
+    statusEl.className = 'status bad';
+  }
+});
 
 /* =========================================================
    4) SAVE TO GITHUB

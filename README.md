@@ -4,6 +4,10 @@ Single-page forex & crypto partnership hub for Meatika Trading — broker links,
 
 Site content (links, titles, descriptions, cards, sections) now lives in **`data.json`** and is editable through **`admin.html`** — no code editing required for day-to-day updates.
 
+Admins can also create **pages** (internal subpages) right from `admin.html`. A page has its own title, intro text, and sections/cards — built with the exact same editor as the homepage. Any card, in any section, on the homepage or on another page, can be pointed at one of these pages instead of an external URL, so you can build multi-level menus entirely inside the site.
+
+The admin panel can also update the site's **logo (light/dark theme) and favicon** — upload any image and it's automatically resized and centered to match the site's existing logo/icon dimensions, so it always displays cleanly.
+
 ## Live site
 
 Once GitHub Pages is enabled (see below), the site will be available at:
@@ -46,17 +50,19 @@ To use a custom domain instead of the github.io URL:
 
 ```
 index.html              Main page — fetches data.json and renders everything
-admin.html               Password-gated editor for non-technical admins
-data.json                 All editable content: ticker, hero text, sections, cards
-favicon.ico               Multi-size favicon
+page.html                 Generic subpage — renders one admin-created page (page.html?id=<pageId>)
+admin.html                 Password-gated editor for non-technical admins
+data.json                    All editable content: ticker, hero text, sections, cards, pages
+favicon.ico                   Multi-size favicon
 assets/
-  icons.js                 Shared icon set used by index.html and admin.html
-  mth-logo.png              Logo — light theme variant
-  mth-logo-white.png         Logo — dark theme variant
-  favicon-16x16.png           Favicon
-  favicon-32x32.png           Favicon
-  favicon-48x48.png           Favicon
-  apple-touch-icon.png        iOS home screen icon
+  icons.js                      Shared icon set used by index.html, page.html and admin.html
+  site.js                        Shared rendering logic (sections/cards) used by index.html and page.html
+  mth-logo.png                    Logo — light theme variant
+  mth-logo-white.png               Logo — dark theme variant
+  favicon-16x16.png                  Favicon
+  favicon-32x32.png                   Favicon
+  favicon-48x48.png                    Favicon
+  apple-touch-icon.png                  iOS home screen icon
 ```
 
 ## Using the admin panel (for non-technical admins)
@@ -81,7 +87,9 @@ assets/
    - Create one at [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new): restrict it to this one repository, and set **Contents → Read and write**.
 3. Click **Load current content**.
 4. Edit ticker items, hero text, or any section/card — add or remove cards and whole sections freely, change titles, descriptions (English + Khmer), links, icons, and colors.
-5. Click **Save changes**. The live site updates automatically within a minute or two.
+5. To add an internal subpage instead of an external link: scroll to the **Pages** panel and click **+ Add page** (or, on any card, set **Link type** to "Internal page" and choose "+ Create new page…"). Give the page a title and intro text, then add sections/cards to it exactly like you would on the homepage — a page can even link to other pages.
+6. To update the logo or favicon: open the **Branding** panel at the top, choose new image file(s), and click **Save logo & favicon** (separate from the content Save button, saves immediately).
+7. Click **Save changes** for any content edits. The live site updates automatically within a minute or two.
 
 ## Making changes via code instead
 
