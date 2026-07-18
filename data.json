@@ -256,6 +256,15 @@
             "en": "របៀបដាក់លុយ",
             "km": "របៀបដាក់លុយ"
           }
+        },
+        {
+          "type": "photo",
+          "id": "block-mrqwuijhlbi4",
+          "image": "https://res.cloudinary.com/lisxurk1/image/upload/v1784412039/blob_eemkgl.png",
+          "caption": {
+            "en": "",
+            "km": ""
+          }
         }
       ],
       "sections": []
