@@ -178,6 +178,30 @@
           "linkType": "url"
         }
       ]
+    },
+    {
+      "id": "section-1784394803494",
+      "label": {
+        "en": "Open Trading Account Quide",
+        "km": "របៀបបង្កើតគណីជួញដូរ"
+      },
+      "cards": [
+        {
+          "id": "card-1784394856393",
+          "title": "Investizo ",
+          "desc": {
+            "en": "Click to see how to sign up with investizo",
+            "km": "ចុះមើលររបៀបបង្កើតគណនី Investizo"
+          },
+          "linkType": "url",
+          "link": "https://meatikatrading.com/page.html?id=new-page-mrqmg3i1",
+          "pageId": "",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": true
+        }
+      ]
     }
   ],
   "pages": [
@@ -227,7 +251,7 @@
       "cover": "",
       "video": {
         "type": "url",
-        "url": "",
+        "url": "page.html?id=new-page-mrqmg3i1",
         "file": ""
       },
       "published": true,
