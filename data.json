@@ -49,7 +49,8 @@
           "icon": "check",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         },
         {
           "id": "litefinance",
@@ -62,7 +63,8 @@
           "icon": "star",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         },
         {
           "id": "gtcfx",
@@ -75,7 +77,8 @@
           "icon": "squares",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": true
+          "wide": true,
+          "linkType": "url"
         }
       ]
     },
@@ -97,7 +100,8 @@
           "icon": "paperplane",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         },
         {
           "id": "facebook",
@@ -110,7 +114,8 @@
           "icon": "bubble",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         }
       ]
     },
@@ -132,7 +137,8 @@
           "icon": "squares",
           "color": "#24262b",
           "iconColor": "#dee2ea",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         },
         {
           "id": "binance",
@@ -145,7 +151,8 @@
           "icon": "diamonds",
           "color": "#24262b",
           "iconColor": "#dee2ea",
-          "wide": false
+          "wide": false,
+          "linkType": "url"
         }
       ]
     },
@@ -167,12 +174,41 @@
           "icon": "paperplane",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": true
+          "wide": true,
+          "linkType": "url"
         }
       ]
     }
   ],
-  "pages": [],
+  "pages": [
+    {
+      "id": "new-page-mrqmg3i1",
+      "title": {
+        "en": "របៀបបង្កើត​ Investizo",
+        "km": "របៀបបង្កើត​ Investizo"
+      },
+      "hero": {
+        "en": "",
+        "km": ""
+      },
+      "blocks": [
+        {
+          "type": "video",
+          "id": "block-mrqmghha3312",
+          "video": {
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=k3BvJBm5Atk",
+            "file": ""
+          },
+          "caption": {
+            "en": "",
+            "km": ""
+          }
+        }
+      ],
+      "sections": []
+    }
+  ],
   "news": [
     {
       "id": "news-welcome",
