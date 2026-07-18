@@ -116,6 +116,21 @@
           "iconColor": "#c7ccd6",
           "wide": false,
           "linkType": "url"
+        },
+        {
+          "id": "card-1784397353864",
+          "title": "Meatika Affiliate Telegram ",
+          "desc": {
+            "en": "Open account, video guide ",
+            "km": "របៀបបង្កើតគណនី"
+          },
+          "linkType": "url",
+          "link": "https://t.me/MeatikaAffiliate",
+          "pageId": "",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": false
         }
       ]
     },
