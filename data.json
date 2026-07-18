@@ -63,7 +63,7 @@
           "icon": "star",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": false,
+          "wide": true,
           "linkType": "url"
         },
         {
@@ -201,18 +201,18 @@
           "cards": [
             {
               "id": "card-1784389687048",
-              "title": "New card",
+              "title": "របៀបបង្កើតគណនី",
               "desc": {
-                "en": "Click link to see it",
-                "km": "Click link to see it"
+                "en": "ចុចដើម្បីមើលរបៀបបង្កើតគណនី",
+                "km": "ចុចដើម្បីមើលរបៀបបង្កើតគណនី"
               },
               "linkType": "url",
-              "link": "https://",
+              "link": "https://youtube.com",
               "pageId": "",
               "icon": "star",
               "color": "#24262b",
               "iconColor": "#d4af37",
-              "wide": false
+              "wide": true
             }
           ]
         }
