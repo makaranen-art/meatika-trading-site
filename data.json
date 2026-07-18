@@ -256,15 +256,6 @@
             "en": "របៀបដាក់លុយ",
             "km": "របៀបដាក់លុយ"
           }
-        },
-        {
-          "type": "photo",
-          "id": "block-mrqtdr3zw8fa",
-          "image": "https://res.cloudinary.com/lisxurk1/image/upload/v1784406211/blob_ksijf6.png",
-          "caption": {
-            "en": "",
-            "km": ""
-          }
         }
       ],
       "sections": []
@@ -285,7 +276,7 @@
         "en": "Welcome to the Meatika Trading news page. From here, admins can publish updates about our broker and exchange partners, community announcements, and educational content — complete with photos, video, and one-tap sharing to social media.\n\nCheck back regularly for the latest updates from the Meatika Trading Network.",
         "km": "សូមស្វាគមន៍មកកាន់ទំព័រព័ត៌មានរបស់ Meatika Trading។ ពីទីនេះ អ្នកគ្រប់គ្រងអាចបោះពុម្ពផ្សាយព័ត៌មានអំពីដៃគូឈ្មួញកណ្តាល និងការផ្លាស់ប្តូររបស់យើង ការប្រកាសសហគមន៍ និងខ្លឹមសារអប់រំ — ជាមួយរូបភាព វីដេអូ និងការចែករំលែកទៅបណ្តាញសង្គមយ៉ាងងាយស្រួល។\n\nសូមពិនិត្យមើលជាទៀងទាត់សម្រាប់ព័ត៌មានថ្មីៗពីបណ្តាញ Meatika Trading។"
       },
-      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784406139/blob_zdemfo.png",
+      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784406601/blob_x4ooyl.png",
       "video": {
         "type": "url",
         "url": "https://www.youtube.com/watch?v=5U6aph_l_sk",
