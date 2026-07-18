@@ -180,7 +180,45 @@
       ]
     }
   ],
-  "pages": [],
+  "pages": [
+    {
+      "id": "investizoguide-mrqlrml8",
+      "title": {
+        "en": "InvestizoGuide",
+        "km": ""
+      },
+      "hero": {
+        "en": "",
+        "km": ""
+      },
+      "sections": [
+        {
+          "id": "section-1784393459707",
+          "label": {
+            "en": "New section",
+            "km": ""
+          },
+          "cards": [
+            {
+              "id": "card-1784393463006",
+              "title": "New card",
+              "desc": {
+                "en": "",
+                "km": ""
+              },
+              "linkType": "url",
+              "link": "https://",
+              "pageId": "",
+              "icon": "star",
+              "color": "#24262b",
+              "iconColor": "#d4af37",
+              "wide": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "news": [
     {
       "id": "news-welcome",
