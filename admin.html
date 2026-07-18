@@ -228,14 +228,10 @@
         </p>
         <div id="pagesList"></div>
         <button id="addPage">+ Add page</button>
-        <div class="toolbar" style="margin-top:14px;">
-          <button class="primary" id="savePageMediaBtn">Save uploaded page media</button>
-          <span class="status" id="pageMediaStatus"></span>
-        </div>
         <p class="helptext" style="margin-top:8px;">
-          Photos and uploaded videos on pages are saved straight to the repo when you click the button above
-          (same GitHub connection as the rest of this page). Click <strong>Save changes</strong> below
-          afterwards to save the page text and publish it.
+          Photos and videos on pages upload straight to Cloudinary the moment you choose the file — no extra
+          save step needed for the media itself. Click <strong>Save changes</strong> below afterwards to save
+          the page text and publish it (which also records the new Cloudinary links).
         </p>
       </div>
 
@@ -251,14 +247,10 @@
         </p>
         <div id="newsList"></div>
         <button id="addNews">+ Add news / article</button>
-        <div class="toolbar" style="margin-top:14px;">
-          <button class="primary" id="saveNewsMediaBtn">Save uploaded news media</button>
-          <span class="status" id="newsMediaStatus"></span>
-        </div>
         <p class="helptext" style="margin-top:8px;">
-          Cover photos and uploaded videos are saved straight to the repo when you click the button above
-          (same GitHub connection as the rest of this page). Click <strong>Save changes</strong> below
-          afterwards to save the article text and publish it.
+          Cover photos and videos upload straight to Cloudinary the moment you choose the file — no extra save
+          step needed for the media itself. Click <strong>Save changes</strong> below afterwards to save the
+          article text and publish it (which also records the new Cloudinary links).
         </p>
       </div>
 
@@ -314,6 +306,42 @@ async function doLogin(){
 if(sessionStorage.getItem('mth-admin-ok') === '1'){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+}
+
+/* =========================================================
+   CLOUDINARY CONFIG — used for every photo & video upload
+   (page media, news media). Fill in your Cloud Name below —
+   find it on your Cloudinary Dashboard homepage, right under
+   "Product Environment Credentials".
+   The upload preset "ml_default" must exist in Cloudinary →
+   Settings (gear icon) → Upload → Upload presets, and its
+   Signing Mode must be set to "Unsigned" — otherwise uploads
+   from this page will be rejected.
+========================================================= */
+const CLOUDINARY_CLOUD_NAME = 'lisxurk1';
+const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
+
+async function uploadToCloudinary(fileOrBlob, resourceType){
+  if(CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME'){
+    throw new Error('Cloudinary isn\'t set up yet — open admin.html and set CLOUDINARY_CLOUD_NAME near the top of the script.');
+  }
+  const formData = new FormData();
+  formData.append('file', fileOrBlob);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`, {
+    method: 'POST',
+    body: formData
+  });
+  if(!res.ok){
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err.error && err.error.message) || `Cloudinary upload failed (${res.status})`);
+  }
+  const data = await res.json();
+  return data.secure_url;
+}
+
+function canvasToBlob(canvas){
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
 /* =========================================================
@@ -804,17 +832,19 @@ function renderBlockItem(page, block, bIdx, onChange){
       const statusEl = body.querySelector('[data-photo-status]');
       const previewEl = body.querySelector('[data-photo-preview]');
       try{
+        statusEl.textContent = 'Uploading to Cloudinary…';
+        statusEl.className = 'status pending';
         const img = await loadImageFile(file);
         const canvas = scaleDownCanvas(img, 1600);
-        const path = `assets/pages/${page.id}-${block.id}.png`;
-        pendingAssets[path] = await canvasToBase64Png(canvas);
-        block.image = path;
-        previewEl.src = canvas.toDataURL('image/png');
+        const blob = await canvasToBlob(canvas);
+        const url = await uploadToCloudinary(blob, 'image');
+        block.image = url;
+        previewEl.src = url;
         previewEl.style.display = 'block';
-        statusEl.textContent = 'Ready — click "Save uploaded page media" below, then "Save changes".';
-        statusEl.className = 'status pending';
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        statusEl.className = 'status ok';
       }catch(err){
-        statusEl.textContent = err.message || 'Could not process that image.';
+        statusEl.textContent = err.message || 'Could not upload that image.';
         statusEl.className = 'status bad';
       }
     });
@@ -860,23 +890,15 @@ function renderBlockItem(page, block, bIdx, onChange){
       const file = e.target.files[0];
       if(!file) return;
       const statusEl = body.querySelector('[data-video-status]');
-      if(file.size > 20 * 1024 * 1024){
-        statusEl.textContent = 'That file is quite large (' + Math.round(file.size/1024/1024) + 'MB) — consider pasting a YouTube/Facebook link instead for a smoother save.';
-        statusEl.className = 'status bad';
-        return;
-      }
       try{
-        statusEl.textContent = 'Reading file…';
+        statusEl.textContent = 'Uploading to Cloudinary… this can take a minute for larger files.';
         statusEl.className = 'status pending';
-        const base64 = await fileToBase64(file);
-        const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
-        const path = `assets/pages/${page.id}-${block.id}.${ext}`;
-        pendingAssets[path] = base64;
-        block.video.file = path;
-        statusEl.textContent = `Ready (${path}) — click "Save uploaded page media" below, then "Save changes".`;
-        statusEl.className = 'status pending';
+        const url = await uploadToCloudinary(file, 'video');
+        block.video.file = url;
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        statusEl.className = 'status ok';
       }catch(err){
-        statusEl.textContent = err.message || 'Could not read that video file.';
+        statusEl.textContent = err.message || 'Could not upload that video file.';
         statusEl.className = 'status bad';
       }
     });
@@ -1022,17 +1044,19 @@ function renderNews(){
       const statusEl = el.querySelector('[data-cover-status]');
       const previewEl = el.querySelector('[data-cover-preview]');
       try{
+        statusEl.textContent = 'Uploading to Cloudinary…';
+        statusEl.className = 'status pending';
         const img = await loadImageFile(file);
         const canvas = fitCoverCanvas(img, 1200, 675);
-        const path = `assets/news/${article.id}-cover.png`;
-        pendingAssets[path] = await canvasToBase64Png(canvas);
-        article.cover = path;
-        previewEl.src = canvas.toDataURL('image/png');
+        const blob = await canvasToBlob(canvas);
+        const url = await uploadToCloudinary(blob, 'image');
+        article.cover = url;
+        previewEl.src = url;
         previewEl.style.display = 'block';
-        statusEl.textContent = 'Ready — click "Save uploaded news media" below, then "Save changes".';
-        statusEl.className = 'status pending';
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        statusEl.className = 'status ok';
       }catch(err){
-        statusEl.textContent = err.message || 'Could not process that image.';
+        statusEl.textContent = err.message || 'Could not upload that image.';
         statusEl.className = 'status bad';
       }
     });
@@ -1055,23 +1079,15 @@ function renderNews(){
       const file = e.target.files[0];
       if(!file) return;
       const statusEl = el.querySelector('[data-video-status]');
-      if(file.size > 20 * 1024 * 1024){
-        statusEl.textContent = 'That file is quite large (' + Math.round(file.size/1024/1024) + 'MB) — consider pasting a YouTube/Facebook link instead for a smoother save.';
-        statusEl.className = 'status bad';
-        return;
-      }
       try{
-        statusEl.textContent = 'Reading file…';
+        statusEl.textContent = 'Uploading to Cloudinary… this can take a minute for larger files.';
         statusEl.className = 'status pending';
-        const base64 = await fileToBase64(file);
-        const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
-        const path = `assets/news/${article.id}-video.${ext}`;
-        pendingAssets[path] = base64;
-        article.video.file = path;
-        statusEl.textContent = `Ready (${path}) — click "Save uploaded news media" below, then "Save changes".`;
-        statusEl.className = 'status pending';
+        const url = await uploadToCloudinary(file, 'video');
+        article.video.file = url;
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        statusEl.className = 'status ok';
       }catch(err){
-        statusEl.textContent = err.message || 'Could not read that video file.';
+        statusEl.textContent = err.message || 'Could not upload that video file.';
         statusEl.className = 'status bad';
       }
     });
@@ -1334,12 +1350,9 @@ async function flushPendingAssets(statusEl, pathFilter){
 document.getElementById('saveBrandingBtn').addEventListener('click', () => {
   flushPendingAssets(document.getElementById('brandingStatus'), p => !p.startsWith('assets/news/') && !p.startsWith('assets/pages/'));
 });
-document.getElementById('saveNewsMediaBtn').addEventListener('click', () => {
-  flushPendingAssets(document.getElementById('newsMediaStatus'), p => p.startsWith('assets/news/'));
-});
-document.getElementById('savePageMediaBtn').addEventListener('click', () => {
-  flushPendingAssets(document.getElementById('pageMediaStatus'), p => p.startsWith('assets/pages/'));
-});
+/* Page and news photos/videos no longer go through pendingAssets — they upload
+   straight to Cloudinary the moment a file is chosen (see uploadToCloudinary above).
+   Only the logo/favicon branding assets still use the GitHub save flow. */
 
 /* =========================================================
    4) SAVE TO GITHUB
