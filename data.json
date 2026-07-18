@@ -1,30 +1,10 @@
 {
   "ticker": [
-    {
-      "label": "INVESTIZO",
-      "text": "$10 BONUS ON SIGNUP",
-      "up": false
-    },
-    {
-      "label": "LITEFINANCE",
-      "text": "LEVERAGE UP TO 1:1000",
-      "up": true
-    },
-    {
-      "label": "OKX",
-      "text": "SPOT & FUTURES ACCESS",
-      "up": false
-    },
-    {
-      "label": "BINANCE",
-      "text": "GLOBAL LIQUIDITY",
-      "up": true
-    },
-    {
-      "label": "MEATIKA",
-      "text": "JOIN THE NETWORK",
-      "up": false
-    }
+    { "label": "INVESTIZO", "text": "$10 BONUS ON SIGNUP", "up": false },
+    { "label": "LITEFINANCE", "text": "LEVERAGE UP TO 1:1000", "up": true },
+    { "label": "OKX", "text": "SPOT & FUTURES ACCESS", "up": false },
+    { "label": "BINANCE", "text": "GLOBAL LIQUIDITY", "up": true },
+    { "label": "MEATIKA", "text": "JOIN THE NETWORK", "up": false }
   ],
   "hero": {
     "en": "The premium forex & crypto partnership network in Cambodia. Join our channels and partners.",
@@ -33,10 +13,7 @@
   "sections": [
     {
       "id": "forex",
-      "label": {
-        "en": "Forex Partners",
-        "km": "ដៃគូ Forex"
-      },
+      "label": { "en": "Forex Partners", "km": "ដៃគូ Forex" },
       "cards": [
         {
           "id": "investizo",
@@ -45,12 +22,11 @@
             "en": "Trusted global forex broker with competitive conditions and multi-market access.",
             "km": "ឈ្មួញកណ្តាល Forex ដែលទុកចិត្តបាន មានលក្ខខណ្ឌប្រកួតប្រជែង និងទីផ្សារជាច្រើន។"
           },
-          "link": "https://meatikatrading.com/page.html?id=invetizoguide-mrqji8nl",
+          "link": "https://investizo.net/?pid=953004&cid=17754",
           "icon": "check",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         },
         {
           "id": "litefinance",
@@ -63,8 +39,7 @@
           "icon": "star",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         },
         {
           "id": "gtcfx",
@@ -77,17 +52,13 @@
           "icon": "squares",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": true,
-          "linkType": "url"
+          "wide": true
         }
       ]
     },
     {
       "id": "community",
-      "label": {
-        "en": "Community",
-        "km": "សហគមន៍"
-      },
+      "label": { "en": "Community", "km": "សហគមន៍" },
       "cards": [
         {
           "id": "telegram",
@@ -100,8 +71,7 @@
           "icon": "paperplane",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         },
         {
           "id": "facebook",
@@ -114,17 +84,13 @@
           "icon": "bubble",
           "color": "#24262b",
           "iconColor": "#c7ccd6",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         }
       ]
     },
     {
       "id": "crypto",
-      "label": {
-        "en": "Crypto Partnership",
-        "km": "ភាពជាដៃគូគ្រីបតូ"
-      },
+      "label": { "en": "Crypto Partnership", "km": "ភាពជាដៃគូគ្រីបតូ" },
       "cards": [
         {
           "id": "okx",
@@ -137,8 +103,7 @@
           "icon": "squares",
           "color": "#24262b",
           "iconColor": "#dee2ea",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         },
         {
           "id": "binance",
@@ -149,19 +114,15 @@
           },
           "link": "#",
           "icon": "diamonds",
-          "color": "#272a23",
+          "color": "#24262b",
           "iconColor": "#dee2ea",
-          "wide": false,
-          "linkType": "url"
+          "wide": false
         }
       ]
     },
     {
       "id": "support",
-      "label": {
-        "en": "Support Team",
-        "km": "ក្រុមគាំទ្រ"
-      },
+      "label": { "en": "Support Team", "km": "ក្រុមគាំទ្រ" },
       "cards": [
         {
           "id": "support",
@@ -174,49 +135,28 @@
           "icon": "paperplane",
           "color": "#2a2418",
           "iconColor": "#d4af37",
-          "wide": true,
-          "linkType": "url"
+          "wide": true
         }
       ]
     }
   ],
-  "pages": [
+  "pages": [],
+  "news": [
     {
-      "id": "invetizoguide-mrqji8nl",
-      "title": {
-        "en": "invetizoguide",
-        "km": "បង្កើតInvestizo"
+      "id": "news-welcome",
+      "title": { "en": "Welcome to Meatika Trading News", "km": "សូមស្វាគមន៍មកកាន់ព័ត៌មាន Meatika Trading" },
+      "excerpt": {
+        "en": "This is where market updates, partner announcements, and community news will be posted.",
+        "km": "នេះជាកន្លែងដែលព័ត៌មានទីផ្សារ សេចក្តីប្រកាសពីដៃគូ និងព័ត៌មានសហគមន៍នឹងត្រូវបានបង្ហោះ។"
       },
-      "hero": {
-        "en": "Click link to see it",
-        "km": "បង្កើត"
+      "body": {
+        "en": "Welcome to the Meatika Trading news page. From here, admins can publish updates about our broker and exchange partners, community announcements, and educational content — complete with photos, video, and one-tap sharing to social media.\n\nCheck back regularly for the latest updates from the Meatika Trading Network.",
+        "km": "សូមស្វាគមន៍មកកាន់ទំព័រព័ត៌មានរបស់ Meatika Trading។ ពីទីនេះ អ្នកគ្រប់គ្រងអាចបោះពុម្ពផ្សាយព័ត៌មានអំពីដៃគូឈ្មួញកណ្តាល និងការផ្លាស់ប្តូររបស់យើង ការប្រកាសសហគមន៍ និងខ្លឹមសារអប់រំ — ជាមួយរូបភាព វីដេអូ និងការចែករំលែកទៅបណ្តាញសង្គមយ៉ាងងាយស្រួល។\n\nសូមពិនិត្យមើលជាទៀងទាត់សម្រាប់ព័ត៌មានថ្មីៗពីបណ្តាញ Meatika Trading។"
       },
-      "sections": [
-        {
-          "id": "section-1784389681884",
-          "label": {
-            "en": "Sign Up",
-            "km": "ចុះឈ្មោះ"
-          },
-          "cards": [
-            {
-              "id": "card-1784389687048",
-              "title": "របៀបបង្កើតគណនី",
-              "desc": {
-                "en": "ចុចដើម្បីមើលរបៀបបង្កើតគណនី",
-                "km": "ចុចដើម្បីមើលរបៀបបង្កើតគណនី"
-              },
-              "linkType": "url",
-              "link": "https://youtube.com",
-              "pageId": "",
-              "icon": "star",
-              "color": "#24262b",
-              "iconColor": "#d4af37",
-              "wide": true
-            }
-          ]
-        }
-      ]
+      "cover": "",
+      "video": { "type": "url", "url": "", "file": "" },
+      "published": true,
+      "publishedAt": "2026-07-18T00:00:00.000Z"
     }
   ]
 }

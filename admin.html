@@ -225,6 +225,29 @@
         <button id="addPage">+ Add page</button>
       </div>
 
+      <div class="panel">
+        <h2>News & articles</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Write news posts or articles with a cover photo, an optional video (paste a YouTube/Facebook/Vimeo
+          link, or upload a short video file), and text in English and Khmer. Each article gets a
+          <strong>Share this article</strong> row (Facebook, Telegram, X, WhatsApp, copy link) automatically —
+          nothing to configure. Uncheck <strong>Published</strong> to keep working on a draft without it
+          showing on the public <code>news.html</code> list (a draft is still viewable if you open its direct
+          link, so you can preview it first).
+        </p>
+        <div id="newsList"></div>
+        <button id="addNews">+ Add news / article</button>
+        <div class="toolbar" style="margin-top:14px;">
+          <button class="primary" id="saveNewsMediaBtn">Save uploaded news media</button>
+          <span class="status" id="newsMediaStatus"></span>
+        </div>
+        <p class="helptext" style="margin-top:8px;">
+          Cover photos and uploaded videos are saved straight to the repo when you click the button above
+          (same GitHub connection as the rest of this page). Click <strong>Save changes</strong> below
+          afterwards to save the article text and publish it.
+        </p>
+      </div>
+
       <div class="save-bar">
         <button class="primary" id="saveBtn">Save changes</button>
         <button id="previewBtn">Preview JSON</button>
@@ -362,9 +385,11 @@ function renderEditor(){
   document.getElementById('heroEn').value = state.hero.en || '';
   document.getElementById('heroKm').value = state.hero.km || '';
   state.pages = state.pages || [];
+  state.news = state.news || [];
   renderHomeSections = makeSectionsRenderer(document.getElementById('sectionsList'), state.sections);
   renderHomeSections();
   renderPages();
+  renderNews();
 }
 
 /* Re-renders every sections list in the app (home + every page). Needed
@@ -633,6 +658,219 @@ document.getElementById('addPage').addEventListener('click', () => {
   renderAll();
 });
 
+/* ---- News / articles ---- */
+function newArticle(){
+  const id = 'news-' + Date.now().toString(36);
+  const nowIso = new Date().toISOString();
+  return {
+    id,
+    title: { en: 'New article', km: '' },
+    excerpt: { en: '', km: '' },
+    body: { en: '', km: '' },
+    cover: '',
+    video: { type: 'url', url: '', file: '' },
+    published: true,
+    publishedAt: nowIso
+  };
+}
+
+/* datetime-local wants "YYYY-MM-DDTHH:mm" in local time; ISO strings are UTC. */
+function isoToLocalInput(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function localInputToIso(val){
+  if(!val) return new Date().toISOString();
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+}
+
+function renderNews(){
+  const wrap = document.getElementById('newsList');
+  wrap.innerHTML = '';
+  (state.news || []).forEach((article, aIdx) => {
+    article.title = article.title || { en:'', km:'' };
+    article.excerpt = article.excerpt || { en:'', km:'' };
+    article.body = article.body || { en:'', km:'' };
+    article.video = article.video || { type:'url', url:'', file:'' };
+
+    const el = document.createElement('details');
+    el.className = 'section-card';
+    const statusLabel = article.published === false ? 'Draft' : 'Published';
+    el.innerHTML = `
+      <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <strong>${escAttr(article.title.en || 'Untitled article')}</strong>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${statusLabel}</span>
+      </summary>
+      <div style="margin-top:14px;">
+        <div class="row">
+          <div class="field"><label>Title (English)</label><input type="text" data-f="title-en" value="${escAttr(article.title.en)}"></div>
+          <div class="field"><label>Title (Khmer)</label><input type="text" data-f="title-km" value="${escAttr(article.title.km)}"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Short excerpt (English) — shown on the news list</label><textarea data-f="excerpt-en">${escText(article.excerpt.en)}</textarea></div>
+          <div class="field"><label>Short excerpt (Khmer)</label><textarea data-f="excerpt-km">${escText(article.excerpt.km)}</textarea></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Full text (English) — leave a blank line between paragraphs</label><textarea data-f="body-en" style="min-height:140px;">${escText(article.body.en)}</textarea></div>
+          <div class="field"><label>Full text (Khmer)</label><textarea data-f="body-km" style="min-height:140px;">${escText(article.body.km)}</textarea></div>
+        </div>
+
+        <div class="field">
+          <label>Cover photo</label>
+          <img data-cover-preview src="${article.cover ? escAttr(article.cover) : ''}" alt="" style="max-width:220px;max-height:120px;display:${article.cover ? 'block' : 'none'};margin-bottom:8px;border-radius:8px;object-fit:cover;">
+          <input type="file" data-f="coverFile" accept="image/png,image/jpeg,image/webp">
+          <div class="status" data-cover-status style="min-height:14px;"></div>
+        </div>
+
+        <div class="field">
+          <label>Video (optional)</label>
+          <select data-f="videoType">
+            <option value="url">Paste a YouTube / Facebook / Vimeo link</option>
+            <option value="file">Upload a video file</option>
+          </select>
+        </div>
+        <div class="field" data-video-url>
+          <label>Video link</label>
+          <input type="url" data-f="videoUrl" placeholder="https://youtube.com/watch?v=..." value="${escAttr(article.video.url)}">
+        </div>
+        <div class="field" data-video-file style="display:none;">
+          <label>Video file (keep it short — large files make the repo heavy and slow to save)</label>
+          <input type="file" data-f="videoFile" accept="video/mp4,video/webm,video/quicktime">
+          <div class="status" data-video-status style="min-height:14px;">${article.video.file ? 'Currently: ' + article.video.file : ''}</div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="checkbox-row" style="margin-top:22px;"><input type="checkbox" data-f="published" ${article.published !== false ? 'checked' : ''}> Published (visible on the public news list)</label>
+          </div>
+          <div class="field">
+            <label>Published date</label>
+            <div style="display:flex;gap:6px;">
+              <input type="datetime-local" data-f="publishedAt" value="${isoToLocalInput(article.publishedAt)}" style="flex:1;">
+              <button class="small" data-act="setNow" type="button">Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:10px;">
+          <a data-act="preview" href="article.html?id=${escAttr(article.id)}" target="_blank" rel="noopener"><button class="small" type="button">Preview article ↗</button></a>
+          <button class="small" data-act="up" type="button">↑</button>
+          <button class="small" data-act="down" type="button">↓</button>
+          <span class="spacer"></span>
+          <button class="small danger" data-act="removeArticle" type="button">Remove article</button>
+        </div>
+      </div>
+    `;
+
+    el.querySelector('[data-f="title-en"]').addEventListener('input', e => {
+      article.title.en = e.target.value;
+      el.querySelector('summary strong').textContent = article.title.en || 'Untitled article';
+    });
+    el.querySelector('[data-f="title-km"]').addEventListener('input', e => article.title.km = e.target.value);
+    el.querySelector('[data-f="excerpt-en"]').addEventListener('input', e => article.excerpt.en = e.target.value);
+    el.querySelector('[data-f="excerpt-km"]').addEventListener('input', e => article.excerpt.km = e.target.value);
+    el.querySelector('[data-f="body-en"]').addEventListener('input', e => article.body.en = e.target.value);
+    el.querySelector('[data-f="body-km"]').addEventListener('input', e => article.body.km = e.target.value);
+    el.querySelector('[data-f="published"]').addEventListener('change', e => {
+      article.published = e.target.checked;
+      el.querySelector('summary span').textContent = article.published === false ? 'Draft' : 'Published';
+    });
+    el.querySelector('[data-f="publishedAt"]').addEventListener('input', e => {
+      article.publishedAt = localInputToIso(e.target.value);
+    });
+    el.querySelector('[data-act="setNow"]').addEventListener('click', () => {
+      article.publishedAt = new Date().toISOString();
+      el.querySelector('[data-f="publishedAt"]').value = isoToLocalInput(article.publishedAt);
+    });
+
+    /* Cover photo: resized/cropped to a clean 16:9 to match the site's article-cover slot. */
+    el.querySelector('[data-f="coverFile"]').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const statusEl = el.querySelector('[data-cover-status]');
+      const previewEl = el.querySelector('[data-cover-preview]');
+      try{
+        const img = await loadImageFile(file);
+        const canvas = fitCoverCanvas(img, 1200, 675);
+        const path = `assets/news/${article.id}-cover.png`;
+        pendingAssets[path] = await canvasToBase64Png(canvas);
+        article.cover = path;
+        previewEl.src = canvas.toDataURL('image/png');
+        previewEl.style.display = 'block';
+        statusEl.textContent = 'Ready — click "Save uploaded news media" below, then "Save changes".';
+        statusEl.className = 'status pending';
+      }catch(err){
+        statusEl.textContent = err.message || 'Could not process that image.';
+        statusEl.className = 'status bad';
+      }
+    });
+
+    /* Video type toggle */
+    const videoTypeSel = el.querySelector('[data-f="videoType"]');
+    videoTypeSel.value = article.video.type === 'file' ? 'file' : 'url';
+    function updateVideoFields(){
+      el.querySelector('[data-video-url]').style.display = article.video.type === 'file' ? 'none' : '';
+      el.querySelector('[data-video-file]').style.display = article.video.type === 'file' ? '' : 'none';
+    }
+    updateVideoFields();
+    videoTypeSel.addEventListener('change', e => {
+      article.video.type = e.target.value;
+      updateVideoFields();
+    });
+    el.querySelector('[data-f="videoUrl"]').addEventListener('input', e => { article.video.url = e.target.value; });
+
+    el.querySelector('[data-f="videoFile"]').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const statusEl = el.querySelector('[data-video-status]');
+      if(file.size > 20 * 1024 * 1024){
+        statusEl.textContent = 'That file is quite large (' + Math.round(file.size/1024/1024) + 'MB) — consider pasting a YouTube/Facebook link instead for a smoother save.';
+        statusEl.className = 'status bad';
+        return;
+      }
+      try{
+        statusEl.textContent = 'Reading file…';
+        statusEl.className = 'status pending';
+        const base64 = await fileToBase64(file);
+        const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+        const path = `assets/news/${article.id}-video.${ext}`;
+        pendingAssets[path] = base64;
+        article.video.file = path;
+        statusEl.textContent = `Ready (${path}) — click "Save uploaded news media" below, then "Save changes".`;
+        statusEl.className = 'status pending';
+      }catch(err){
+        statusEl.textContent = err.message || 'Could not read that video file.';
+        statusEl.className = 'status bad';
+      }
+    });
+
+    el.querySelector('[data-act="removeArticle"]').addEventListener('click', () => {
+      if(confirm('Remove this article? This cannot be undone after you save.')){
+        state.news.splice(aIdx, 1);
+        renderNews();
+      }
+    });
+    el.querySelector('[data-act="up"]').addEventListener('click', () => {
+      if(aIdx > 0){ [state.news[aIdx-1], state.news[aIdx]] = [state.news[aIdx], state.news[aIdx-1]]; renderNews(); }
+    });
+    el.querySelector('[data-act="down"]').addEventListener('click', () => {
+      if(aIdx < state.news.length-1){ [state.news[aIdx+1], state.news[aIdx]] = [state.news[aIdx], state.news[aIdx+1]]; renderNews(); }
+    });
+
+    wrap.appendChild(el);
+  });
+}
+
+document.getElementById('addNews').addEventListener('click', () => {
+  state.news = state.news || [];
+  state.news.unshift(newArticle());
+  renderNews();
+});
+
 /* ---- helpers ---- */
 function escAttr(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escText(s){ return escAttr(s); }
@@ -683,6 +921,29 @@ function canvasToBase64Png(canvas){
       reader.onload = () => resolve(reader.result.split(',')[1]);
       reader.readAsDataURL(blob);
     }, 'image/png');
+  });
+}
+
+/* Fit-cover the source image onto a w×h canvas, cropping any overflow so the
+   canvas is filled edge-to-edge with no letterboxing — used for news cover
+   photos, where a crop looks better than the logo's transparent fit-contain. */
+function fitCoverCanvas(img, w, h){
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const scale = Math.max(w / img.width, h / img.height);
+  const dw = img.width * scale, dh = img.height * scale;
+  ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  return canvas;
+}
+
+/* Reads any file (e.g. a video) straight to base64, no image processing. */
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = () => reject(new Error('Could not read that file.'));
+    reader.readAsDataURL(file);
   });
 }
 
@@ -783,17 +1044,23 @@ document.getElementById('faviconInput').addEventListener('change', e => {
   if(e.target.files[0]) handleFaviconUpload(e.target.files[0]);
 });
 
-document.getElementById('saveBrandingBtn').addEventListener('click', async () => {
+/* Saves every currently pending binary asset (branding images, news cover
+   photos, news video uploads — anything queued in pendingAssets) straight to
+   the repo. Shared by both the Branding and News panels since they queue into
+   the same pendingAssets map; whichever "Save" button is clicked flushes
+   whatever is pending, so it's safe to click either one. `pathFilter`, if
+   given, restricts the flush to matching paths (used to keep each button's
+   status message accurate to what it actually saved). */
+async function flushPendingAssets(statusEl, pathFilter){
   const conn = currentConn();
-  const statusEl = document.getElementById('brandingStatus');
   if(!conn.token || !conn.owner || !conn.repo){
     statusEl.textContent = 'Fill in the GitHub connection details above first.';
     statusEl.className = 'status bad';
     return;
   }
-  const paths = Object.keys(pendingAssets);
+  const paths = Object.keys(pendingAssets).filter(p => !pathFilter || pathFilter(p));
   if(!paths.length){
-    statusEl.textContent = 'Choose a new logo or favicon image first.';
+    statusEl.textContent = 'Nothing to save yet — choose a file above first.';
     statusEl.className = 'status bad';
     return;
   }
@@ -828,12 +1095,19 @@ document.getElementById('saveBrandingBtn').addEventListener('click', async () =>
       }
     }
     paths.forEach(p => delete pendingAssets[p]);
-    statusEl.textContent = 'Saved. The live site will update within a minute or two.';
+    statusEl.textContent = 'Saved. Now click "Save changes" below to publish the article/branding text pointing at it.';
     statusEl.className = 'status ok';
   }catch(e){
-    statusEl.textContent = e.message || 'Failed to save branding.';
+    statusEl.textContent = e.message || 'Failed to save.';
     statusEl.className = 'status bad';
   }
+}
+
+document.getElementById('saveBrandingBtn').addEventListener('click', () => {
+  flushPendingAssets(document.getElementById('brandingStatus'), p => !p.startsWith('assets/news/'));
+});
+document.getElementById('saveNewsMediaBtn').addEventListener('click', () => {
+  flushPendingAssets(document.getElementById('newsMediaStatus'), p => p.startsWith('assets/news/'));
 });
 
 /* =========================================================

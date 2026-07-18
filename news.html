@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News — Meatika Trading</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-900:#1b2753; --ink-800:#3a4260; --ink-700:#454d6e; --ink-600:#565f82;
+    --bg-grad-end:#2a1233; --gold-500:#d4af37; --gold-300:#f4d980;
+    --green-500:#b9c1d1; --green-300:#dee2ea; --up:#ffb026;
+    --paper:#f2f2f8; --muted:#a8b2cc; --radius:16px; --maxw:480px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body.light{
+    --ink-900:#f7f4ec; --ink-800:#ffffff; --ink-700:#f1ede1; --ink-600:#e3ddca;
+    --bg-grad-end:#f7f4ec; --paper:#1b2753; --muted:#5c6580;
+    --gold-300:#9c7a1f; --green-500:#5b6577; --green-300:#414a5c;
+  }
+  body{
+    background:
+      radial-gradient(circle at 15% -10%, rgba(212,175,55,0.14), transparent 45%),
+      radial-gradient(circle at 100% 20%, rgba(185,193,209,0.10), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 32px),
+      linear-gradient(180deg, var(--ink-900) 0%, var(--bg-grad-end) 100%);
+    color:var(--paper); font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.km, body.km *{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif !important; }
+  ::selection{ background:var(--gold-500); color:var(--ink-900); }
+
+  .ticker-wrap{ width:100%; background:var(--ink-800); border-bottom:1px solid var(--ink-600); overflow:hidden; white-space:nowrap; padding:8px 0; }
+  .ticker{ display:inline-flex; animation:scroll 28s linear infinite; font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.02em; }
+  .ticker span{ padding:0 22px; color:var(--muted); display:inline-flex; align-items:center; gap:8px; }
+  .ticker span b{ color:var(--gold-300); font-weight:600; }
+  .ticker .up{ color:var(--up); }
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @media (prefers-reduced-motion: reduce){ .ticker{ animation:none; } }
+
+  .page{ width:100%; max-width:var(--maxw); padding:22px 18px 40px; }
+
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:26px; }
+  .topbar-actions{ display:flex; gap:8px; align-items:center; }
+  .icon-btn{
+    width:34px; height:34px; border-radius:10px; background:var(--ink-800); border:1px solid var(--ink-600);
+    color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s ease; text-decoration:none;
+  }
+  .icon-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  .icon-btn svg{ width:16px; height:16px; }
+  .lang-btn{ width:auto; padding:0 9px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; letter-spacing:0.03em; }
+  .back-btn{ width:auto; padding:0 12px; gap:6px; font-size:12.5px; font-weight:600; }
+
+  .hero{ text-align:center; margin-bottom:26px; }
+  .page-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 8px; color:var(--paper); }
+  .hero p{ color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 auto; max-width:340px; }
+
+  .news-grid{ display:flex; flex-direction:column; gap:14px; }
+  .news-card{
+    display:flex; gap:12px; background:var(--ink-800); border:1px solid var(--ink-600);
+    border-radius:var(--radius); padding:12px; text-decoration:none; color:inherit; transition:.18s ease;
+  }
+  .news-card:hover{ border-color:var(--gold-500); transform:translateY(-2px); }
+  .news-thumb{
+    width:96px; height:96px; flex-shrink:0; border-radius:12px; background-size:cover; background-position:center;
+    background-color:var(--ink-700);
+  }
+  .news-thumb-empty{ display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .news-thumb-empty svg{ width:26px; height:26px; }
+  .news-card-body{ min-width:0; display:flex; flex-direction:column; justify-content:center; gap:4px; }
+  .news-meta{ display:flex; align-items:center; gap:8px; }
+  .news-date{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--gold-300); letter-spacing:0.04em; }
+  .news-draft-tag{ font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:0.06em; color:var(--ink-900); background:var(--gold-300); padding:1px 6px; border-radius:5px; font-weight:700; }
+  .news-card-body h3{ font-family:'Space Grotesk', sans-serif; font-size:14.5px; font-weight:600; margin:0; color:var(--paper); }
+  .news-card-body p{ font-size:12px; color:var(--muted); line-height:1.5; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+  footer{ text-align:center; margin-top:26px; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; color:var(--ink-600); text-transform:uppercase; }
+  .not-found{ text-align:center; color:var(--muted); font-size:13.5px; padding:40px 10px; }
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"><!-- filled from data.json --></div>
+  </div>
+
+  <div class="page">
+
+    <div class="topbar">
+      <a class="icon-btn back-btn" href="index.html" title="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-en="Home" data-km="ទំព័រដើម">Home</span>
+      </a>
+      <div class="topbar-actions">
+        <button class="icon-btn lang-btn" id="langBtn" title="Switch to Khmer">
+          <span id="langLabel">EN</span>
+        </button>
+        <button class="icon-btn" id="themeBtn" title="Switch to light theme">
+          <svg viewBox="0 0 24 24" fill="none" id="themeIconMoon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" id="themeIconSun" style="display:none;"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1 class="page-title" data-en="News & Articles" data-km="ព័ត៌មាន និងអត្ថបទ">News & Articles</h1>
+      <p data-en="Updates, insights, and announcements from Meatika Trading." data-km="ព័ត៌មានថ្មីៗ ការវិភាគ និងសេចក្តីប្រកាសពី Meatika Trading។">Updates, insights, and announcements from Meatika Trading.</p>
+    </div>
+
+    <div id="newsList"><!-- filled from data.json --></div>
+
+    <footer data-en="Powered by Meatika Trading Network" data-km="ដំណើរការដោយបណ្តាញ Meatika Trading">Powered by Meatika Trading Network</footer>
+  </div>
+
+  <script src="assets/icons.js"></script>
+  <script src="assets/site.js"></script>
+  <script src="assets/news.js"></script>
+  <script>
+    const langBtn = document.getElementById('langBtn');
+    const langLabel = document.getElementById('langLabel');
+    function applyLang(isKhmer){
+      document.body.classList.toggle('km', isKhmer);
+      document.documentElement.lang = isKhmer ? 'km' : 'en';
+      langLabel.textContent = isKhmer ? 'ខ្មែរ' : 'EN';
+      langBtn.title = isKhmer ? 'Switch to English' : 'Switch to Khmer';
+      document.querySelectorAll('[data-en]').forEach(el=>{
+        const en = el.getAttribute('data-en'), km = el.getAttribute('data-km');
+        if(en) el.textContent = isKhmer ? (km || en) : en;
+      });
+    }
+    let savedLang = false;
+    try{ savedLang = localStorage.getItem('mth-lang') === 'km'; }catch(e){ /* storage unavailable */ }
+    langBtn.addEventListener('click', ()=>{
+      savedLang = !document.body.classList.contains('km');
+      applyLang(savedLang);
+      try{ localStorage.setItem('mth-lang', savedLang ? 'km' : 'en'); }catch(e){ /* storage unavailable */ }
+    });
+
+    const themeBtn = document.getElementById('themeBtn');
+    const moonIcon = document.getElementById('themeIconMoon');
+    const sunIcon = document.getElementById('themeIconSun');
+    function applyTheme(isLight){
+      document.body.classList.toggle('light', isLight);
+      moonIcon.style.display = isLight ? 'none' : 'block';
+      sunIcon.style.display = isLight ? 'block' : 'none';
+      themeBtn.title = isLight ? 'Switch to dark theme' : 'Switch to light theme';
+    }
+    let savedLight = false;
+    try{ savedLight = localStorage.getItem('mth-theme') === 'light'; }catch(e){ /* storage unavailable */ }
+    applyTheme(savedLight);
+    themeBtn.addEventListener('click', ()=>{
+      const nowLight = !document.body.classList.contains('light');
+      applyTheme(nowLight);
+      try{ localStorage.setItem('mth-theme', nowLight ? 'light' : 'dark'); }catch(e){ /* storage unavailable */ }
+    });
+
+    async function init(){
+      let data;
+      try{
+        data = await MTHSite.loadData();
+      }catch(e){
+        document.getElementById('newsList').innerHTML = '<p class="not-found">Content failed to load.</p>';
+        return;
+      }
+      MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
+      const list = MTHNews.publishedNews(data);
+      document.getElementById('newsList').innerHTML = MTHNews.newsListHtml(list);
+      applyLang(savedLang);
+    }
+    init();
+  </script>
+
+</body>
+</html>

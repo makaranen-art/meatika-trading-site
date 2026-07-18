@@ -8,6 +8,8 @@ Admins can also create **pages** (internal subpages) right from `admin.html`. A 
 
 The admin panel can also update the site's **logo (light/dark theme) and favicon** — upload any image and it's automatically resized and centered to match the site's existing logo/icon dimensions, so it always displays cleanly.
 
+Admins can also publish **news posts / articles** from `admin.html` — each one has a title, short excerpt, full text (English + Khmer), an optional cover photo, and an optional video (paste a YouTube/Facebook/Vimeo link, or upload a short video file directly). Every article automatically gets a **Share this article** row (Facebook, Telegram, X, WhatsApp, copy link) — nothing to configure. Articles can be saved as a draft (unchecking "Published") before going live on the public news list.
+
 ## Live site
 
 Once GitHub Pages is enabled (see below), the site will be available at:
@@ -51,18 +53,22 @@ To use a custom domain instead of the github.io URL:
 ```
 index.html              Main page — fetches data.json and renders everything
 page.html                 Generic subpage — renders one admin-created page (page.html?id=<pageId>)
-admin.html                 Password-gated editor for non-technical admins
-data.json                    All editable content: ticker, hero text, sections, cards, pages
-favicon.ico                   Multi-size favicon
+news.html                   News list — shows all published articles
+article.html                 Single article view — video embed, body text, social share buttons
+admin.html                     Password-gated editor for non-technical admins
+data.json                        All editable content: ticker, hero text, sections, cards, pages, news
+favicon.ico                        Multi-size favicon
 assets/
-  icons.js                      Shared icon set used by index.html, page.html and admin.html
-  site.js                        Shared rendering logic (sections/cards) used by index.html and page.html
-  mth-logo.png                    Logo — light theme variant
-  mth-logo-white.png               Logo — dark theme variant
-  favicon-16x16.png                  Favicon
-  favicon-32x32.png                   Favicon
-  favicon-48x48.png                    Favicon
-  apple-touch-icon.png                  iOS home screen icon
+  icons.js                            Shared icon set used by index.html, page.html and admin.html
+  site.js                              Shared rendering logic (sections/cards) used by index.html and page.html
+  news.js                                Shared news/article rendering + social share links, used by news.html and article.html
+  news/                                    Cover photos and uploaded videos for articles (created automatically on first upload)
+  mth-logo.png                              Logo — light theme variant
+  mth-logo-white.png                         Logo — dark theme variant
+  favicon-16x16.png                            Favicon
+  favicon-32x32.png                             Favicon
+  favicon-48x48.png                              Favicon
+  apple-touch-icon.png                            iOS home screen icon
 ```
 
 ## Using the admin panel (for non-technical admins)
@@ -89,7 +95,8 @@ assets/
 4. Edit ticker items, hero text, or any section/card — add or remove cards and whole sections freely, change titles, descriptions (English + Khmer), links, icons, and colors.
 5. To add an internal subpage instead of an external link: scroll to the **Pages** panel and click **+ Add page** (or, on any card, set **Link type** to "Internal page" and choose "+ Create new page…"). Give the page a title and intro text, then add sections/cards to it exactly like you would on the homepage — a page can even link to other pages.
 6. To update the logo or favicon: open the **Branding** panel at the top, choose new image file(s), and click **Save logo & favicon** (separate from the content Save button, saves immediately).
-7. Click **Save changes** for any content edits. The live site updates automatically within a minute or two.
+7. To publish news or an article: scroll to the **News & articles** panel and click **+ Add news / article**. Fill in the title, a short excerpt (shown on the news list), and the full text in English and Khmer. Optionally upload a cover photo, and optionally add a video — either paste a YouTube/Facebook/Vimeo link, or upload a short video file directly. If you added a cover photo or video file, click **Save uploaded news media** first, then click **Save changes** below to publish the article text. Uncheck **Published** to keep an article as a private draft (use **Preview article** to check it before publishing).
+8. Click **Save changes** for any content edits. The live site updates automatically within a minute or two.
 
 ## Making changes via code instead
 
