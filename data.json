@@ -228,6 +228,19 @@
             "en": "",
             "km": ""
           }
+        },
+        {
+          "type": "video",
+          "id": "block-mrqmtp8jl7dv",
+          "video": {
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=5U6aph_l_sk",
+            "file": ""
+          },
+          "caption": {
+            "en": "របៀបដាក់លុយ",
+            "km": "របៀបដាក់លុយ"
+          }
         }
       ],
       "sections": []
