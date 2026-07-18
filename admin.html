@@ -216,13 +216,27 @@
       <div class="panel">
         <h2>Pages</h2>
         <p class="helptext" style="margin-bottom:14px;">
-          Create standalone pages with their own title, intro text, and sections/cards — useful when a card
-          should open more detail inside the site instead of an external link. Each page works exactly like
-          the homepage above. Once a page exists, open any card below and set its <strong>Link type</strong>
+          Create standalone pages with their own title, intro text, content, and sections/cards — useful when
+          a card should open more detail inside the site instead of an external link. Each page works exactly
+          like the homepage above. Once a page exists, open any card below and set its <strong>Link type</strong>
           to "Internal page" to point to it.
+        </p>
+        <p class="helptext" style="margin-bottom:14px;">
+          Each page also has a <strong>Page content</strong> area where you can add photo, video, and text
+          blocks in any order and any mix — use it alone for a simple content page (leave sections/cards
+          empty), or combine it with sections/cards below for a linkable card grid too.
         </p>
         <div id="pagesList"></div>
         <button id="addPage">+ Add page</button>
+        <div class="toolbar" style="margin-top:14px;">
+          <button class="primary" id="savePageMediaBtn">Save uploaded page media</button>
+          <span class="status" id="pageMediaStatus"></span>
+        </div>
+        <p class="helptext" style="margin-top:8px;">
+          Photos and uploaded videos on pages are saved straight to the repo when you click the button above
+          (same GitHub connection as the rest of this page). Click <strong>Save changes</strong> below
+          afterwards to save the page text and publish it.
+        </p>
       </div>
 
       <div class="panel">
@@ -572,7 +586,7 @@ function renderCard(section, card, cIdx, onChange){
       if(!title){ e.target.value = card.pageId || ''; return; }
       const id = slugify(title) + '-' + Date.now().toString(36);
       state.pages = state.pages || [];
-      state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, sections: [] });
+      state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, blocks: [], sections: [] });
       card.pageId = id;
       renderAll();
     } else {
@@ -601,6 +615,7 @@ function renderPages(){
     page.title = page.title || {en:'',km:''};
     page.hero = page.hero || {en:'',km:''};
     page.sections = page.sections || [];
+    page.blocks = page.blocks || [];
 
     const el = document.createElement('details');
     el.className = 'section-card';
@@ -618,6 +633,21 @@ function renderPages(){
           <div class="field"><label>Intro text (English)</label><textarea data-f="hero-en">${escText(page.hero.en)}</textarea></div>
           <div class="field"><label>Intro text (Khmer)</label><textarea data-f="hero-km">${escText(page.hero.km)}</textarea></div>
         </div>
+
+        <div class="field">
+          <label>Page content — photo, video & text blocks</label>
+          <p class="helptext" style="margin-bottom:10px;">
+            Shown above this page's sections, in the order you add them. Good for a standalone "blank" page
+            (skip sections entirely), or as an intro above a card grid.
+          </p>
+          <div class="blocksHolder"></div>
+          <div class="toolbar" style="margin-top:6px;">
+            <button class="small" type="button" data-act="addTextBlock">+ Add text</button>
+            <button class="small" type="button" data-act="addPhotoBlock">+ Add photo</button>
+            <button class="small" type="button" data-act="addVideoBlock">+ Add video</button>
+          </div>
+        </div>
+
         <div class="pageSectionsHolder"></div>
         <button class="small" data-act="addSectionToPage">+ Add section to this page</button>
         <div style="margin-top:14px;"><button class="small danger" data-act="removePage">Remove this page</button></div>
@@ -637,6 +667,22 @@ function renderPages(){
       }
     });
 
+    const blocksHolder = el.querySelector('.blocksHolder');
+    const renderThisPageBlocks = makeBlocksRenderer(blocksHolder, page);
+    renderThisPageBlocks();
+    el.querySelector('[data-act="addTextBlock"]').addEventListener('click', () => {
+      page.blocks.push(newTextBlock());
+      renderThisPageBlocks();
+    });
+    el.querySelector('[data-act="addPhotoBlock"]').addEventListener('click', () => {
+      page.blocks.push(newPhotoBlock());
+      renderThisPageBlocks();
+    });
+    el.querySelector('[data-act="addVideoBlock"]').addEventListener('click', () => {
+      page.blocks.push(newVideoBlock());
+      renderThisPageBlocks();
+    });
+
     const holder = el.querySelector('.pageSectionsHolder');
     const renderThisPage = makeSectionsRenderer(holder, page.sections);
     renderThisPage();
@@ -654,9 +700,191 @@ document.getElementById('addPage').addEventListener('click', () => {
   if(!title) return;
   const id = slugify(title) + '-' + Date.now().toString(36);
   state.pages = state.pages || [];
-  state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, sections: [] });
+  state.pages.push({ id, title:{en:title, km:''}, hero:{en:'', km:''}, blocks: [], sections: [] });
   renderAll();
 });
+
+/* ---- Page content blocks (photo / video / text) ----
+   Lets a page carry a free-form list of photo, video, and text blocks in
+   addition to its sections/cards — used for a simple "blank" content page,
+   or as an intro above a card grid. Rendered by MTHSite.blocksHtml() on
+   the public page.html. */
+function newTextBlock(){
+  return { type:'text', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), text:{en:'',km:''} };
+}
+function newPhotoBlock(){
+  return { type:'photo', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), image:'', caption:{en:'',km:''} };
+}
+function newVideoBlock(){
+  return { type:'video', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), video:{type:'url',url:'',file:''}, caption:{en:'',km:''} };
+}
+
+/* Scales an image down to fit within maxDim (preserving aspect ratio, no
+   crop/letterbox) — used for page photo blocks, where the original shape
+   should be kept rather than forced into a fixed slot like the logo/cover. */
+function scaleDownCanvas(img, maxDim){
+  const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+  const w = Math.max(1, Math.round(img.width * scale));
+  const h = Math.max(1, Math.round(img.height * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  return canvas;
+}
+
+function makeBlocksRenderer(wrapEl, page){
+  page.blocks = page.blocks || [];
+  function render(){
+    wrapEl.innerHTML = '';
+    page.blocks.forEach((block, bIdx) => {
+      wrapEl.appendChild(renderBlockItem(page, block, bIdx, render));
+    });
+  }
+  return render;
+}
+
+function renderBlockItem(page, block, bIdx, onChange){
+  const el = document.createElement('div');
+  el.className = 'card-item';
+  const typeLabel = block.type === 'text' ? 'Text block' : block.type === 'photo' ? 'Photo block' : 'Video block';
+
+  const header = document.createElement('div');
+  header.className = 'row2';
+  header.innerHTML = `
+    <strong style="font-size:12.5px;color:var(--muted);">${typeLabel}</strong>
+    <div>
+      <button class="small" type="button" data-act="up">↑</button>
+      <button class="small" type="button" data-act="down">↓</button>
+      <button class="small danger" type="button" data-act="remove">Remove</button>
+    </div>
+  `;
+  header.querySelector('[data-act="up"]').addEventListener('click', () => {
+    if(bIdx > 0){ [page.blocks[bIdx-1], page.blocks[bIdx]] = [page.blocks[bIdx], page.blocks[bIdx-1]]; onChange(); }
+  });
+  header.querySelector('[data-act="down"]').addEventListener('click', () => {
+    if(bIdx < page.blocks.length - 1){ [page.blocks[bIdx+1], page.blocks[bIdx]] = [page.blocks[bIdx], page.blocks[bIdx+1]]; onChange(); }
+  });
+  header.querySelector('[data-act="remove"]').addEventListener('click', () => {
+    if(confirm('Remove this block?')){ page.blocks.splice(bIdx, 1); onChange(); }
+  });
+  el.appendChild(header);
+
+  const body = document.createElement('div');
+  body.style.marginTop = '8px';
+
+  if(block.type === 'text'){
+    block.text = block.text || {en:'',km:''};
+    body.innerHTML = `
+      <div class="row">
+        <div class="field"><label>Text (English) — leave a blank line between paragraphs</label><textarea data-f="text-en" style="min-height:90px;">${escText(block.text.en)}</textarea></div>
+        <div class="field"><label>Text (Khmer)</label><textarea data-f="text-km" style="min-height:90px;">${escText(block.text.km)}</textarea></div>
+      </div>
+    `;
+    body.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
+    body.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
+  }
+
+  if(block.type === 'photo'){
+    block.caption = block.caption || {en:'',km:''};
+    body.innerHTML = `
+      <label>Photo</label>
+      <img data-photo-preview src="${block.image ? escAttr(block.image) : ''}" alt="" style="max-width:220px;max-height:160px;display:${block.image ? 'block' : 'none'};margin-bottom:8px;border-radius:8px;object-fit:contain;background:var(--ink-900);">
+      <input type="file" data-f="photoFile" accept="image/png,image/jpeg,image/webp">
+      <div class="status" data-photo-status style="min-height:14px;">${block.image ? 'Currently: ' + block.image : ''}</div>
+      <div class="row" style="margin-top:8px;">
+        <div class="field"><label>Caption (English, optional)</label><input type="text" data-f="cap-en" value="${escAttr(block.caption.en)}"></div>
+        <div class="field"><label>Caption (Khmer)</label><input type="text" data-f="cap-km" value="${escAttr(block.caption.km)}"></div>
+      </div>
+    `;
+    body.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
+    body.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
+    body.querySelector('[data-f="photoFile"]').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const statusEl = body.querySelector('[data-photo-status]');
+      const previewEl = body.querySelector('[data-photo-preview]');
+      try{
+        const img = await loadImageFile(file);
+        const canvas = scaleDownCanvas(img, 1600);
+        const path = `assets/pages/${page.id}-${block.id}.png`;
+        pendingAssets[path] = await canvasToBase64Png(canvas);
+        block.image = path;
+        previewEl.src = canvas.toDataURL('image/png');
+        previewEl.style.display = 'block';
+        statusEl.textContent = 'Ready — click "Save uploaded page media" below, then "Save changes".';
+        statusEl.className = 'status pending';
+      }catch(err){
+        statusEl.textContent = err.message || 'Could not process that image.';
+        statusEl.className = 'status bad';
+      }
+    });
+  }
+
+  if(block.type === 'video'){
+    block.video = block.video || {type:'url',url:'',file:''};
+    block.caption = block.caption || {en:'',km:''};
+    body.innerHTML = `
+      <div class="field">
+        <label>Video source</label>
+        <select data-f="videoType">
+          <option value="url">Paste a YouTube / Facebook / Vimeo link</option>
+          <option value="file">Upload a video file</option>
+        </select>
+      </div>
+      <div class="field" data-video-url>
+        <label>Video link</label>
+        <input type="url" data-f="videoUrl" placeholder="https://youtube.com/watch?v=..." value="${escAttr(block.video.url)}">
+      </div>
+      <div class="field" data-video-file style="display:none;">
+        <label>Video file (keep it short — large files make the repo heavy and slow to save)</label>
+        <input type="file" data-f="videoFile" accept="video/mp4,video/webm,video/quicktime">
+        <div class="status" data-video-status style="min-height:14px;">${block.video.file ? 'Currently: ' + block.video.file : ''}</div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div class="field"><label>Caption (English, optional)</label><input type="text" data-f="cap-en" value="${escAttr(block.caption.en)}"></div>
+        <div class="field"><label>Caption (Khmer)</label><input type="text" data-f="cap-km" value="${escAttr(block.caption.km)}"></div>
+      </div>
+    `;
+    const videoTypeSel = body.querySelector('[data-f="videoType"]');
+    videoTypeSel.value = block.video.type === 'file' ? 'file' : 'url';
+    function updateVideoFields(){
+      body.querySelector('[data-video-url]').style.display = block.video.type === 'file' ? 'none' : '';
+      body.querySelector('[data-video-file]').style.display = block.video.type === 'file' ? '' : 'none';
+    }
+    updateVideoFields();
+    videoTypeSel.addEventListener('change', e => { block.video.type = e.target.value; updateVideoFields(); });
+    body.querySelector('[data-f="videoUrl"]').addEventListener('input', e => block.video.url = e.target.value);
+    body.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
+    body.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
+    body.querySelector('[data-f="videoFile"]').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const statusEl = body.querySelector('[data-video-status]');
+      if(file.size > 20 * 1024 * 1024){
+        statusEl.textContent = 'That file is quite large (' + Math.round(file.size/1024/1024) + 'MB) — consider pasting a YouTube/Facebook link instead for a smoother save.';
+        statusEl.className = 'status bad';
+        return;
+      }
+      try{
+        statusEl.textContent = 'Reading file…';
+        statusEl.className = 'status pending';
+        const base64 = await fileToBase64(file);
+        const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+        const path = `assets/pages/${page.id}-${block.id}.${ext}`;
+        pendingAssets[path] = base64;
+        block.video.file = path;
+        statusEl.textContent = `Ready (${path}) — click "Save uploaded page media" below, then "Save changes".`;
+        statusEl.className = 'status pending';
+      }catch(err){
+        statusEl.textContent = err.message || 'Could not read that video file.';
+        statusEl.className = 'status bad';
+      }
+    });
+  }
+
+  el.appendChild(body);
+  return el;
+}
 
 /* ---- News / articles ---- */
 function newArticle(){
@@ -1045,12 +1273,12 @@ document.getElementById('faviconInput').addEventListener('change', e => {
 });
 
 /* Saves every currently pending binary asset (branding images, news cover
-   photos, news video uploads — anything queued in pendingAssets) straight to
-   the repo. Shared by both the Branding and News panels since they queue into
-   the same pendingAssets map; whichever "Save" button is clicked flushes
-   whatever is pending, so it's safe to click either one. `pathFilter`, if
-   given, restricts the flush to matching paths (used to keep each button's
-   status message accurate to what it actually saved). */
+   photos/videos, page photo/video blocks — anything queued in pendingAssets)
+   straight to the repo. Shared by the Branding, News, and Pages panels since
+   they all queue into the same pendingAssets map; whichever "Save" button is
+   clicked flushes whatever is pending, so it's safe to click any of them.
+   `pathFilter`, if given, restricts the flush to matching paths (used to keep
+   each button's status message accurate to what it actually saved). */
 async function flushPendingAssets(statusEl, pathFilter){
   const conn = currentConn();
   if(!conn.token || !conn.owner || !conn.repo){
@@ -1104,10 +1332,13 @@ async function flushPendingAssets(statusEl, pathFilter){
 }
 
 document.getElementById('saveBrandingBtn').addEventListener('click', () => {
-  flushPendingAssets(document.getElementById('brandingStatus'), p => !p.startsWith('assets/news/'));
+  flushPendingAssets(document.getElementById('brandingStatus'), p => !p.startsWith('assets/news/') && !p.startsWith('assets/pages/'));
 });
 document.getElementById('saveNewsMediaBtn').addEventListener('click', () => {
   flushPendingAssets(document.getElementById('newsMediaStatus'), p => p.startsWith('assets/news/'));
+});
+document.getElementById('savePageMediaBtn').addEventListener('click', () => {
+  flushPendingAssets(document.getElementById('pageMediaStatus'), p => p.startsWith('assets/pages/'));
 });
 
 /* =========================================================
