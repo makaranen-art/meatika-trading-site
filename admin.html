@@ -165,6 +165,21 @@
     <div id="editor" style="display:none;">
 
       <div class="panel">
+        <h2>Migrate existing media to Cloudinary</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Any photo/video you uploaded before switching to Cloudinary is still sitting in your GitHub
+          <code>assets/</code> folder (paths like <code>assets/news/xxx.png</code>). Click the button below to
+          pull every one of those in, upload it to Cloudinary, and rewrite the link automatically. New links
+          are only stored in memory until you click <strong>Save changes</strong> at the bottom afterwards —
+          nothing is deleted from GitHub, so this is safe to run more than once.
+        </p>
+        <div class="toolbar">
+          <button class="primary" id="migrateBtn">Migrate existing media to Cloudinary</button>
+          <span class="status" id="migrateStatus"></span>
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Branding — logo & favicon</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Upload a new logo or favicon image — any size or shape is fine, it's automatically resized and
@@ -343,6 +358,96 @@ async function uploadToCloudinary(fileOrBlob, resourceType){
 function canvasToBlob(canvas){
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
+
+/* Pulls one existing file out of the GitHub repo (by path) and re-uploads it
+   straight to Cloudinary, returning the new secure_url. Used by the
+   "Migrate existing media to Cloudinary" button to move old assets over. */
+async function migrateAssetToCloudinary(path, resourceType){
+  const conn = currentConn();
+  const headers = { 'Accept': 'application/vnd.github+json' };
+  if(conn.token) headers['Authorization'] = `Bearer ${conn.token}`;
+  const res = await fetch(
+    `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(conn.branch)}`,
+    { headers }
+  );
+  if(!res.ok) throw new Error(`Could not fetch ${path} from GitHub (${res.status})`);
+  const json = await res.json();
+  const byteChars = atob(json.content.replace(/\n/g, ''));
+  const bytes = new Uint8Array(byteChars.length);
+  for(let i = 0; i < byteChars.length; i++) bytes[i] = byteChars.charCodeAt(i);
+  const blob = new Blob([bytes]);
+  return await uploadToCloudinary(blob, resourceType);
+}
+
+/* Scans every page block and news article for old assets/... paths (as
+   opposed to https://res.cloudinary.com/... links already migrated) and
+   moves each one to Cloudinary, updating the in-memory state as it goes. */
+async function migrateExistingMedia(){
+  const statusEl = document.getElementById('migrateStatus');
+  const conn = currentConn();
+  if(!conn.owner || !conn.repo){
+    statusEl.textContent = 'Enter your GitHub connection details and load content first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  if(!state){
+    statusEl.textContent = 'Load the current content first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+
+  const isLocalPath = p => p && !/^https?:\/\//i.test(p);
+
+  const jobs = [];
+  (state.pages || []).forEach(page => {
+    (page.blocks || []).forEach(block => {
+      if(block.type === 'photo' && isLocalPath(block.image)){
+        jobs.push({ label: block.image, type: 'image', apply: url => { block.image = url; } });
+      }
+      if(block.type === 'video' && block.video && block.video.type === 'file' && isLocalPath(block.video.file)){
+        jobs.push({ label: block.video.file, type: 'video', apply: url => { block.video.file = url; } });
+      }
+    });
+  });
+  (state.news || []).forEach(article => {
+    if(isLocalPath(article.cover)){
+      jobs.push({ label: article.cover, type: 'image', apply: url => { article.cover = url; } });
+    }
+    if(article.video && article.video.type === 'file' && isLocalPath(article.video.file)){
+      jobs.push({ label: article.video.file, type: 'video', apply: url => { article.video.file = url; } });
+    }
+  });
+
+  if(!jobs.length){
+    statusEl.textContent = 'Nothing to migrate — every photo/video is already on Cloudinary.';
+    statusEl.className = 'status ok';
+    return;
+  }
+
+  statusEl.className = 'status pending';
+  let done = 0, failed = 0;
+  for(const job of jobs){
+    statusEl.textContent = `Migrating ${job.label}… (${done + failed + 1}/${jobs.length})`;
+    try{
+      const url = await migrateAssetToCloudinary(job.label, job.type);
+      job.apply(url);
+      done++;
+    }catch(e){
+      failed++;
+      console.error(`Failed to migrate ${job.label}:`, e.message);
+    }
+  }
+  renderAll();
+  renderNews();
+  if(failed){
+    statusEl.textContent = `Migrated ${done} of ${jobs.length} — ${failed} failed (check browser console for details). Click "Save changes" to publish what succeeded.`;
+    statusEl.className = 'status bad';
+  } else {
+    statusEl.textContent = `Migrated all ${done} file(s) to Cloudinary. Click "Save changes" below to publish.`;
+    statusEl.className = 'status ok';
+  }
+}
+document.getElementById('migrateBtn').addEventListener('click', migrateExistingMedia);
 
 /* =========================================================
    2) GITHUB CONNECTION SETTINGS
