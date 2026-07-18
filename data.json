@@ -111,6 +111,19 @@
           "color": "#24262b",
           "iconColor": "#c7ccd6",
           "wide": false
+        },
+        {
+          "id": "card-1784387355406",
+          "title": "Meatika Affiliate",
+          "desc": {
+            "en": "Open account support and forex partner training.",
+            "km": "របៀបបង្កើតគណនី និងដៃគូ Forex"
+          },
+          "link": "https://t.me/MeatikaAffiliate",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": true
         }
       ]
     },
@@ -166,19 +179,6 @@
           "link": "https://t.me/MeatikaSupport",
           "icon": "paperplane",
           "color": "#2a2418",
-          "iconColor": "#d4af37",
-          "wide": true
-        },
-        {
-          "id": "card-1784386607767",
-          "title": "Meatika Affiliate Telegram",
-          "desc": {
-            "en": "sdsd",
-            "km": "sds"
-          },
-          "link": "https://",
-          "icon": "star",
-          "color": "#24262b",
           "iconColor": "#d4af37",
           "wide": true
         }
