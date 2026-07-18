@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meatika Trading</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48x48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-900:#1b2753;
+    --ink-800:#3a4260;
+    --ink-700:#454d6e;
+    --ink-600:#565f82;
+    --bg-grad-end:#2a1233;
+    --gold-500:#d4af37;
+    --gold-300:#f4d980;
+    --green-500:#b9c1d1;
+    --green-300:#dee2ea;
+    --up:#ffb026;
+    --paper:#f2f2f8;
+    --muted:#a8b2cc;
+    --radius:16px;
+    --maxw:480px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body.light{
+    --ink-900:#f7f4ec;
+    --ink-800:#ffffff;
+    --ink-700:#f1ede1;
+    --ink-600:#e3ddca;
+    --bg-grad-end:#f7f4ec;
+    --paper:#1b2753;
+    --muted:#5c6580;
+    --gold-300:#9c7a1f;
+    --green-500:#5b6577;
+    --green-300:#414a5c;
+  }
+  body{
+    background:
+      radial-gradient(circle at 15% -10%, rgba(212,175,55,0.14), transparent 45%),
+      radial-gradient(circle at 100% 20%, rgba(185,193,209,0.10), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 32px),
+      linear-gradient(180deg, var(--ink-900) 0%, var(--bg-grad-end) 100%);
+    color:var(--paper);
+    font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.km, body.km *{
+    font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif !important;
+  }
+  ::selection{background:var(--gold-500); color:var(--ink-900);}
+
+  /* ---- Ticker tape (signature element) ---- */
+  .ticker-wrap{
+    width:100%;
+    background:var(--ink-800);
+    border-bottom:1px solid var(--ink-600);
+    overflow:hidden;
+    white-space:nowrap;
+    padding:8px 0;
+  }
+  .ticker{
+    display:inline-flex;
+    animation:scroll 28s linear infinite;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.02em;
+  }
+  .ticker span{ padding:0 22px; color:var(--muted); display:inline-flex; align-items:center; gap:8px; }
+  .ticker span b{ color:var(--gold-300); font-weight:600; }
+  .ticker .up{ color:var(--up); }
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @media (prefers-reduced-motion: reduce){ .ticker{ animation:none; } }
+
+  .page{
+    width:100%;
+    max-width:var(--maxw);
+    padding:22px 18px 40px;
+  }
+
+  /* ---- Top bar ---- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .topbar-actions{ display:flex; gap:8px; }
+  .icon-btn{
+    width:34px; height:34px; border-radius:10px;
+    background:var(--ink-800); border:1px solid var(--ink-600);
+    color:var(--muted); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:.15s ease;
+  }
+  .icon-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  .icon-btn.active{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+  .icon-btn svg{ width:16px; height:16px; }
+  .lang-btn{ width:auto; padding:0 9px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; letter-spacing:0.03em; }
+
+  /* ---- Hero ---- */
+  .hero{ text-align:center; margin-bottom:34px; position:relative; }
+  .logo-mark{
+    width:100%; max-width:320px; margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    padding:10px 8px;
+    background:radial-gradient(circle, rgba(212,175,55,0.12), transparent 70%);
+    border-radius:16px;
+  }
+  .logo-img{ width:100%; height:auto; display:block; filter:drop-shadow(0 6px 18px rgba(212,175,55,0.25)); }
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  .hero p{
+    color:var(--muted); font-size:13.5px; line-height:1.6;
+    margin:0 auto; max-width:320px;
+  }
+
+  /* ---- Section ---- */
+  .section{ margin-bottom:28px; }
+  .section-label{
+    display:flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:600; letter-spacing:0.12em;
+    color:var(--gold-300); text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .section-label::after{
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg, var(--ink-600), transparent);
+  }
+
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  body.view-list .cards{ grid-template-columns:1fr; }
+
+  .card{
+    background:var(--ink-800);
+    border:1px solid var(--ink-600);
+    border-radius:var(--radius);
+    padding:14px;
+    transition:.18s ease;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .card:hover{ border-color:var(--gold-500); transform:translateY(-2px); }
+  body.view-list .card{ flex-direction:row; align-items:flex-start; gap:12px; }
+
+  .avatar{
+    width:38px; height:38px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .avatar svg{ width:19px; height:19px; }
+
+  .card-body{ flex:1; min-width:0; }
+  .card-body h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14.5px; font-weight:600; margin:0 0 4px; color:var(--paper);
+  }
+  .card-body p{
+    font-size:12px; color:var(--muted); line-height:1.5; margin:0;
+  }
+  .card-detail{
+    display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease;
+  }
+  .card-detail-inner{ overflow:hidden; }
+  .card.open .card-detail{ grid-template-rows:1fr; }
+  .card-detail p{
+    font-size:11.5px; color:var(--green-300); padding-top:8px;
+    border-top:1px dashed var(--ink-600); margin-top:8px;
+  }
+
+  .card-actions{ display:flex; gap:8px; margin-top:2px; }
+  body.view-list .card-actions{ margin-top:6px; }
+  .card-actions button, .card-actions a{
+    width:28px; height:28px; border-radius:8px;
+    background:var(--ink-700); border:1px solid var(--ink-600);
+    color:var(--muted); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; text-decoration:none; transition:.15s ease;
+  }
+  .card-actions button:hover{ color:var(--gold-300); border-color:var(--gold-500); }
+  .card-actions a:hover{ color:var(--green-300); border-color:var(--green-500); }
+  .card-actions svg{ width:13px; height:13px; }
+
+  /* wide card for single-column standalone entries */
+  .card.wide{ grid-column:1 / -1; flex-direction:row; align-items:flex-start; }
+
+  footer{
+    text-align:center; margin-top:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:0.08em;
+    color:var(--ink-600); text-transform:uppercase;
+  }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--gold-500); color:var(--ink-900); font-weight:600; font-size:13px;
+    padding:10px 18px; border-radius:10px; opacity:0; pointer-events:none;
+    transition:.25s ease; font-family:'Inter',sans-serif;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <span><b>INVESTIZO</b> · $10 BONUS ON SIGNUP</span>
+      <span><b>LITEFINANCE</b> · LEVERAGE UP TO 1:1000 <span class="up">▲</span></span>
+      <span><b>OKX</b> · SPOT &amp; FUTURES ACCESS</span>
+      <span><b>BINANCE</b> · GLOBAL LIQUIDITY <span class="up">▲</span></span>
+      <span><b>MEATIKA</b> · JOIN THE NETWORK</span>
+      <!-- duplicate for seamless loop -->
+      <span><b>INVESTIZO</b> · $10 BONUS ON SIGNUP</span>
+      <span><b>LITEFINANCE</b> · LEVERAGE UP TO 1:1000 <span class="up">▲</span></span>
+      <span><b>OKX</b> · SPOT &amp; FUTURES ACCESS</span>
+      <span><b>BINANCE</b> · GLOBAL LIQUIDITY <span class="up">▲</span></span>
+      <span><b>MEATIKA</b> · JOIN THE NETWORK</span>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <div class="topbar">
+      <div class="topbar-actions">
+        <button class="icon-btn lang-btn" id="langBtn" title="Switch to Khmer">
+          <span id="langLabel">EN</span>
+        </button>
+        <button class="icon-btn" id="themeBtn" title="Switch to light theme">
+          <svg viewBox="0 0 24 24" fill="none" id="themeIconMoon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" id="themeIconSun" style="display:none;"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn active" id="gridBtn" title="Grid view">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="3" y="13" width="8" height="8" rx="1.5" fill="currentColor"/><rect x="13" y="13" width="8" height="8" rx="1.5" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" id="listBtn" title="List view">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="11" width="18" height="3" rx="1.2" fill="currentColor"/><rect x="3" y="17" width="18" height="3" rx="1.2" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" id="shareBtn" title="Share this page">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="18" cy="5" r="2.5" fill="currentColor"/><circle cx="6" cy="12" r="2.5" fill="currentColor"/><circle cx="18" cy="19" r="2.5" fill="currentColor"/><path d="M8.2 10.8 15.8 6.2M8.2 13.2l7.6 4.6" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="logo-mark">
+        <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" class="logo-img" id="logoImg">
+      </div>
+      <h1 class="sr-only">Meatika Trading</h1>
+      <p data-en="The premium forex &amp; crypto partnership network in Cambodia. Join our channels and partners." data-km="បណ្តាញដៃគូហ្វរិច និងគ្រីបតូគុណភាពខ្ពស់នៅកម្ពុជា។ ចូលរួមឆានែល និងដៃគូរបស់យើង។">The premium forex &amp; crypto partnership network in Cambodia. Join our channels and partners.</p>
+    </div>
+
+    <!-- FOREX PARTNERS -->
+    <div class="section">
+      <div class="section-label" data-en="Forex Partners" data-km="ដៃគូ Forex">Forex Partners</div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="avatar" style="background:#24262b;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m3 21 6-6 4 4 8-9" stroke="#c7ccd6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>Investizo</h3>
+            <p data-en="Trusted global forex broker with competitive conditions and multi-market access." data-km="ឈ្មួញកណ្តាល Forex ដែលទុកចិត្តបាន មានលក្ខខណ្ឌប្រកួតប្រជែង និងទីផ្សារជាច្រើន។">Trusted global forex broker with competitive conditions and multi-market access.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://investizo.net/?pid=953004&cid=17754" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="avatar" style="background:#2a2418;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 14.5 8.5 21 9l-5 4.5L17.5 20 12 16.5 6.5 20 8 13.5 3 9l6.5-.5Z" fill="#d4af37"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>LiteFinance</h3>
+            <p data-en="Globally recognized broker offering fast execution and low spreads." data-km="ឈ្មួញកណ្តាលដែលទទួលស្គាល់អន្តរជាតិ ជាមួយការប្រតិបត្តិលឿន និងអេស្ព្រេដទាប។">Globally recognized broker offering fast execution and low spreads.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://www.litefinance-kh.com/?uid=751038299" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card wide">
+          <div class="avatar" style="background:#24262b;">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#c7ccd6"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#c7ccd6"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>GTC FX</h3>
+            <p data-en="Multi-asset broker with institutional-grade tech and competitive pricing." data-km="ឈ្មួញកណ្តាលពហុទ្រព្យ ជាមួយបច្ចេកវិទ្យាកម្រិតស្ថាប័ន និងតម្លៃប្រកួតប្រជែង។">Multi-asset broker with institutional-grade tech and competitive pricing.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://web.mygtc.app/login/register?ref=130111321" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COMMUNITY -->
+    <div class="section">
+      <div class="section-label" data-en="Community" data-km="សហគមន៍">Community</div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="avatar" style="background:#2a2418;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m2 12 19-8-7 19-3-8-9-3Z" fill="#d4af37"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>Meatika Trading Telegram</h3>
+            <p data-en="Daily market updates, trading signals, and educational content." data-km="ព័ត៌មានទីផ្សារប្រចាំថ្ងៃ សញ្ញាជួញដូរ និងខ្លឹមសារអប់រំ។">Daily market updates, trading signals, and educational content.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://t.me/MeatikaTradersHub" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="avatar" style="background:#24262b;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.1 2 11.2c0 2.9 1.5 5.5 3.8 7.2V22l3.5-1.9c.9.2 1.8.4 2.7.4 5.5 0 10-4.1 10-9.2S17.5 2 12 2Z" fill="#c7ccd6"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>Meatika Trading Facebook</h3>
+            <p data-en="Market insights, trading tips, and the latest MTH updates." data-km="ការយល់ដឹងអំពីទីផ្សារ គន្លឹះជួញដូរ និងព័ត៌មានថ្មីៗពី MTH។">Market insights, trading tips, and the latest MTH updates.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://www.facebook.com/MeatikaTradersHub" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CRYPTO PARTNERSHIP -->
+    <div class="section">
+      <div class="section-label" data-en="Crypto Partnership" data-km="ភាពជាដៃគូគ្រីបតូ">Crypto Partnership</div>
+      <div class="cards">
+
+        <div class="card">
+          <div class="avatar" style="background:#24262b;">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#dee2ea"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#dee2ea"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>OKX</h3>
+            <p data-en="Trade spot and futures with deep liquidity and low fees." data-km="ជួញដូរ Spot និង Futures ជាមួយសាច់ប្រាក់ងាយស្រួល និងកម្រៃទាប។">Trade spot and futures with deep liquidity and low fees.</p>
+          </div>
+          <div class="card-actions">
+            <a href="#" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="avatar" style="background:#24262b;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 15 6 12 9 9 6Z" fill="#dee2ea"/><path d="M5 10 8 13 5 16 2 13Z" fill="#dee2ea"/><path d="M19 10 22 13 19 16 16 13Z" fill="#dee2ea"/><path d="M12 15 15 18 12 21 9 18Z" fill="#dee2ea"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>Binance</h3>
+            <p data-en="World's largest exchange for spot, futures, and staking." data-km="ការផ្លាស់ប្តូរធំបំផុតលើពិភពលោក សម្រាប់ Spot, Futures និង Staking។">World's largest exchange for spot, futures, and staking.</p>
+          </div>
+          <div class="card-actions">
+            <a href="#" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUPPORT TEAM -->
+    <div class="section">
+      <div class="section-label" data-en="Support Team" data-km="ក្រុមគាំទ្រ">Support Team</div>
+      <div class="cards">
+
+        <div class="card wide">
+          <div class="avatar" style="background:#2a2418;">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m2 12 19-8-7 19-3-8-9-3Z" fill="#d4af37"/></svg>
+          </div>
+          <div class="card-body">
+            <h3>Meatika Trading Support</h3>
+            <p data-en="Help with account inquiries, trading guidance, and technical support." data-km="ជំនួយអំពីគណនី ការណែនាំជួញដូរ និងជំនួយបច្ចេកទេស។">Help with account inquiries, trading guidance, and technical support.</p>
+          </div>
+          <div class="card-actions">
+            <a href="https://t.me/MeatikaSupport" target="_blank" title="Open link">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer data-en="Powered by Meatika Trading Network" data-km="ដំណើរការដោយបណ្តាញ Meatika Trading">Powered by Meatika Trading Network</footer>
+  </div>
+
+  <div class="toast" id="toast">Link copied</div>
+
+  <script>
+    function toggleCard(btn){
+      btn.closest('.card').classList.toggle('open');
+    }
+
+    const gridBtn = document.getElementById('gridBtn');
+    const listBtn = document.getElementById('listBtn');
+    gridBtn.addEventListener('click', ()=>{
+      document.body.classList.remove('view-list');
+      gridBtn.classList.add('active'); listBtn.classList.remove('active');
+    });
+    listBtn.addEventListener('click', ()=>{
+      document.body.classList.add('view-list');
+      listBtn.classList.add('active'); gridBtn.classList.remove('active');
+    });
+
+    const langBtn = document.getElementById('langBtn');
+    const langLabel = document.getElementById('langLabel');
+    function applyLang(isKhmer){
+      document.body.classList.toggle('km', isKhmer);
+      document.documentElement.lang = isKhmer ? 'km' : 'en';
+      langLabel.textContent = isKhmer ? 'ខ្មែរ' : 'EN';
+      langBtn.title = isKhmer ? 'Switch to English' : 'Switch to Khmer';
+      document.querySelectorAll('[data-en]').forEach(el=>{
+        el.textContent = isKhmer ? el.getAttribute('data-km') : el.getAttribute('data-en');
+      });
+    }
+    let savedLang = false;
+    try{ savedLang = localStorage.getItem('mth-lang') === 'km'; }catch(e){ /* storage unavailable */ }
+    applyLang(savedLang);
+    langBtn.addEventListener('click', ()=>{
+      const nowKhmer = !document.body.classList.contains('km');
+      applyLang(nowKhmer);
+      try{ localStorage.setItem('mth-lang', nowKhmer ? 'km' : 'en'); }catch(e){ /* storage unavailable */ }
+    });
+
+    const themeBtn = document.getElementById('themeBtn');
+    const moonIcon = document.getElementById('themeIconMoon');
+    const sunIcon = document.getElementById('themeIconSun');
+    const logoImg = document.getElementById('logoImg');
+    function applyTheme(isLight){
+      document.body.classList.toggle('light', isLight);
+      moonIcon.style.display = isLight ? 'none' : 'block';
+      sunIcon.style.display = isLight ? 'block' : 'none';
+      themeBtn.title = isLight ? 'Switch to dark theme' : 'Switch to light theme';
+      logoImg.src = isLight ? 'assets/mth-logo.png' : 'assets/mth-logo-white.png';
+    }
+    let savedLight = false;
+    try{ savedLight = localStorage.getItem('mth-theme') === 'light'; }catch(e){ /* storage unavailable */ }
+    applyTheme(savedLight);
+    themeBtn.addEventListener('click', ()=>{
+      const nowLight = !document.body.classList.contains('light');
+      applyTheme(nowLight);
+      try{ localStorage.setItem('mth-theme', nowLight ? 'light' : 'dark'); }catch(e){ /* storage unavailable */ }
+    });
+
+    const shareBtn = document.getElementById('shareBtn');
+    const toast = document.getElementById('toast');
+    shareBtn.addEventListener('click', async ()=>{
+      const shareData = { title:'Meatika Trading', text:'Forex & crypto partnership network', url: location.href };
+      try{
+        if(navigator.share){ await navigator.share(shareData); }
+        else{
+          await navigator.clipboard.writeText(location.href);
+          showToast('Link copied');
+        }
+      }catch(e){ /* user cancelled share, ignore */ }
+    });
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 1800);
+    }
+  </script>
+
+</body>
+</html>
