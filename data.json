@@ -235,7 +235,7 @@
           "type": "video",
           "id": "block-mrqmghha3312",
           "video": {
-            "type": "url",
+            "type": "file",
             "url": "https://www.youtube.com/watch?v=k3BvJBm5Atk",
             "file": ""
           },
@@ -252,7 +252,7 @@
           "type": "video",
           "id": "block-mrqmtp8jl7dv",
           "video": {
-            "type": "url",
+            "type": "file",
             "url": "https://www.youtube.com/watch?v=5U6aph_l_sk",
             "file": ""
           },
