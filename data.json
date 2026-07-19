@@ -229,7 +229,7 @@
           "icon": "star",
           "color": "#24262b",
           "iconColor": "#d4af37",
-          "wide": false
+          "wide": true
         }
       ]
     }
