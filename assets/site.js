@@ -118,26 +118,38 @@
     return `<${tag} class="block-caption i18n-en">${en}</${tag}><${tag} class="block-caption i18n-km">${km}</${tag}>`;
   }
 
+  /* Optional heading shown above a block's content (works for any block
+     type — text, photo, video). Set per-block in admin.html; falls back
+     to the English heading when no Khmer translation was entered. */
+  function headingHtml(heading){
+    const h = heading || {};
+    if(!h.en && !h.km) return '';
+    const en = escapeHtml(h.en || '');
+    const km = escapeHtml(h.km || h.en || '');
+    return `<h3 class="block-heading i18n-en">${en}</h3><h3 class="block-heading i18n-km">${km}</h3>`;
+  }
+
   function blockHtml(block){
     if(!block || !block.type) return '';
+    const heading = headingHtml(block.heading);
 
     if(block.type === 'text'){
       const text = block.text || {};
       const en = textBlockParagraphs(text.en);
       const km = textBlockParagraphs(text.km || text.en);
       if(!en && !km) return '';
-      return `<div class="block block-text"><div class="i18n-en">${en}</div><div class="i18n-km">${km}</div></div>`;
+      return `<div class="block block-text">${heading}<div class="i18n-en">${en}</div><div class="i18n-km">${km}</div></div>`;
     }
 
     if(block.type === 'photo'){
       if(!block.image) return '';
-      return `<figure class="block block-photo"><img src="${escapeHtml(block.image)}" alt="" loading="lazy">${captionHtml(block.caption, 'figcaption')}</figure>`;
+      return `<figure class="block block-photo">${heading}<img src="${escapeHtml(block.image)}" alt="" loading="lazy">${captionHtml(block.caption, 'figcaption')}</figure>`;
     }
 
     if(block.type === 'video'){
       const embed = videoEmbedHtml(block.video);
       if(!embed) return '';
-      return `<div class="block block-video-wrap">${embed}${captionHtml(block.caption, 'p')}</div>`;
+      return `<div class="block block-video-wrap">${heading}${embed}${captionHtml(block.caption, 'p')}</div>`;
     }
 
     return '';
