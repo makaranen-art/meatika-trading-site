@@ -301,6 +301,105 @@
         }
       ],
       "sections": []
+    },
+    {
+      "id": "gtcfx-guide-mrrr6jju",
+      "title": {
+        "en": "Video Guide GTC FX",
+        "km": "វីដេអូបង្រៀន​ GTC FX"
+      },
+      "hero": {
+        "en": "Video Guide​ Investizo",
+        "km": "Video Guide​ Investizo"
+      },
+      "blocks": [
+        {
+          "type": "video",
+          "id": "block-mrrr7r52jkau",
+          "heading": {
+            "en": "Register Account Trade GTC FX",
+            "km": "🔔របៀបបើក/Register Account Trade នៅ GTC"
+          },
+          "video": {
+            "type": "file",
+            "url": "",
+            "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784463104/Register_qvd69l.mp4"
+          },
+          "caption": {
+            "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
+            "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
+          }
+        },
+        {
+          "type": "video",
+          "id": "block-mrrr9i3npg0k",
+          "heading": {
+            "en": "Create Account MT5 ",
+            "km": "🔔របៀបបង្កើត Account MT5 សម្រាប់ Trade🕯"
+          },
+          "video": {
+            "type": "file",
+            "url": "",
+            "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784463166/mt4_lxplqd.mp4"
+          },
+          "caption": {
+            "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
+            "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
+          }
+        },
+        {
+          "type": "video",
+          "id": "block-mrrrariqhyjp",
+          "heading": {
+            "en": " Deposit Money with GTC FX",
+            "km": "🔔របៀបដាក់លុយ Deposit ចូល Account Trade💵"
+          },
+          "video": {
+            "type": "file",
+            "url": "",
+            "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784463236/Deposit_qsqhnw.mp4"
+          },
+          "caption": {
+            "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
+            "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
+          }
+        },
+        {
+          "type": "video",
+          "id": "block-mrrrcc9mhifw",
+          "heading": {
+            "en": " Internal Transfer GTC FX",
+            "km": "🔔របៀបផ្ទេរលុយ Internal Transfer ពី Account មួយ ទៅ Account មួយទៀត"
+          },
+          "video": {
+            "type": "file",
+            "url": "",
+            "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784463290/internal_transfer_ljpm8y.mp4"
+          },
+          "caption": {
+            "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
+            "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
+          }
+        },
+        {
+          "type": "video",
+          "id": "block-mrrrdjfkt6r2",
+          "heading": {
+            "en": " Withdraw Money GTC FX",
+            "km": "🔔របៀបដកលុយ Withdraw ចេញពី Account Trade ចូលគណនីធនាគា💵"
+          },
+          "video": {
+            "type": "file",
+            "url": "",
+            "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784463355/with_umkqeo.mp4"
+          },
+          "caption": {
+            "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
+            "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
+          }
+        }
+      ],
+      "sections": []
     }
   ],
   "news": [
