@@ -247,6 +247,19 @@
       },
       "blocks": [
         {
+          "type": "photo",
+          "id": "block-mrrslzrhjvqy",
+          "heading": {
+            "en": "Benefits of Investizo",
+            "km": "អត្ថប្រយោជន៍ Investizo"
+          },
+          "image": "https://res.cloudinary.com/lisxurk1/image/upload/v1784465413/blob_b8aids.png",
+          "caption": {
+            "en": "",
+            "km": ""
+          }
+        },
+        {
           "type": "video",
           "id": "block-mrqmghha3312",
           "video": {
