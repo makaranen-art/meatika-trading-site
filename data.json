@@ -130,7 +130,7 @@
           "icon": "star",
           "color": "#24262b",
           "iconColor": "#d4af37",
-          "wide": false
+          "wide": true
         }
       ]
     },
@@ -197,7 +197,7 @@
     {
       "id": "section-1784394803494",
       "label": {
-        "en": "Open Trading Account Quide",
+        "en": "Open Trading Account Guide",
         "km": "របៀបបង្កើតគណីជួញដូរ"
       },
       "cards": [
