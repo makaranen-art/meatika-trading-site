@@ -203,10 +203,10 @@
       "cards": [
         {
           "id": "card-1784394856393",
-          "title": "Investizo ",
+          "title": "Investizo Trading Guide",
           "desc": {
             "en": "Click to see how to sign up with investizo",
-            "km": "ចុះមើលររបៀបបង្កើតគណនី Investizo"
+            "km": "ចុចដើម្បីមើលររបៀបបង្កើតគណនី Investizo"
           },
           "linkType": "url",
           "link": "https://meatikatrading.com/page.html?id=new-page-mrqmg3i1",
@@ -215,6 +215,21 @@
           "color": "#24262b",
           "iconColor": "#d4af37",
           "wide": true
+        },
+        {
+          "id": "card-1784463384426",
+          "title": "GTC FX Trading Guide",
+          "desc": {
+            "en": "Click to see how to sign up with GTC FX",
+            "km": "ចុចដើម្បីមើលររបៀបបង្កើតគណនី ​GTC FX"
+          },
+          "linkType": "url",
+          "link": "https://",
+          "pageId": "",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": false
         }
       ]
     }
