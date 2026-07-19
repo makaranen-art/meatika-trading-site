@@ -669,7 +669,11 @@ function renderCard(section, card, cIdx, onChange){
         <input type="color" class="color-input" data-f="color" value="${normalizeColor(card.color)}" title="Background color">
         <input type="color" class="color-input" data-f="iconColor" value="${normalizeColor(card.iconColor)}" title="Icon color">
       </div>
-      <button class="small danger" data-act="removeCard">Remove</button>
+      <div>
+        <button class="small" type="button" data-act="cardUp">↑</button>
+        <button class="small" type="button" data-act="cardDown">↓</button>
+        <button class="small danger" data-act="removeCard">Remove</button>
+      </div>
     </div>
     <div class="field"><label>Title</label><input type="text" data-f="title" value="${escAttr(card.title)}"></div>
     <div class="row">
@@ -729,6 +733,12 @@ function renderCard(section, card, cIdx, onChange){
   el.querySelector('[data-act="removeCard"]').addEventListener('click', () => {
     section.cards.splice(cIdx, 1);
     onChange();
+  });
+  el.querySelector('[data-act="cardUp"]').addEventListener('click', () => {
+    if(cIdx > 0){ [section.cards[cIdx-1], section.cards[cIdx]] = [section.cards[cIdx], section.cards[cIdx-1]]; onChange(); }
+  });
+  el.querySelector('[data-act="cardDown"]').addEventListener('click', () => {
+    if(cIdx < section.cards.length - 1){ [section.cards[cIdx+1], section.cards[cIdx]] = [section.cards[cIdx], section.cards[cIdx+1]]; onChange(); }
   });
 
   return el;
@@ -843,13 +853,13 @@ document.getElementById('addPage').addEventListener('click', () => {
    or as an intro above a card grid. Rendered by MTHSite.blocksHtml() on
    the public page.html. */
 function newTextBlock(){
-  return { type:'text', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), text:{en:'',km:''} };
+  return { type:'text', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), heading:{en:'',km:''}, text:{en:'',km:''} };
 }
 function newPhotoBlock(){
-  return { type:'photo', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), image:'', caption:{en:'',km:''} };
+  return { type:'photo', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), heading:{en:'',km:''}, image:'', caption:{en:'',km:''} };
 }
 function newVideoBlock(){
-  return { type:'video', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), video:{type:'url',url:'',file:''}, caption:{en:'',km:''} };
+  return { type:'video', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), heading:{en:'',km:''}, video:{type:'url',url:'',file:''}, caption:{en:'',km:''} };
 }
 
 /* Scales an image down to fit within maxDim (preserving aspect ratio, no
@@ -905,21 +915,35 @@ function renderBlockItem(page, block, bIdx, onChange){
   const body = document.createElement('div');
   body.style.marginTop = '8px';
 
+  block.heading = block.heading || {en:'',km:''};
+  const headingRow = document.createElement('div');
+  headingRow.className = 'row';
+  headingRow.innerHTML = `
+    <div class="field"><label>Header (English, optional)</label><input type="text" data-f="heading-en" value="${escAttr(block.heading.en)}" placeholder="e.g. How to deposit"></div>
+    <div class="field"><label>Header (Khmer, optional)</label><input type="text" data-f="heading-km" value="${escAttr(block.heading.km)}"></div>
+  `;
+  headingRow.querySelector('[data-f="heading-en"]').addEventListener('input', e => block.heading.en = e.target.value);
+  headingRow.querySelector('[data-f="heading-km"]').addEventListener('input', e => block.heading.km = e.target.value);
+  body.appendChild(headingRow);
+
+  const typeBody = document.createElement('div');
+  body.appendChild(typeBody);
+
   if(block.type === 'text'){
     block.text = block.text || {en:'',km:''};
-    body.innerHTML = `
+    typeBody.innerHTML = `
       <div class="row">
         <div class="field"><label>Text (English) — leave a blank line between paragraphs</label><textarea data-f="text-en" style="min-height:90px;">${escText(block.text.en)}</textarea></div>
         <div class="field"><label>Text (Khmer)</label><textarea data-f="text-km" style="min-height:90px;">${escText(block.text.km)}</textarea></div>
       </div>
     `;
-    body.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
-    body.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
+    typeBody.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
+    typeBody.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
   }
 
   if(block.type === 'photo'){
     block.caption = block.caption || {en:'',km:''};
-    body.innerHTML = `
+    typeBody.innerHTML = `
       <label>Photo</label>
       <img data-photo-preview src="${block.image ? escAttr(block.image) : ''}" alt="" style="max-width:220px;max-height:160px;display:${block.image ? 'block' : 'none'};margin-bottom:8px;border-radius:8px;object-fit:contain;background:var(--ink-900);">
       <input type="file" data-f="photoFile" accept="image/png,image/jpeg,image/webp">
@@ -929,13 +953,13 @@ function renderBlockItem(page, block, bIdx, onChange){
         <div class="field"><label>Caption (Khmer)</label><input type="text" data-f="cap-km" value="${escAttr(block.caption.km)}"></div>
       </div>
     `;
-    body.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
-    body.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
-    body.querySelector('[data-f="photoFile"]').addEventListener('change', async e => {
+    typeBody.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
+    typeBody.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
+    typeBody.querySelector('[data-f="photoFile"]').addEventListener('change', async e => {
       const file = e.target.files[0];
       if(!file) return;
-      const statusEl = body.querySelector('[data-photo-status]');
-      const previewEl = body.querySelector('[data-photo-preview]');
+      const statusEl = typeBody.querySelector('[data-photo-status]');
+      const previewEl = typeBody.querySelector('[data-photo-preview]');
       try{
         statusEl.textContent = 'Uploading to Cloudinary…';
         statusEl.className = 'status pending';
@@ -958,7 +982,7 @@ function renderBlockItem(page, block, bIdx, onChange){
   if(block.type === 'video'){
     block.video = block.video || {type:'url',url:'',file:''};
     block.caption = block.caption || {en:'',km:''};
-    body.innerHTML = `
+    typeBody.innerHTML = `
       <div class="field">
         <label>Video source</label>
         <select data-f="videoType">
@@ -980,21 +1004,21 @@ function renderBlockItem(page, block, bIdx, onChange){
         <div class="field"><label>Caption (Khmer)</label><input type="text" data-f="cap-km" value="${escAttr(block.caption.km)}"></div>
       </div>
     `;
-    const videoTypeSel = body.querySelector('[data-f="videoType"]');
+    const videoTypeSel = typeBody.querySelector('[data-f="videoType"]');
     videoTypeSel.value = block.video.type === 'file' ? 'file' : 'url';
     function updateVideoFields(){
-      body.querySelector('[data-video-url]').style.display = block.video.type === 'file' ? 'none' : '';
-      body.querySelector('[data-video-file]').style.display = block.video.type === 'file' ? '' : 'none';
+      typeBody.querySelector('[data-video-url]').style.display = block.video.type === 'file' ? 'none' : '';
+      typeBody.querySelector('[data-video-file]').style.display = block.video.type === 'file' ? '' : 'none';
     }
     updateVideoFields();
     videoTypeSel.addEventListener('change', e => { block.video.type = e.target.value; updateVideoFields(); });
-    body.querySelector('[data-f="videoUrl"]').addEventListener('input', e => block.video.url = e.target.value);
-    body.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
-    body.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
-    body.querySelector('[data-f="videoFile"]').addEventListener('change', async e => {
+    typeBody.querySelector('[data-f="videoUrl"]').addEventListener('input', e => block.video.url = e.target.value);
+    typeBody.querySelector('[data-f="cap-en"]').addEventListener('input', e => block.caption.en = e.target.value);
+    typeBody.querySelector('[data-f="cap-km"]').addEventListener('input', e => block.caption.km = e.target.value);
+    typeBody.querySelector('[data-f="videoFile"]').addEventListener('change', async e => {
       const file = e.target.files[0];
       if(!file) return;
-      const statusEl = body.querySelector('[data-video-status]');
+      const statusEl = typeBody.querySelector('[data-video-status]');
       try{
         statusEl.textContent = 'Uploading to Cloudinary… this can take a minute for larger files.';
         statusEl.className = 'status pending';

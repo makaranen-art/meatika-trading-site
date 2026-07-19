@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="km">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -137,8 +137,11 @@
         if(en) el.textContent = isKhmer ? (km || en) : en;
       });
     }
-    let savedLang = false;
-    try{ savedLang = localStorage.getItem('mth-lang') === 'km'; }catch(e){ /* storage unavailable */ }
+    let savedLang = true; // default language: Khmer, unless the visitor has chosen English before
+    try{
+      const storedLang = localStorage.getItem('mth-lang');
+      if(storedLang) savedLang = storedLang === 'km';
+    }catch(e){ /* storage unavailable */ }
     langBtn.addEventListener('click', ()=>{
       savedLang = !document.body.classList.contains('km');
       applyLang(savedLang);

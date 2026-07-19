@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="km">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -194,6 +194,7 @@
   #blocks{ margin-bottom:8px; }
   #blocks:empty{ margin-bottom:0; }
   .block{ margin-bottom:22px; }
+  .block-heading{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:var(--paper); margin:0 0 10px; }
   .block-text{ color:var(--paper); font-size:14.5px; line-height:1.75; }
   .block-text p{ margin:0 0 14px; }
   .block-text p:last-child{ margin-bottom:0; }
@@ -268,8 +269,11 @@
         if(en) el.textContent = isKhmer ? (km || en) : en;
       });
     }
-    let savedLang = false;
-    try{ savedLang = localStorage.getItem('mth-lang') === 'km'; }catch(e){ /* storage unavailable */ }
+    let savedLang = true; // default language: Khmer, unless the visitor has chosen English before
+    try{
+      const storedLang = localStorage.getItem('mth-lang');
+      if(storedLang) savedLang = storedLang === 'km';
+    }catch(e){ /* storage unavailable */ }
     langBtn.addEventListener('click', ()=>{
       savedLang = !document.body.classList.contains('km');
       applyLang(savedLang);
