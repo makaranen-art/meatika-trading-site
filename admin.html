@@ -359,6 +359,20 @@ function canvasToBlob(canvas){
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
+/* Cloudinary auto-generates a JPG thumbnail for any video it hosts just by
+   swapping the file extension — so every uploaded video gets a thumbnail
+   for free, with nothing extra to store or manage. so_1 grabs the frame at
+   the 1s mark (skips the black first frame many videos start on). Returns
+   '' for anything not hosted on Cloudinary (e.g. an old GitHub-hosted path
+   from before pages/news switched to Cloudinary — use "Migrate existing
+   media" above to move those over so they get thumbnails too). */
+function cloudinaryVideoPosterUrl(videoUrl){
+  const m = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\/)(.+)$/.exec(videoUrl || '');
+  if(!m) return '';
+  const rest = m[2].replace(/\.[a-z0-9]+(\?.*)?$/i, '.jpg');
+  return `${m[1]}so_1,c_fill,w_400,h_225,q_auto/${rest}`;
+}
+
 /* Pulls one existing file out of the GitHub repo (by path) and re-uploads it
    straight to Cloudinary, returning the new secure_url. Used by the
    "Migrate existing media to Cloudinary" button to move old assets over. */
@@ -996,6 +1010,7 @@ function renderBlockItem(page, block, bIdx, onChange){
       </div>
       <div class="field" data-video-file style="display:none;">
         <label>Video file (keep it short — large files make the repo heavy and slow to save)</label>
+        <img data-video-thumb src="${escAttr(cloudinaryVideoPosterUrl(block.video.file))}" alt="" style="max-width:220px;max-height:124px;display:${block.video.file && cloudinaryVideoPosterUrl(block.video.file) ? 'block' : 'none'};margin-bottom:8px;border-radius:8px;object-fit:cover;">
         <input type="file" data-f="videoFile" accept="video/mp4,video/webm,video/quicktime">
         <div class="status" data-video-status style="min-height:14px;">${block.video.file ? 'Currently: ' + block.video.file : ''}</div>
       </div>
@@ -1019,12 +1034,16 @@ function renderBlockItem(page, block, bIdx, onChange){
       const file = e.target.files[0];
       if(!file) return;
       const statusEl = typeBody.querySelector('[data-video-status]');
+      const thumbEl = typeBody.querySelector('[data-video-thumb]');
       try{
         statusEl.textContent = 'Uploading to Cloudinary… this can take a minute for larger files.';
         statusEl.className = 'status pending';
+        thumbEl.style.display = 'none';
         const url = await uploadToCloudinary(file, 'video');
         block.video.file = url;
-        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        const poster = cloudinaryVideoPosterUrl(url);
+        if(poster){ thumbEl.src = poster; thumbEl.style.display = 'block'; }
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ (thumbnail generated automatically) — click "Save changes" below to publish.';
         statusEl.className = 'status ok';
       }catch(err){
         statusEl.textContent = err.message || 'Could not upload that video file.';
@@ -1118,6 +1137,7 @@ function renderNews(){
         </div>
         <div class="field" data-video-file style="display:none;">
           <label>Video file (keep it short — large files make the repo heavy and slow to save)</label>
+          <img data-video-thumb src="${escAttr(cloudinaryVideoPosterUrl(article.video.file))}" alt="" style="max-width:220px;max-height:124px;display:${article.video.file && cloudinaryVideoPosterUrl(article.video.file) ? 'block' : 'none'};margin-bottom:8px;border-radius:8px;object-fit:cover;">
           <input type="file" data-f="videoFile" accept="video/mp4,video/webm,video/quicktime">
           <div class="status" data-video-status style="min-height:14px;">${article.video.file ? 'Currently: ' + article.video.file : ''}</div>
         </div>
@@ -1208,12 +1228,16 @@ function renderNews(){
       const file = e.target.files[0];
       if(!file) return;
       const statusEl = el.querySelector('[data-video-status]');
+      const thumbEl = el.querySelector('[data-video-thumb]');
       try{
         statusEl.textContent = 'Uploading to Cloudinary… this can take a minute for larger files.';
         statusEl.className = 'status pending';
+        thumbEl.style.display = 'none';
         const url = await uploadToCloudinary(file, 'video');
         article.video.file = url;
-        statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+        const poster = cloudinaryVideoPosterUrl(url);
+        if(poster){ thumbEl.src = poster; thumbEl.style.display = 'block'; }
+        statusEl.textContent = 'Uploaded to Cloudinary ✓ (thumbnail generated automatically) — click "Save changes" below to publish.';
         statusEl.className = 'status ok';
       }catch(err){
         statusEl.textContent = err.message || 'Could not upload that video file.';
