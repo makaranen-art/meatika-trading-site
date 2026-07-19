@@ -223,9 +223,9 @@
             "en": "Click to see how to sign up with GTC FX",
             "km": "ចុចដើម្បីមើលររបៀបបង្កើតគណនី ​GTC FX"
           },
-          "linkType": "url",
+          "linkType": "page",
           "link": "https://",
-          "pageId": "",
+          "pageId": "gtcfx-guide-mrrr6jju",
           "icon": "star",
           "color": "#24262b",
           "iconColor": "#d4af37",
