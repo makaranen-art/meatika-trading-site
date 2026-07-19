@@ -85,13 +85,28 @@
     return t.split(/\n{2,}/).map(p => `<p>${escapeHtml(p).replace(/\n/g,'<br>')}</p>`).join('');
   }
 
+  /* Cloudinary auto-generates a JPG thumbnail for any video it hosts just by
+     swapping the file extension — no separate thumbnail upload/storage
+     needed. so_1 grabs the frame at the 1s mark (skips the black first
+     frame many videos start on); c_fill/w/h keeps it a clean 16:9 crop.
+     Returns '' for anything that isn't a Cloudinary-hosted video (e.g. an
+     old GitHub-hosted path from before the Cloudinary switch). */
+  function cloudinaryVideoPosterUrl(videoUrl){
+    const m = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\/)(.+)$/.exec(videoUrl || '');
+    if(!m) return '';
+    const rest = m[2].replace(/\.[a-z0-9]+(\?.*)?$/i, '.jpg');
+    return `${m[1]}so_1,c_fill,w_800,h_450,q_auto/${rest}`;
+  }
+
   /* Turns a stored video reference into an inline embed. Supports an
      uploaded video file, a pasted YouTube/Vimeo/Facebook link (converted
      to an embeddable iframe), or any other URL (shown as a plain link). */
   function videoEmbedHtml(video){
     if(!video) return '';
     if(video.type === 'file' && video.file){
-      return `<div class="block-video"><video controls preload="metadata" src="${escapeHtml(video.file)}"></video></div>`;
+      const poster = cloudinaryVideoPosterUrl(video.file);
+      const posterAttr = poster ? ` poster="${escapeHtml(poster)}"` : '';
+      return `<div class="block-video"><video controls preload="metadata"${posterAttr} src="${escapeHtml(video.file)}"></video></div>`;
     }
     const url = (video.url || '').trim();
     if(!url) return '';
@@ -161,7 +176,8 @@
 
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
-    renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml
+    renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
+    cloudinaryVideoPosterUrl
   };
 
 })(window);

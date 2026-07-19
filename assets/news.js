@@ -4,6 +4,7 @@
 (function(window){
 
   const esc = window.MTHSite.escapeHtml;
+  const cloudinaryVideoPosterUrl = window.MTHSite.cloudinaryVideoPosterUrl;
 
   /* Published articles, newest first. Admin-created drafts (published:false)
      are excluded from public listings but still reachable directly if linked,
@@ -35,8 +36,11 @@
     const titleKm = (article.title && article.title.km) || title;
     const excerpt = (article.excerpt && article.excerpt.en) || '';
     const excerptKm = (article.excerpt && article.excerpt.km) || excerpt;
-    const cover = article.cover
-      ? `<div class="news-thumb" style="background-image:url('${esc(article.cover)}')"></div>`
+    const videoPoster = article.video && article.video.type === 'file'
+      ? cloudinaryVideoPosterUrl(article.video.file) : '';
+    const thumbImg = article.cover || videoPoster;
+    const cover = thumbImg
+      ? `<div class="news-thumb" style="background-image:url('${esc(thumbImg)}')"></div>`
       : `<div class="news-thumb news-thumb-empty"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16v14H4z" stroke="currentColor" stroke-width="1.6"/><path d="m4 15 4.5-4.5L12 14l3-3 5 5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/></svg></div>`;
     const draftTag = article.published === false
       ? '<span class="news-draft-tag">DRAFT</span>' : '';
@@ -65,7 +69,9 @@
   function videoEmbedHtml(video){
     if(!video) return '';
     if(video.type === 'file' && video.file){
-      return `<div class="news-video"><video controls preload="metadata" src="${esc(video.file)}"></video></div>`;
+      const poster = cloudinaryVideoPosterUrl(video.file);
+      const posterAttr = poster ? ` poster="${esc(poster)}"` : '';
+      return `<div class="news-video"><video controls preload="metadata"${posterAttr} src="${esc(video.file)}"></video></div>`;
     }
     const url = (video.url || '').trim();
     if(!url) return '';
