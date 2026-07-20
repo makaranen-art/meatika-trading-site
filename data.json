@@ -135,43 +135,6 @@
       ]
     },
     {
-      "id": "crypto",
-      "label": {
-        "en": "Crypto Partnership",
-        "km": "ភាពជាដៃគូគ្រីបតូ"
-      },
-      "cards": [
-        {
-          "id": "okx",
-          "title": "OKX",
-          "desc": {
-            "en": "Trade spot and futures with deep liquidity and low fees.",
-            "km": "ជួញដូរ Spot និង Futures ជាមួយសាច់ប្រាក់ងាយស្រួល និងកម្រៃទាប។"
-          },
-          "link": "https://okx.pro/join/45909682",
-          "icon": "squares",
-          "color": "#24262b",
-          "iconColor": "#dee2ea",
-          "wide": false,
-          "linkType": "url"
-        },
-        {
-          "id": "binance",
-          "title": "Binance",
-          "desc": {
-            "en": "World's largest exchange for spot, futures, and staking.",
-            "km": "ការផ្លាស់ប្តូរធំបំផុតលើពិភពលោក សម្រាប់ Spot, Futures និង Staking។"
-          },
-          "link": "https://www.binance.com/referral/earn-together/refer2earn-usdc/claim?hl=en&ref=GRO_28502_PZ929&utm_source=referral_entrance",
-          "icon": "diamonds",
-          "color": "#24262b",
-          "iconColor": "#dee2ea",
-          "wide": false,
-          "linkType": "url"
-        }
-      ]
-    },
-    {
       "id": "support",
       "label": {
         "en": "Chat for More Information ",
