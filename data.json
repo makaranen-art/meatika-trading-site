@@ -47,8 +47,8 @@
           },
           "link": "https://investizo.net/?pid=953004&cid=17754",
           "icon": "check",
-          "color": "#24262b",
-          "iconColor": "#c7ccd6",
+          "color": "#000105",
+          "iconColor": "#ffffff",
           "wide": false,
           "linkType": "url"
         },
@@ -61,8 +61,8 @@
           },
           "link": "https://web.mygtc.app/login/register?ref=130111321",
           "icon": "squares",
-          "color": "#24262b",
-          "iconColor": "#c7ccd6",
+          "color": "#000000",
+          "iconColor": "#ffffff",
           "wide": false,
           "linkType": "url"
         },
