@@ -131,6 +131,21 @@
           "color": "#24262b",
           "iconColor": "#d4af37",
           "wide": true
+        },
+        {
+          "id": "card-1784566975092",
+          "title": "Meatika Trading Youtube",
+          "desc": {
+            "en": "Youtube Channel of Meatika Trading",
+            "km": "Youtube Channel របស់​ Meatika Trading"
+          },
+          "linkType": "url",
+          "link": "https://www.youtube.com/@MeatikaTrading",
+          "pageId": "",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": false
         }
       ]
     },
