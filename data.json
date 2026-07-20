@@ -146,6 +146,21 @@
           "color": "#24262b",
           "iconColor": "#d4af37",
           "wide": false
+        },
+        {
+          "id": "card-1784567203194",
+          "title": "Meatika Trading Tiktok",
+          "desc": {
+            "en": "Official  Tiktok of Meatika Trading",
+            "km": "Tiktok ផ្លូវការរបស់​ Meatika Trading"
+          },
+          "linkType": "url",
+          "link": "https://www.tiktok.com/@meatikatrading",
+          "pageId": "",
+          "icon": "star",
+          "color": "#24262b",
+          "iconColor": "#d4af37",
+          "wide": false
         }
       ]
     },
