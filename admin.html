@@ -792,16 +792,19 @@ function renderPages(){
         </div>
 
         <div class="field">
-          <label>Page content — photo, video & text blocks</label>
+          <label>Page content — photo, video, text & form blocks</label>
           <p class="helptext" style="margin-bottom:10px;">
             Shown above this page's sections, in the order you add them. Good for a standalone "blank" page
-            (skip sections entirely), or as an intro above a card grid.
+            (skip sections entirely), or as an intro above a card grid. To build a lead-capture page (e.g.
+            "Register for exclusive educational content"), create a new page below and add just a
+            registration form block to it.
           </p>
           <div class="blocksHolder"></div>
           <div class="toolbar" style="margin-top:6px;">
             <button class="small" type="button" data-act="addTextBlock">+ Add text</button>
             <button class="small" type="button" data-act="addPhotoBlock">+ Add photo</button>
             <button class="small" type="button" data-act="addVideoBlock">+ Add video</button>
+            <button class="small" type="button" data-act="addFormBlock">+ Add registration form</button>
           </div>
         </div>
 
@@ -837,6 +840,10 @@ function renderPages(){
     });
     el.querySelector('[data-act="addVideoBlock"]').addEventListener('click', () => {
       page.blocks.push(newVideoBlock());
+      renderThisPageBlocks();
+    });
+    el.querySelector('[data-act="addFormBlock"]').addEventListener('click', () => {
+      page.blocks.push(newFormBlock());
       renderThisPageBlocks();
     });
 
@@ -875,6 +882,19 @@ function newPhotoBlock(){
 function newVideoBlock(){
   return { type:'video', id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), heading:{en:'',km:''}, video:{type:'url',url:'',file:''}, caption:{en:'',km:''} };
 }
+function newFormBlock(){
+  return {
+    type:'form',
+    id: 'block-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    heading:{en:'Register for Exclusive Educational Content', km:''},
+    text:{en:'Fill in your details below and our team will reach out with exclusive trading lessons and resources.', km:''},
+    endpoint:'',
+    accessKey:'',
+    notifyEmail:'',
+    success:{en:'Thank you! Our team will get back to you soon.', km:''},
+    privacy:{en:'We respect your privacy. We never spam or sell your information.', km:''}
+  };
+}
 
 /* Scales an image down to fit within maxDim (preserving aspect ratio, no
    crop/letterbox) — used for page photo blocks, where the original shape
@@ -903,7 +923,7 @@ function makeBlocksRenderer(wrapEl, page){
 function renderBlockItem(page, block, bIdx, onChange){
   const el = document.createElement('div');
   el.className = 'card-item';
-  const typeLabel = block.type === 'text' ? 'Text block' : block.type === 'photo' ? 'Photo block' : 'Video block';
+  const typeLabel = block.type === 'text' ? 'Text block' : block.type === 'photo' ? 'Photo block' : block.type === 'form' ? 'Registration form block' : 'Video block';
 
   const header = document.createElement('div');
   header.className = 'row2';
@@ -1050,6 +1070,61 @@ function renderBlockItem(page, block, bIdx, onChange){
         statusEl.className = 'status bad';
       }
     });
+  }
+
+  if(block.type === 'form'){
+    block.text = block.text || {en:'',km:''};
+    block.success = block.success || {en:'Thank you! Our team will get back to you soon.', km:''};
+    block.privacy = block.privacy || {en:'We respect your privacy. We never spam or sell your information.', km:''};
+    typeBody.innerHTML = `
+      <p class="helptext" style="margin-bottom:10px;">
+        Shows a fixed registration form: Full Name, Email, Phone Number, Telegram Username (optional),
+        and a Short Message — good for a "register for exclusive content" page. Submissions are sent
+        straight from the visitor's browser, since this site has no backend of its own. Three ways to
+        receive them (pick one): send directly to your email (below, simplest — no signup), a form
+        service that emails you automatically (Formspree/Web3Forms), or a Google Sheet — see
+        <code>google-sheets-setup.md</code> in the project files.
+      </p>
+      <div class="row">
+        <div class="field"><label>Intro text (English, optional)</label><textarea data-f="text-en" style="min-height:70px;">${escText(block.text.en)}</textarea></div>
+        <div class="field"><label>Intro text (Khmer, optional)</label><textarea data-f="text-km" style="min-height:70px;">${escText(block.text.km)}</textarea></div>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Send directly to your email (opens the visitor's email app — no signup needed)</label>
+        <input type="email" data-f="notifyEmail" placeholder="you@example.com" value="${escAttr(block.notifyEmail || '')}">
+      </div>
+      <p class="helptext" style="margin:4px 0 8px;">
+        If filled in, submitting opens a pre-filled email in the visitor's own email app addressed to you —
+        they just click Send. No account, key, or endpoint needed. The trade-off: it needs a working email
+        app on their device, and one extra click from them, so it's less reliable than the automatic options
+        below. Leave this blank to use one of those instead.
+      </p>
+      <div class="field" style="margin-top:8px;">
+        <label>Form submission endpoint (from Formspree, Web3Forms, etc. — ignored if "Send directly to your email" above is filled in)</label>
+        <input type="url" data-f="endpoint" placeholder="https://formspree.io/f/xxxxxxxx" value="${escAttr(block.endpoint)}">
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Access key (only needed for Web3Forms — get one free at web3forms.com, leave blank otherwise)</label>
+        <input type="text" data-f="accessKey" placeholder="e.g. a1b2c3d4-..." value="${escAttr(block.accessKey || '')}">
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div class="field"><label>Thank-you message (English)</label><input type="text" data-f="success-en" value="${escAttr(block.success.en)}"></div>
+        <div class="field"><label>Thank-you message (Khmer)</label><input type="text" data-f="success-km" value="${escAttr(block.success.km)}"></div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div class="field"><label>Privacy note (English)</label><input type="text" data-f="privacy-en" value="${escAttr(block.privacy.en)}"></div>
+        <div class="field"><label>Privacy note (Khmer)</label><input type="text" data-f="privacy-km" value="${escAttr(block.privacy.km)}"></div>
+      </div>
+    `;
+    typeBody.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
+    typeBody.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
+    typeBody.querySelector('[data-f="notifyEmail"]').addEventListener('input', e => block.notifyEmail = e.target.value);
+    typeBody.querySelector('[data-f="endpoint"]').addEventListener('input', e => block.endpoint = e.target.value);
+    typeBody.querySelector('[data-f="accessKey"]').addEventListener('input', e => block.accessKey = e.target.value);
+    typeBody.querySelector('[data-f="success-en"]').addEventListener('input', e => block.success.en = e.target.value);
+    typeBody.querySelector('[data-f="success-km"]').addEventListener('input', e => block.success.km = e.target.value);
+    typeBody.querySelector('[data-f="privacy-en"]').addEventListener('input', e => block.privacy.en = e.target.value);
+    typeBody.querySelector('[data-f="privacy-km"]').addEventListener('input', e => block.privacy.km = e.target.value);
   }
 
   el.appendChild(body);

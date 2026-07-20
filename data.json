@@ -225,6 +225,30 @@
           "wide": true
         }
       ]
+    },
+    {
+      "id": "section-education",
+      "label": {
+        "en": "Free Education",
+        "km": "ការអប់រំឥតគិតថ្លៃ"
+      },
+      "cards": [
+        {
+          "id": "card-exclusive-education",
+          "title": "Exclusive Educational Content",
+          "desc": {
+            "en": "Register to receive free, exclusive trading lessons and resources from our team.",
+            "km": "ចុះឈ្មោះដើម្បីទទួលបានមេរៀន Trading និងឯកសារផ្តាច់មុខឥតគិតថ្លៃពីក្រុមការងាររបស់យើង។"
+          },
+          "link": "",
+          "pageId": "exclusive-education-mt01",
+          "icon": "chart",
+          "color": "#2a2418",
+          "iconColor": "#d4af37",
+          "wide": true,
+          "linkType": "page"
+        }
+      ]
     }
   ],
   "pages": [
@@ -431,6 +455,43 @@
             "en": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321",
             "km": "⚠️សូមកុំភ្លេច ប្រើLink រឺ Invite Code របស់ Meatika Trading  🔗Link សម្រាប់ Register: https://web.mygtc.app/login/register?ref=130111321 ✔️Invite Code: 130111321"
           }
+        }
+      ],
+      "sections": []
+    },
+    {
+      "id": "exclusive-education-mt01",
+      "title": {
+        "en": "Exclusive Educational Content",
+        "km": "ខ្លឹមសារអប់រំផ្តាច់មុខ"
+      },
+      "hero": {
+        "en": "Register below to get free, exclusive trading lessons, guides and market insights from the Meatika Trading team — sent straight to you.",
+        "km": "ចុះឈ្មោះខាងក្រោមដើម្បីទទួលបានមេរៀន Trading ឯកសារណែនាំ និងការវិភាគទីផ្សារដោយឥតគិតថ្លៃ ផ្តាច់មុខពីក្រុម Meatika Trading — ផ្ញើផ្ទាល់មកអ្នក។"
+      },
+      "blocks": [
+        {
+          "type": "form",
+          "id": "block-formregister01",
+          "heading": {
+            "en": "Register for Exclusive Educational Content",
+            "km": "ចុះឈ្មោះទទួលខ្លឹមសារអប់រំផ្តាច់មុខ"
+          },
+          "text": {
+            "en": "Fill in your details below and our team will reach out with exclusive trading lessons and resources.",
+            "km": "បំពេញព័ត៌មានខាងក្រោម ហើយក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកជាមួយមេរៀន និងឯកសារ Trading ផ្តាច់មុខ។"
+          },
+          "endpoint": "",
+          "success": {
+            "en": "Thank you! Our team will get back to you soon.",
+            "km": "សូមអរគុណ! ក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកវិញឆាប់ៗនេះ។"
+          },
+          "privacy": {
+            "en": "We respect your privacy. We never spam or sell your information.",
+            "km": "យើងគោរពឯកជនភាពរបស់អ្នក។ យើងមិនដែលផ្ញើសារឥតបានការ ឬលក់ព័ត៌មានរបស់អ្នកឡើយ។"
+          },
+          "notifyEmail": "makaranen@gmail.com",
+          "accessKey": ""
         }
       ],
       "sections": []

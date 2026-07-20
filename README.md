@@ -6,6 +6,13 @@ Site content (links, titles, descriptions, cards, sections) now lives in **`data
 
 Admins can also create **pages** (internal subpages) right from `admin.html`. A page has its own title, intro text, and sections/cards — built with the exact same editor as the homepage. Any card, in any section, on the homepage or on another page, can be pointed at one of these pages instead of an external URL, so you can build multi-level menus entirely inside the site.
 
+A page can also include a **registration form block** — a fixed lead-capture form (Full Name, Email, Phone Number, optional Telegram Username, Short Message) for things like "register for exclusive educational content." Since the site has no backend, submissions are sent straight from the visitor's browser. Three ways to receive them, pick one per form:
+- **Straight to your email, no signup** — fill in "Send directly to your email" with your address. Submitting opens a pre-filled email in the visitor's own email app, addressed to you; they click Send. Zero setup, but relies on the visitor having a working email app and taking that one extra click.
+- **A form service that emails you automatically** — sign up free at [Web3Forms](https://web3forms.com) with your email (instant access key, no account) or [Formspree](https://formspree.io), then fill in "Form submission endpoint" (and "Access key" for Web3Forms). More reliable than the mailto option since delivery happens automatically, no click needed from the visitor.
+- **Straight into a Google Sheet** — see `google-sheets-setup.md` for the full walkthrough (uses the included `google-sheets-form-handler.gs` Apps Script). Paste the resulting Google Apps Script URL into "Form submission endpoint."
+
+A ready-made "Exclusive Educational Content" page with this form is already set up under **Pages** in `admin.html` (and linked from a "Free Education" card on the homepage), sending straight to an email address by default — open it to change or replace that address.
+
 The admin panel can also update the site's **logo (light/dark theme) and favicon** — upload any image and it's automatically resized and centered to match the site's existing logo/icon dimensions, so it always displays cleanly.
 
 Admins can also publish **news posts / articles** from `admin.html` — each one has a title, short excerpt, full text (English + Khmer), an optional cover photo, and an optional video (paste a YouTube/Facebook/Vimeo link, or upload a short video file directly). Every article automatically gets a **Share this article** row (Facebook, Telegram, X, WhatsApp, copy link) — nothing to configure. Articles can be saved as a draft (unchecking "Published") before going live on the public news list.
@@ -57,6 +64,8 @@ news.html                   News list — shows all published articles
 article.html                 Single article view — video embed, body text, social share buttons
 admin.html                     Password-gated editor for non-technical admins
 data.json                        All editable content: ticker, hero text, sections, cards, pages, news
+google-sheets-form-handler.gs      Apps Script code — appends registration-form submissions to a Google Sheet
+google-sheets-setup.md              Step-by-step guide for wiring the registration form to a Google Sheet
 favicon.ico                        Multi-size favicon
 assets/
   icons.js                            Shared icon set used by index.html, page.html and admin.html
@@ -93,7 +102,7 @@ assets/
    - Create one at [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new): restrict it to this one repository, and set **Contents → Read and write**.
 3. Click **Load current content**.
 4. Edit ticker items, hero text, or any section/card — add or remove cards and whole sections freely, change titles, descriptions (English + Khmer), links, icons, and colors.
-5. To add an internal subpage instead of an external link: scroll to the **Pages** panel and click **+ Add page** (or, on any card, set **Link type** to "Internal page" and choose "+ Create new page…"). Give the page a title and intro text, then add sections/cards to it exactly like you would on the homepage — a page can even link to other pages.
+5. To add an internal subpage instead of an external link: scroll to the **Pages** panel and click **+ Add page** (or, on any card, set **Link type** to "Internal page" and choose "+ Create new page…"). Give the page a title and intro text, then add sections/cards to it exactly like you would on the homepage — a page can even link to other pages. To add a registration form to any page, click **+ Add registration form** in that page's content-blocks toolbar, then paste in a form endpoint URL from a service like Formspree or Web3Forms (create a free form there first — it gives you the URL to paste in).
 6. To update the logo or favicon: open the **Branding** panel at the top, choose new image file(s), and click **Save logo & favicon** (separate from the content Save button, saves immediately).
 7. To publish news or an article: scroll to the **News & articles** panel and click **+ Add news / article**. Fill in the title, a short excerpt (shown on the news list), and the full text in English and Khmer. Optionally upload a cover photo, and optionally add a video — either paste a YouTube/Facebook/Vimeo link, or upload a short video file directly. If you added a cover photo or video file, click **Save uploaded news media** first, then click **Save changes** below to publish the article text. Uncheck **Published** to keep an article as a private draft (use **Preview article** to check it before publishing).
 8. Click **Save changes** for any content edits. The live site updates automatically within a minute or two.
