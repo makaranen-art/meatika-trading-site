@@ -1,27 +1,39 @@
-# Sending registration-form submissions to a Google Sheet
+# Sending registration-form submissions straight to your email
 
 The site's registration form block (Full Name, Email, Phone Number, Telegram
-Username, Short Message) can send every submission straight into a Google
-Sheet, with no backend server or paid service required. It works using a
-free Google Apps Script "Web App" attached to the sheet.
+Username, Short Message) can email every submission straight to
+**makaranen@gmail.com** the instant a visitor clicks Submit — no login for
+the visitor, no email app popping up, nothing else for them to click. It
+works using a free Google Apps Script "Web App," and doesn't require any
+third-party account beyond the Google account you already have.
 
-## 1. Create the sheet
+(It can *also* log every submission as a row in a Google Sheet at the same
+time, if you want a running record — that part is optional, see step 1b.)
 
-1. Go to [sheets.google.com](https://sheets.google.com) and create a new,
-   blank spreadsheet. Name it something like **Meatika Trading — Registrations**.
-2. Leave the first sheet/tab empty — the script fills in the header row for
-   you the first time it runs.
+## 1. Create the script
 
-## 2. Add the script
-
-1. In the sheet, go to **Extensions → Apps Script**. A new tab opens with a
-   code editor and a placeholder `Code.gs` file.
-2. Select all the placeholder code and delete it.
+1. Go to [script.google.com](https://script.google.com) and click **New project**.
+   A blank Google Sheet is **not** required for this — email sending works
+   on its own.
+2. Select all the placeholder code (`function myFunction() {}`) and delete it.
 3. Open `google-sheets-form-handler.gs` (included in this project) and paste
    its full contents into the editor.
-4. Click the save icon (or Ctrl/Cmd+S). You can rename the project at the
+4. Double-check the `NOTIFY_EMAIL` line near the top says
+   `makaranen@gmail.com` (it does by default).
+5. Click the save icon (or Ctrl/Cmd+S). You can rename the project at the
    top (e.g. "Registration form handler") if you like — it doesn't affect
    anything.
+
+### 1b. Optional: also log to a Google Sheet
+
+If you'd like a spreadsheet record in addition to the email, create a sheet
+at [sheets.google.com](https://sheets.google.com), then in the Apps Script
+editor go to **Resources / the "+" next to Services → Editor → Project
+Settings**, or simply open the script from **Extensions → Apps Script**
+*inside* that sheet instead of from script.google.com directly — either way,
+as soon as the script is bound to a sheet, it will start appending a row per
+submission automatically. If you skip this, the script still works fine —
+it just emails you and skips the sheet part silently.
 
 ## 3. Deploy it as a Web App
 
@@ -45,10 +57,15 @@ free Google Apps Script "Web App" attached to the sheet.
 2. Find the page with your registration form (e.g. "Exclusive Educational
    Content" under **Pages**), open its registration-form block.
 3. Paste the Web app URL into **Form submission endpoint**.
-4. Click **Save changes**.
+4. Make sure **Notify email** (the mailto field) is left **blank**. If it
+   has an address in it, the form falls back to opening the visitor's own
+   email app instead of submitting silently — only one of the two fields
+   should be filled in at a time.
+5. Click **Save changes**.
 
-That's it — submissions will now show up as new rows in your sheet within
-a second or two of someone submitting the form.
+That's it — from now on, the moment a visitor clicks **Submit**, you'll get
+an email at makaranen@gmail.com with their name, email, phone, Telegram, and
+message — no further click needed from them or you.
 
 ## Notes
 

@@ -463,7 +463,7 @@
       "id": "exclusive-education-mt01",
       "title": {
         "en": "Exclusive Educational Content",
-        "km": "ទទួលបានខ្លឹមសារអប់រំផ្តាច់មុខ"
+        "km": "ខ្លឹមសារអប់រំផ្តាច់មុខ"
       },
       "hero": {
         "en": "Register below to get free, exclusive trading lessons, guides and market insights from the Meatika Trading team — sent straight to you.",
@@ -481,7 +481,7 @@
             "en": "Fill in your details below and our team will reach out with exclusive trading lessons and resources.",
             "km": "បំពេញព័ត៌មានខាងក្រោម ហើយក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកជាមួយមេរៀន និងឯកសារ Trading ផ្តាច់មុខ។"
           },
-          "endpoint": "",
+          "endpoint": "https://api.web3forms.com/submit",
           "success": {
             "en": "Thank you! Our team will get back to you soon.",
             "km": "សូមអរគុណ! ក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកវិញឆាប់ៗនេះ។"
@@ -490,8 +490,8 @@
             "en": "We respect your privacy. We never spam or sell your information.",
             "km": "យើងគោរពឯកជនភាពរបស់អ្នក។ យើងមិនដែលផ្ញើសារឥតបានការ ឬលក់ព័ត៌មានរបស់អ្នកឡើយ។"
           },
-          "notifyEmail": "makaranen@gmail.com",
-          "accessKey": "1d6f2d2a-f23e-4212-b097-76ae0a9e572a"
+          "notifyEmail": "",
+          "accessKey": ""
         }
       ],
       "sections": []
