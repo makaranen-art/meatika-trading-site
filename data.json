@@ -453,8 +453,8 @@
       },
       "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784567684/blob_v2sylp.png",
       "video": {
-        "type": "file",
-        "url": "",
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=rBQTd4MYgnM",
         "file": ""
       },
       "published": true,
