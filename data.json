@@ -481,7 +481,7 @@
             "en": "Fill in your details below and our team will reach out with exclusive trading lessons and resources.",
             "km": "បំពេញព័ត៌មានខាងក្រោម ហើយក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកជាមួយមេរៀន និងឯកសារ Trading ផ្តាច់មុខ។"
           },
-          "endpoint": "https://api.web3forms.com/submit",
+          "endpoint": "https://script.google.com/macros/s/AKfycbyy-14X6VQ0sKU4lLjrlHg2YnGpgSvz1zA1C3bVKiKKaI5MvrTcMe-BUgmofJarjChw/exec",
           "success": {
             "en": "Thank you! Our team will get back to you soon.",
             "km": "សូមអរគុណ! ក្រុមការងាររបស់យើងនឹងទាក់ទងអ្នកវិញឆាប់ៗនេះ។"
@@ -491,7 +491,7 @@
             "km": "យើងគោរពឯកជនភាពរបស់អ្នក។ យើងមិនដែលផ្ញើសារឥតបានការ ឬលក់ព័ត៌មានរបស់អ្នកឡើយ។"
           },
           "notifyEmail": "makaranen@gmail.com",
-          "accessKey": "1d6f2d2a-f23e-4212-b097-76ae0a9e572a"
+          "accessKey": "AKfycbyy-14X6VQ0sKU4lLjrlHg2YnGpgSvz1zA1C3bVKiKKaI5MvrTcMe-BUgmofJarjChw"
         }
       ],
       "sections": []
