@@ -443,29 +443,5 @@
       "sections": []
     }
   ],
-  "news": [
-    {
-      "id": "news-welcome",
-      "title": {
-        "en": "Welcome to Meatika Trading News",
-        "km": "សូមស្វាគមន៍មកកាន់ព័ត៌មាន Meatika Trading"
-      },
-      "excerpt": {
-        "en": "This is where market updates, partner announcements, and community news will be posted.",
-        "km": "នេះជាកន្លែងដែលព័ត៌មានទីផ្សារ សេចក្តីប្រកាសពីដៃគូ និងព័ត៌មានសហគមន៍នឹងត្រូវបានបង្ហោះ។"
-      },
-      "body": {
-        "en": "Welcome to the Meatika Trading news page. From here, admins can publish updates about our broker and exchange partners, community announcements, and educational content — complete with photos, video, and one-tap sharing to social media.\n\nCheck back regularly for the latest updates from the Meatika Trading Network.",
-        "km": "សូមស្វាគមន៍មកកាន់ទំព័រព័ត៌មានរបស់ Meatika Trading។ ពីទីនេះ អ្នកគ្រប់គ្រងអាចបោះពុម្ពផ្សាយព័ត៌មានអំពីដៃគូឈ្មួញកណ្តាល និងការផ្លាស់ប្តូររបស់យើង ការប្រកាសសហគមន៍ និងខ្លឹមសារអប់រំ — ជាមួយរូបភាព វីដេអូ និងការចែករំលែកទៅបណ្តាញសង្គមយ៉ាងងាយស្រួល។\n\nសូមពិនិត្យមើលជាទៀងទាត់សម្រាប់ព័ត៌មានថ្មីៗពីបណ្តាញ Meatika Trading។"
-      },
-      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784441505/blob_nekahm.png",
-      "video": {
-        "type": "file",
-        "url": "https://www.youtube.com/watch?v=5U6aph_l_sk",
-        "file": "https://res.cloudinary.com/lisxurk1/video/upload/v1784447268/1000056525_cgz0eq.mp4"
-      },
-      "published": true,
-      "publishedAt": "2026-07-18T00:00:00.000Z"
-    }
-  ]
+  "news": []
 }
