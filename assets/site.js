@@ -246,16 +246,16 @@
     const telegramLink = String(block.telegramSupport || '').trim();
     const stepOne = (referralLink || referralCode) ? `
       <section class="registration-step">
-        <div class="step-heading"><span class="step-number">1</span><div><h3>Register using our referral</h3><p>Use the referral link or copy our referral code before you register with ${brokerName}.</p></div></div>
+        <div class="step-heading"><span class="step-number">1</span><div><h3 data-en="Register using our referral" data-km="ចុះឈ្មោះតាមតំណយោងរបស់យើង">Register using our referral</h3><p data-en="Use the referral link or copy our referral code before you register with ${brokerName}." data-km="សូមប្រើតំណយោង ឬចម្លងលេខកូដយោងរបស់យើង មុនពេលអ្នកចុះឈ្មោះជាមួយ ${brokerName}។">Use the referral link or copy our referral code before you register with ${brokerName}.</p></div></div>
         <div class="step-actions">
-          ${referralLink ? `<a class="step-button primary" href="${escapeHtml(referralLink)}" target="_blank" rel="noopener">Open referral link</a>` : ''}
-          ${referralCode ? `<button class="step-button secondary copy-referral" type="button" data-referral-code="${escapeHtml(referralCode)}">Copy referral code: <strong>${escapeHtml(referralCode)}</strong></button>` : ''}
+          ${referralLink ? `<a class="step-button primary" href="${escapeHtml(referralLink)}" target="_blank" rel="noopener" data-en="Open referral link" data-km="បើកតំណយោង">Open referral link</a>` : ''}
+          ${referralCode ? `<button class="step-button secondary copy-referral" type="button" data-referral-code="${escapeHtml(referralCode)}" data-en="Copy referral code: ${escapeHtml(referralCode)}" data-km="ចម្លងលេខកូដយោង៖ ${escapeHtml(referralCode)}">Copy referral code: ${escapeHtml(referralCode)}</button>` : ''}
         </div>
       </section>` : '';
     const stepThree = telegramLink ? `
       <section class="registration-step">
-        <div class="step-heading"><span class="step-number">3</span><div><h3>Send your registration screenshot</h3><p>Take a screenshot of your completed registration, then send it to Telegram Support for verification. Once verified, we will provide your textbook and video.</p></div></div>
-        <a class="step-button telegram-button" href="${escapeHtml(telegramLink)}" target="_blank" rel="noopener">Send screenshot to Telegram Support</a>
+        <div class="step-heading"><span class="step-number">3</span><div><h3 data-en="Send your registration screenshot" data-km="ផ្ញើរូបថតអេក្រង់នៃការចុះឈ្មោះរបស់អ្នក">Send your registration screenshot</h3><p data-en="Take a screenshot of your completed registration, then send it to Telegram Support for verification. Once verified, we will provide your textbook and video." data-km="សូមថតរូបអេក្រង់នៃការចុះឈ្មោះដែលបានបញ្ចប់រួច ហើយផ្ញើទៅ Telegram Support ដើម្បីផ្ទៀងផ្ទាត់។ បន្ទាប់ពីបានផ្ទៀងផ្ទាត់ យើងនឹងផ្តល់សៀវភៅ និងវីដេអូជូនអ្នក។">Take a screenshot of your completed registration, then send it to Telegram Support for verification. Once verified, we will provide your textbook and video.</p></div></div>
+        <a class="step-button telegram-button" href="${escapeHtml(telegramLink)}" target="_blank" rel="noopener" data-en="Send screenshot to Telegram Support" data-km="ផ្ញើរូបថតអេក្រង់ទៅ Telegram Support">Send screenshot to Telegram Support</a>
       </section>` : '';
 
     return `
@@ -264,7 +264,7 @@
         ${textHtml}
         ${stepOne}
         <section class="registration-step">
-          <div class="step-heading"><span class="step-number">2</span><div><h3>Fill in and submit the form</h3><p>Enter your registration details so our team can match your account.</p></div></div>
+          <div class="step-heading"><span class="step-number">2</span><div><h3 data-en="Fill in and submit the form" data-km="បំពេញ និងដាក់ស្នើទម្រង់">Fill in and submit the form</h3><p data-en="Enter your registration details so our team can match your account." data-km="សូមបញ្ចូលព័ត៌មានចុះឈ្មោះរបស់អ្នក ដើម្បីឱ្យក្រុមការងារយើងអាចផ្គូផ្គងគណនីរបស់អ្នកបាន។">Enter your registration details so our team can match your account.</p></div></div>
         <form class="reg-form" data-endpoint="${endpoint}" data-mailto="${mailto}" data-subject="${escapeHtml(subjectSource)}" data-success-en="${successEn}" data-success-km="${successKm}">
           ${hiddenFields}          <div class="field">
             <label data-en="Full Name" data-km="ឈ្មោះពេញ">Full Name</label>
@@ -316,9 +316,9 @@
         const original = button.innerHTML;
         try{
           await navigator.clipboard.writeText(code);
-          button.textContent = 'Referral code copied';
+          button.textContent = document.body.classList.contains('km') ? 'បានចម្លងលេខកូដយោងរួចហើយ' : 'Referral code copied';
         }catch(err){
-          button.textContent = 'Copy this code: ' + code;
+          button.textContent = document.body.classList.contains('km') ? 'ចម្លងលេខកូដនេះ៖ ' + code : 'Copy this code: ' + code;
         }
         setTimeout(() => { button.innerHTML = original; }, 1800);
       });
