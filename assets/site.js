@@ -188,7 +188,7 @@
      renders but tells the visitor registration isn't open yet instead of
      failing silently. */
   /* Optional "register with our broker first" referral block, shown above
-     the registration form. Lets the visitor copy the admin-configured
+     the registration form. Lets the visitor open the admin-configured
      affiliate/referral link and see which broker it's for, before filling
      in the form below. Renders nothing if the admin hasn't set a link or
      broker name yet. */
@@ -206,17 +206,15 @@
       : '';
     const linkRow = link
       ? `<div class="referral-link-row">
-           <input type="text" class="referral-link-input" readonly value="${linkAttr}" onclick="this.select()">
-           <button type="button" class="referral-copy-btn" data-copy-link="${linkAttr}" data-en="Copy" data-km="ចម្លង">Copy</button>
-           <a class="referral-visit-btn" href="${linkAttr}" target="_blank" rel="noopener noreferrer" data-en="Visit" data-km="ចូលទស្សនា">Visit</a>
+           <a class="referral-register-btn" href="${linkAttr}" target="_blank" rel="noopener noreferrer" data-en="Register" data-km="បើកគណនី">Register</a>
          </div>`
       : '';
     return `
       <div class="block-referral">
         ${brokerRow}
         ${linkRow}
-        <p class="referral-hint i18n-en">Register with this broker first using the link above, then fill in the form below to unlock exclusive content.</p>
-        <p class="referral-hint i18n-km">ចុះឈ្មោះជាមួយ broker នេះជាមុនសិន ដោយប្រើតំណខាងលើ រួចបំពេញទម្រង់ខាងក្រោមដើម្បីទទួលបានខ្លឹមសារផ្តាច់មុខ។</p>
+        <p class="referral-hint i18n-en">Register with this broker first using the button above, then fill in the form below to unlock exclusive content.</p>
+        <p class="referral-hint i18n-km">ចុះឈ្មោះជាមួយ broker នេះជាមុនសិន ដោយប្រើប៊ូតុងខាងលើ រួចបំពេញទម្រង់ខាងក្រោមដើម្បីទទួលបានខ្លឹមសារផ្តាច់មុខ។</p>
       </div>`;
   }
 
@@ -262,16 +260,8 @@
             <input type="tel" name="phone" required>
           </div>
           <div class="field">
-            <label data-en="Your Current Broker" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក">Your Current Broker</label>
-            <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX..." required>
-          </div>
-          <div class="field">
-            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (អាចរំលងបាន)">Telegram Username (optional)</label>
-            <input type="text" name="telegram" placeholder="@username">
-          </div>
-          <div class="field">
-            <label data-en="Registration Screenshot (optional)" data-km="រូបថតអេក្រង់នៃការចុះឈ្មោះ (អាចរំលងបាន)">Registration Screenshot (optional)</label>
-            <input type="file" name="screenshot" accept="image/*">
+            <label data-en="Registration Screenshot" data-km="រូបថតអេក្រង់នៃការចុះឈ្មោះ">Registration Screenshot</label>
+            <input type="file" name="screenshot" accept="image/*" required>
             <p class="field-hint i18n-en">Attach a screenshot showing you've registered with the broker above.</p>
             <p class="field-hint i18n-km">ភ្ជាប់រូបថតអេក្រង់បង្ហាញថាអ្នកបានចុះឈ្មោះជាមួយ broker ខាងលើរួចហើយ។</p>
           </div>
@@ -333,8 +323,6 @@
             'Full Name: ' + get('name'),
             'Email: ' + get('email'),
             'Phone Number: ' + get('phone'),
-            'Current Broker: ' + get('broker'),
-            'Telegram: ' + (get('telegram') || '-'),
             'Message: ' + (get('message') || '-'),
             'Screenshot: ' + (hasScreenshot ? '(please attach "' + screenshotFile.name + '" to this email before sending — mailto links can\u2019t attach files automatically)' : '-')
           ].join('\n');
@@ -383,40 +371,6 @@
     });
   }
 
-  /* Wires the "Copy" button on any rendered referral-link block so it
-     copies the admin-configured link to the clipboard and shows brief
-     "Copied!" feedback. Safe to call even when there's no referral block
-     on the page. Call once after inserting blocksHtml() into the DOM. */
-  function wireReferralCopy(root){
-    const scope = root || document;
-    scope.querySelectorAll('.referral-copy-btn').forEach(btn => {
-      if(btn.dataset.wired) return;
-      btn.dataset.wired = '1';
-      btn.addEventListener('click', async () => {
-        const link = btn.getAttribute('data-copy-link') || '';
-        const isKm = document.body.classList.contains('km');
-        const input = btn.parentElement ? btn.parentElement.querySelector('.referral-link-input') : null;
-        try{
-          if(navigator.clipboard && navigator.clipboard.writeText){
-            await navigator.clipboard.writeText(link);
-          } else if(input){
-            input.select();
-            document.execCommand('copy');
-          }
-        }catch(e){
-          if(input) input.select();
-        }
-        btn.textContent = isKm ? 'បានចម្លង!' : 'Copied!';
-        btn.classList.add('copied');
-        clearTimeout(btn._copyResetTimer);
-        btn._copyResetTimer = setTimeout(() => {
-          btn.textContent = document.body.classList.contains('km') ? 'ចម្លង' : 'Copy';
-          btn.classList.remove('copied');
-        }, 1800);
-      });
-    });
-  }
-
   /* ---- Load-in float animation ----
      Gives cards, sections, blocks and news items a subtle fade/float-in
      as soon as they're rendered — no scrolling required. A light stagger
@@ -444,7 +398,7 @@
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
     renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
-    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, wireReferralCopy, initReveal
+    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal
   };
 
 })(window);
