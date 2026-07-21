@@ -231,7 +231,7 @@
             <input type="text" name="telegram" placeholder="@username">
           </div>
           <div class="field">
-            <label data-en="Your Current Broker (optional)" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក ">Your Current Broker</label>
+            <label data-en="Your Current Broker" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក ">Your Current Broker</label>
             <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX...">
           </div>
           <div class="field">
