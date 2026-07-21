@@ -463,7 +463,7 @@
       "id": "exclusive-education-mt01",
       "title": {
         "en": "Exclusive Educational Content",
-        "km": "ទទួលបានខ្លឹមសារអប់រំផ្តាច់មុខ"
+        "km": "ខ្លឹមសារអប់រំផ្តាច់មុខ"
       },
       "hero": {
         "en": "Register below to get free, exclusive trading lessons, guides and market insights from the Meatika Trading team — sent straight to you.",
@@ -491,7 +491,11 @@
             "km": "យើងគោរពឯកជនភាពរបស់អ្នក។ យើងមិនដែលផ្ញើសារឥតបានការ ឬលក់ព័ត៌មានរបស់អ្នកឡើយ។"
           },
           "notifyEmail": "",
-          "accessKey": ""
+          "accessKey": "",
+          "referral": {
+            "brokerName": "",
+            "link": ""
+          }
         }
       ],
       "sections": []

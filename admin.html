@@ -892,7 +892,8 @@ function newFormBlock(){
     accessKey:'',
     notifyEmail:'',
     success:{en:'Thank you! Our team will get back to you soon.', km:''},
-    privacy:{en:'We respect your privacy. We never spam or sell your information.', km:''}
+    privacy:{en:'We respect your privacy. We never spam or sell your information.', km:''},
+    referral:{brokerName:'', link:''}
   };
 }
 
@@ -1076,6 +1077,7 @@ function renderBlockItem(page, block, bIdx, onChange){
     block.text = block.text || {en:'',km:''};
     block.success = block.success || {en:'Thank you! Our team will get back to you soon.', km:''};
     block.privacy = block.privacy || {en:'We respect your privacy. We never spam or sell your information.', km:''};
+    block.referral = block.referral || {brokerName:'', link:''};
     typeBody.innerHTML = `
       <p class="helptext" style="margin-bottom:10px;">
         Shows a fixed registration form: Full Name, Email, Phone Number, Telegram Username (optional),
@@ -1085,6 +1087,15 @@ function renderBlockItem(page, block, bIdx, onChange){
         service that emails you automatically (Formspree/Web3Forms), or a Google Sheet — see
         <code>google-sheets-setup.md</code> in the project files.
       </p>
+      <p class="helptext" style="margin:0 0 8px;">
+        <strong>Referral link (optional):</strong> shows a "register with our broker" box above the
+        form with the broker name and a Copy button for the visitor's referral/affiliate link. Leave
+        both fields blank to hide this box.
+      </p>
+      <div class="row" style="margin-bottom:12px;">
+        <div class="field"><label>Broker name</label><input type="text" data-f="referral-broker" placeholder="e.g. Investizo" value="${escAttr(block.referral.brokerName)}"></div>
+        <div class="field"><label>Referral / affiliate link</label><input type="url" data-f="referral-link" placeholder="https://broker.com/ref/your-code" value="${escAttr(block.referral.link)}"></div>
+      </div>
       <div class="row">
         <div class="field"><label>Intro text (English, optional)</label><textarea data-f="text-en" style="min-height:70px;">${escText(block.text.en)}</textarea></div>
         <div class="field"><label>Intro text (Khmer, optional)</label><textarea data-f="text-km" style="min-height:70px;">${escText(block.text.km)}</textarea></div>
@@ -1116,6 +1127,8 @@ function renderBlockItem(page, block, bIdx, onChange){
         <div class="field"><label>Privacy note (Khmer)</label><input type="text" data-f="privacy-km" value="${escAttr(block.privacy.km)}"></div>
       </div>
     `;
+    typeBody.querySelector('[data-f="referral-broker"]').addEventListener('input', e => block.referral.brokerName = e.target.value);
+    typeBody.querySelector('[data-f="referral-link"]').addEventListener('input', e => block.referral.link = e.target.value);
     typeBody.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
     typeBody.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
     typeBody.querySelector('[data-f="notifyEmail"]').addEventListener('input', e => block.notifyEmail = e.target.value);
