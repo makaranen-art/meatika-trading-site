@@ -19,5 +19,5 @@ window.MTH_ICONS = {
 /* Returns the inner SVG markup for `key`, with `color` substituted in. */
 window.mthIconSvg = function(key, color){
   var tpl = window.MTH_ICONS[key] || window.MTH_ICONS.star;
-  return tpl.split('{c}').join(color || '#dee2ea');
+  return tpl.split('{c}').join(color || '#efe3e6');
 };

@@ -335,68 +335,34 @@
     });
   }
 
-  /* ---- Scroll-reveal animation ----
-     Gives cards, sections, blocks and news items a subtle fade/slide-in
-     as they enter the viewport, with a light stagger so groups of items
-     don't all pop in at once. Purely additive: it just toggles a class,
-     the actual motion lives in each page's CSS (.reveal / .is-visible)
-     so it can respect prefers-reduced-motion there.
+  /* ---- Load-in float animation ----
+     Gives cards, sections, blocks and news items a subtle fade/float-in
+     as soon as they're rendered — no scrolling required. A light stagger
+     keeps groups of items from all popping in at once. Purely additive:
+     it just toggles a class, the actual motion lives in each page's CSS
+     (.reveal / .is-visible) so it can respect prefers-reduced-motion there.
      Call initReveal() (optionally with a container element) right after
      injecting any dynamic HTML — sections, cards, blocks, news list —
      so newly-added elements get picked up. Safe to call repeatedly;
      elements already wired are skipped. */
   const REVEAL_SELECTOR = '.card, .section, .block, .news-card, .art-cover, .art-header';
-  let revealObserver = null;
-  function ensureRevealObserver(){
-    if(revealObserver || typeof IntersectionObserver === 'undefined') return revealObserver;
-    revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-    return revealObserver;
-  }
   function initReveal(root){
     const scope = root || document;
-    const obs = ensureRevealObserver();
     const items = scope.querySelectorAll ? scope.querySelectorAll(REVEAL_SELECTOR) : [];
     items.forEach((el, i) => {
       if(el.classList.contains('reveal')) return;
       el.classList.add('reveal');
       el.style.transitionDelay = (Math.min(i, 9) * 55) + 'ms';
-      if(obs) obs.observe(el);
-      else el.classList.add('is-visible'); // no IO support: just show it
+      // Two rAFs so the browser paints the initial (hidden) state first,
+      // then transitions into view — a simple load-time float-in.
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-visible')));
     });
-  }
-
-  /* ---- Scroll-down cue ----
-     A small bouncing arrow shown under the hero, hinting that there's
-     more content below. Hidden automatically if the page is short enough
-     that there's nothing to scroll to, and fades out permanently once the
-     visitor actually starts scrolling. Call after hero/content is in the
-     DOM (layout needs to be final for the height check to be accurate). */
-  function initScrollCue(id){
-    const cue = document.getElementById(id || 'scrollCue');
-    if(!cue || cue.dataset.wired) return;
-    cue.dataset.wired = '1';
-    const hasRoom = document.documentElement.scrollHeight > window.innerHeight + 60;
-    if(!hasRoom){ cue.classList.add('hide'); return; }
-    const onScroll = () => {
-      if(window.scrollY > 40){
-        cue.classList.add('hide');
-        window.removeEventListener('scroll', onScroll);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
   }
 
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
     renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
-    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal, initScrollCue
+    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal
   };
 
 })(window);

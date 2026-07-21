@@ -42,20 +42,20 @@
 
     var palette = {
       dark: {
-        up: 'rgba(120, 235, 255, ALPHA)',     // cyan
-        down: 'rgba(196, 140, 255, ALPHA)',   // violet
-        line: 'rgba(160, 200, 255, ALPHA)',
-        dot: 'rgba(255, 214, 120, ALPHA)',    // gold accent dots
+        up: 'rgba(255, 90, 130, ALPHA)',      // pink
+        down: 'rgba(200, 200, 210, ALPHA)',   // grey
+        line: 'rgba(255, 130, 160, ALPHA)',
+        dot: 'rgba(255, 47, 95, ALPHA)',      // crimson accent dots
         bodyAlpha: 0.55,
         wickAlpha: 0.4,
         lineAlpha: 0.22,
         glow: 10
       },
       light: {
-        up: 'rgba(20, 130, 150, ALPHA)',
-        down: 'rgba(140, 80, 200, ALPHA)',
-        line: 'rgba(60, 90, 150, ALPHA)',
-        dot: 'rgba(180, 130, 20, ALPHA)',
+        up: 'rgba(200, 20, 70, ALPHA)',
+        down: 'rgba(120, 100, 105, ALPHA)',
+        line: 'rgba(180, 60, 90, ALPHA)',
+        dot: 'rgba(200, 27, 74, ALPHA)',
         bodyAlpha: 0.16,
         wickAlpha: 0.12,
         lineAlpha: 0.10,
