@@ -227,8 +227,12 @@
             <input type="tel" name="phone" required>
           </div>
           <div class="field">
-            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (មិនចាំបាច់)">Telegram Username (optional)</label>
+            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (អាចរំលងបាន)">Telegram Username (optional)</label>
             <input type="text" name="telegram" placeholder="@username">
+          </div>
+          <div class="field">
+            <label data-en="Your Current Broker (optional)" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក (អាចរំលងបាន)">Your Current Broker (optional)</label>
+            <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX...">
           </div>
           <div class="field">
             <label data-en="Short Message" data-km="សារខ្លី">Short Message</label>
@@ -287,6 +291,7 @@
             'Email: ' + get('email'),
             'Phone Number: ' + get('phone'),
             'Telegram: ' + (get('telegram') || '-'),
+            'Current Broker: ' + (get('broker') || '-'),
             'Message: ' + (get('message') || '-')
           ].join('\n');
           window.location.href = 'mailto:' + encodeURIComponent(mailto) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
@@ -330,10 +335,47 @@
     });
   }
 
+  /* ---- Scroll-reveal animation ----
+     Gives cards, sections, blocks and news items a subtle fade/slide-in
+     as they enter the viewport, with a light stagger so groups of items
+     don't all pop in at once. Purely additive: it just toggles a class,
+     the actual motion lives in each page's CSS (.reveal / .is-visible)
+     so it can respect prefers-reduced-motion there.
+     Call initReveal() (optionally with a container element) right after
+     injecting any dynamic HTML — sections, cards, blocks, news list —
+     so newly-added elements get picked up. Safe to call repeatedly;
+     elements already wired are skipped. */
+  const REVEAL_SELECTOR = '.card, .section, .block, .news-card, .art-cover, .art-header';
+  let revealObserver = null;
+  function ensureRevealObserver(){
+    if(revealObserver || typeof IntersectionObserver === 'undefined') return revealObserver;
+    revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    return revealObserver;
+  }
+  function initReveal(root){
+    const scope = root || document;
+    const obs = ensureRevealObserver();
+    const items = scope.querySelectorAll ? scope.querySelectorAll(REVEAL_SELECTOR) : [];
+    items.forEach((el, i) => {
+      if(el.classList.contains('reveal')) return;
+      el.classList.add('reveal');
+      el.style.transitionDelay = (Math.min(i, 9) * 55) + 'ms';
+      if(obs) obs.observe(el);
+      else el.classList.add('is-visible'); // no IO support: just show it
+    });
+  }
+
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
     renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
-    cloudinaryVideoPosterUrl, formBlockHtml, wireForms
+    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal
   };
 
 })(window);
