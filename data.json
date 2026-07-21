@@ -494,8 +494,10 @@
           "accessKey": "",
           "referral": {
             "brokerName": "GTC FX",
-            "link": "https://web.mygtc.app/login/register?ref=130111321"
-          }
+            "link": "https://web.mygtc.app/login/register?ref=130111321",
+            "code": "130111321"
+          },
+          "telegramSupport": "https://t.me/MeatikaSupport"
         }
       ],
       "sections": []

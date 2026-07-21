@@ -893,7 +893,8 @@ function newFormBlock(){
     notifyEmail:'',
     success:{en:'Thank you! Our team will get back to you soon.', km:''},
     privacy:{en:'We respect your privacy. We never spam or sell your information.', km:''},
-    referral:{brokerName:'', link:''}
+    referral:{brokerName:'', link:'', code:''},
+    telegramSupport:''
   };
 }
 
@@ -1077,11 +1078,13 @@ function renderBlockItem(page, block, bIdx, onChange){
     block.text = block.text || {en:'',km:''};
     block.success = block.success || {en:'Thank you! Our team will get back to you soon.', km:''};
     block.privacy = block.privacy || {en:'We respect your privacy. We never spam or sell your information.', km:''};
-    block.referral = block.referral || {brokerName:'', link:''};
+    block.referral = block.referral || {brokerName:'', link:'', code:''};
+    if(typeof block.referral.code !== 'string') block.referral.code = '';
+    if(typeof block.telegramSupport !== 'string') block.telegramSupport = '';
     typeBody.innerHTML = `
       <p class="helptext" style="margin-bottom:10px;">
-        Shows a fixed registration form: Full Name, Email, Phone Number, Registration Screenshot
-        (required), and a Short Message — good for a "register for exclusive content" page.
+        Shows a three-step registration flow. Step 2 collects Full Name, Email, and Phone Number.
+        Screenshot upload and short message fields have been removed; Step 3 sends screenshots to Telegram Support.
         Submissions are sent straight from the visitor's browser, since this site has no backend of
         its own. Three ways to receive them (pick one): send directly to your email (below, simplest
         — no signup), a form service that emails you automatically (Formspree/Web3Forms), or a Google
@@ -1095,6 +1098,10 @@ function renderBlockItem(page, block, bIdx, onChange){
       <div class="row" style="margin-bottom:12px;">
         <div class="field"><label>Broker name</label><input type="text" data-f="referral-broker" placeholder="e.g. Investizo" value="${escAttr(block.referral.brokerName)}"></div>
         <div class="field"><label>Referral / affiliate link</label><input type="url" data-f="referral-link" placeholder="https://broker.com/ref/your-code" value="${escAttr(block.referral.link)}"></div>
+      </div>
+      <div class="row" style="margin-bottom:12px;">
+        <div class="field"><label>Referral code</label><input type="text" data-f="referral-code" placeholder="e.g. 130111321" value="${escAttr(block.referral.code)}"></div>
+        <div class="field"><label>Telegram Support chat link</label><input type="url" data-f="telegram-support" placeholder="https://t.me/your_support" value="${escAttr(block.telegramSupport)}"></div>
       </div>
       <div class="row">
         <div class="field"><label>Intro text (English, optional)</label><textarea data-f="text-en" style="min-height:70px;">${escText(block.text.en)}</textarea></div>
@@ -1129,6 +1136,8 @@ function renderBlockItem(page, block, bIdx, onChange){
     `;
     typeBody.querySelector('[data-f="referral-broker"]').addEventListener('input', e => block.referral.brokerName = e.target.value);
     typeBody.querySelector('[data-f="referral-link"]').addEventListener('input', e => block.referral.link = e.target.value);
+    typeBody.querySelector('[data-f="referral-code"]').addEventListener('input', e => block.referral.code = e.target.value);
+    typeBody.querySelector('[data-f="telegram-support"]').addEventListener('input', e => block.telegramSupport = e.target.value);
     typeBody.querySelector('[data-f="text-en"]').addEventListener('input', e => block.text.en = e.target.value);
     typeBody.querySelector('[data-f="text-km"]').addEventListener('input', e => block.text.km = e.target.value);
     typeBody.querySelector('[data-f="notifyEmail"]').addEventListener('input', e => block.notifyEmail = e.target.value);

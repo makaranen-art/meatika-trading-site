@@ -208,11 +208,32 @@
       ? `<input type="hidden" name="access_key" value="${accessKey}"><input type="hidden" name="subject" value="New registration — ${escapeHtml(subjectSource)}">`
       : '';
     const mailto = escapeHtml(block.notifyEmail || '');
+    const referral = block.referral || {};
+    const referralLink = String(referral.link || '').trim();
+    const referralCode = String(referral.code || '').trim();
+    const brokerName = escapeHtml(referral.brokerName || 'our partner');
+    const telegramLink = String(block.telegramSupport || '').trim();
+    const stepOne = (referralLink || referralCode) ? `
+      <section class="registration-step">
+        <div class="step-heading"><span class="step-number">1</span><div><h3>Register using our referral</h3><p>Use the referral link or copy our referral code before you register with ${brokerName}.</p></div></div>
+        <div class="step-actions">
+          ${referralLink ? `<a class="step-button primary" href="${escapeHtml(referralLink)}" target="_blank" rel="noopener">Open referral link</a>` : ''}
+          ${referralCode ? `<button class="step-button secondary copy-referral" type="button" data-referral-code="${escapeHtml(referralCode)}">Copy referral code: <strong>${escapeHtml(referralCode)}</strong></button>` : ''}
+        </div>
+      </section>` : '';
+    const stepThree = telegramLink ? `
+      <section class="registration-step">
+        <div class="step-heading"><span class="step-number">3</span><div><h3>Send your registration screenshot</h3><p>Take a screenshot of your completed registration, then send it to Telegram Support for verification. Once verified, we will provide your textbook and video.</p></div></div>
+        <a class="step-button telegram-button" href="${escapeHtml(telegramLink)}" target="_blank" rel="noopener">Send screenshot to Telegram Support</a>
+      </section>` : '';
 
     return `
       <div class="block block-form">
         ${heading}
         ${textHtml}
+        ${stepOne}
+        <section class="registration-step">
+          <div class="step-heading"><span class="step-number">2</span><div><h3>Fill in and submit the form</h3><p>Enter your registration details so our team can match your account.</p></div></div>
         <form class="reg-form" data-endpoint="${endpoint}" data-mailto="${mailto}" data-subject="${escapeHtml(subjectSource)}" data-success-en="${successEn}" data-success-km="${successKm}">
           ${hiddenFields}          <div class="field">
             <label data-en="Full Name" data-km="ឈ្មោះពេញ">Full Name</label>
@@ -236,11 +257,12 @@
           </div>
           <div class="field">
             <label data-en="Short Message" data-km="សារខ្លី">Short Message</label>
-            <textarea name="message" rows="3"></textarea>
           </div>
           <button type="submit" class="reg-submit" data-en="Submit" data-km="ដាក់ស្នើ">Submit</button>
           <p class="form-status" hidden></p>
         </form>
+        </section>
+        ${stepThree}
         <p class="block-caption form-privacy i18n-en">${escapeHtml(privacyEn)}</p>
         <p class="block-caption form-privacy i18n-km">${escapeHtml(privacyKm)}</p>
       </div>`;
@@ -261,6 +283,21 @@
      when there are no forms present. */
   function wireForms(root){
     const scope = root || document;
+    scope.querySelectorAll('.copy-referral').forEach(button => {
+      if(button.dataset.wired) return;
+      button.dataset.wired = '1';
+      button.addEventListener('click', async () => {
+        const code = button.dataset.referralCode || '';
+        const original = button.innerHTML;
+        try{
+          await navigator.clipboard.writeText(code);
+          button.textContent = 'Referral code copied';
+        }catch(err){
+          button.textContent = 'Copy this code: ' + code;
+        }
+        setTimeout(() => { button.innerHTML = original; }, 1800);
+      });
+    });
     scope.querySelectorAll('form.reg-form').forEach(form => {
       if(form.dataset.wired) return;
       form.dataset.wired = '1';
@@ -291,8 +328,7 @@
             'Email: ' + get('email'),
             'Phone Number: ' + get('phone'),
             'Telegram: ' + (get('telegram') || '-'),
-            'Current Broker: ' + (get('broker') || '-'),
-            'Message: ' + (get('message') || '-')
+            'Current Broker: ' + (get('broker') || '-')
           ].join('\n');
           window.location.href = 'mailto:' + encodeURIComponent(mailto) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
           setStatus(isKm()

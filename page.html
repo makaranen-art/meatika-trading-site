@@ -276,6 +276,29 @@
   .form-status.ok{ color:var(--gold-300); font-weight:600; }
   .form-status.bad{ color:#e77; font-weight:600; }
   .form-privacy{ margin-top:14px; }
+  .reg-form .field:has(label[data-en="Short Message"]),
+  .reg-form .field:has(label[data-en="Registration Screenshot"]){ display:none; }
+  .registration-step{
+    margin:0 0 18px; padding:18px; border:1px solid var(--glass-2-border);
+    border-radius:14px; background:var(--glass-2-bg);
+  }
+  .step-heading{ display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .step-number{
+    width:28px; height:28px; flex:0 0 28px; display:grid; place-items:center;
+    border-radius:50%; background:var(--gold-500); color:var(--ink-900);
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+  }
+  .step-heading h3{ margin:1px 0 5px; color:var(--paper); font-size:16px; }
+  .step-heading p{ margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+  .step-actions{ display:flex; flex-wrap:wrap; gap:9px; }
+  .step-button{
+    padding:11px 14px; border:0; border-radius:9px; font:700 13px 'Space Grotesk',sans-serif;
+    text-decoration:none; cursor:pointer; display:inline-flex; justify-content:center; align-items:center;
+  }
+  .step-button.primary, .reg-submit{ background:linear-gradient(135deg,var(--gold-500),var(--gold-300)); color:var(--ink-900); }
+  .step-button.secondary{ background:transparent; color:var(--gold-300); border:1px solid var(--gold-500); }
+  .telegram-button{ width:100%; background:#229ED9; color:#fff; }
+  .step-button:hover{ filter:brightness(1.06); transform:translateY(-1px); }
 
   /* ---- Referral / affiliate link block (shown above the reg form) ---- */
   .block-referral{
