@@ -187,11 +187,44 @@
      visible in data.json). If no endpoint is configured yet, the form still
      renders but tells the visitor registration isn't open yet instead of
      failing silently. */
+  /* Optional "register with our broker first" referral block, shown above
+     the registration form. Lets the visitor copy the admin-configured
+     affiliate/referral link and see which broker it's for, before filling
+     in the form below. Renders nothing if the admin hasn't set a link or
+     broker name yet. */
+  function referralHtml(referral){
+    const r = referral || {};
+    const link = (r.link || '').trim();
+    const broker = (r.brokerName || '').trim();
+    if(!link && !broker) return '';
+    const linkAttr = escapeHtml(link);
+    const brokerRow = broker
+      ? `<div class="referral-row">
+           <span class="referral-tag" data-en="Broker" data-km="ឈ្មោះ Broker">Broker</span>
+           <span class="referral-broker">${escapeHtml(broker)}</span>
+         </div>`
+      : '';
+    const linkRow = link
+      ? `<div class="referral-link-row">
+           <input type="text" class="referral-link-input" readonly value="${linkAttr}" onclick="this.select()">
+           <button type="button" class="referral-copy-btn" data-copy-link="${linkAttr}" data-en="Copy" data-km="ចម្លង">Copy</button>
+         </div>`
+      : '';
+    return `
+      <div class="block-referral">
+        ${brokerRow}
+        ${linkRow}
+        <p class="referral-hint i18n-en">Register with this broker first using the link above, then fill in the form below to unlock exclusive content.</p>
+        <p class="referral-hint i18n-km">ចុះឈ្មោះជាមួយ broker នេះជាមុនសិន ដោយប្រើតំណខាងលើ រួចបំពេញទម្រង់ខាងក្រោមដើម្បីទទួលបានខ្លឹមសារផ្តាច់មុខ។</p>
+      </div>`;
+  }
+
   function formBlockHtml(block, heading){
     const text = block.text || {};
     const textEn = textBlockParagraphs(text.en);
     const textKm = textBlockParagraphs(text.km || text.en);
     const textHtml = (textEn || textKm) ? `<div class="block-text"><div class="i18n-en">${textEn}</div><div class="i18n-km">${textKm}</div></div>` : '';
+    const referral = referralHtml(block.referral);
 
     const success = block.success || {};
     const successEn = escapeHtml(success.en || 'Thank you! Our team will get back to you soon.');
@@ -213,6 +246,7 @@
       <div class="block block-form">
         ${heading}
         ${textHtml}
+        ${referral}
         <form class="reg-form" data-endpoint="${endpoint}" data-mailto="${mailto}" data-subject="${escapeHtml(subjectSource)}" data-success-en="${successEn}" data-success-km="${successKm}">
           ${hiddenFields}          <div class="field">
             <label data-en="Full Name" data-km="ឈ្មោះពេញ">Full Name</label>
@@ -335,6 +369,40 @@
     });
   }
 
+  /* Wires the "Copy" button on any rendered referral-link block so it
+     copies the admin-configured link to the clipboard and shows brief
+     "Copied!" feedback. Safe to call even when there's no referral block
+     on the page. Call once after inserting blocksHtml() into the DOM. */
+  function wireReferralCopy(root){
+    const scope = root || document;
+    scope.querySelectorAll('.referral-copy-btn').forEach(btn => {
+      if(btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      btn.addEventListener('click', async () => {
+        const link = btn.getAttribute('data-copy-link') || '';
+        const isKm = document.body.classList.contains('km');
+        const input = btn.parentElement ? btn.parentElement.querySelector('.referral-link-input') : null;
+        try{
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            await navigator.clipboard.writeText(link);
+          } else if(input){
+            input.select();
+            document.execCommand('copy');
+          }
+        }catch(e){
+          if(input) input.select();
+        }
+        btn.textContent = isKm ? 'បានចម្លង!' : 'Copied!';
+        btn.classList.add('copied');
+        clearTimeout(btn._copyResetTimer);
+        btn._copyResetTimer = setTimeout(() => {
+          btn.textContent = document.body.classList.contains('km') ? 'ចម្លង' : 'Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    });
+  }
+
   /* ---- Load-in float animation ----
      Gives cards, sections, blocks and news items a subtle fade/float-in
      as soon as they're rendered — no scrolling required. A light stagger
@@ -362,7 +430,7 @@
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
     renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
-    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal
+    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, wireReferralCopy, initReveal
   };
 
 })(window);
