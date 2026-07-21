@@ -227,12 +227,12 @@
             <input type="tel" name="phone" required>
           </div>
           <div class="field">
-            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (ជម្រើស)">Telegram Username (optional)</label>
-            <input type="text" name="telegram" placeholder="@username">
+            <label data-en="Your Current Broker" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក">Your Current Broker</label>
+            <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX..." required>
           </div>
           <div class="field">
-            <label data-en="Your Current Broker" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក ">Your Current Broker</label>
-            <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX...">
+            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (អាចរំលងបាន)">Telegram Username (optional)</label>
+            <input type="text" name="telegram" placeholder="@username">
           </div>
           <div class="field">
             <label data-en="Short Message" data-km="សារខ្លី">Short Message</label>
@@ -290,8 +290,8 @@
             'Full Name: ' + get('name'),
             'Email: ' + get('email'),
             'Phone Number: ' + get('phone'),
+            'Current Broker: ' + get('broker'),
             'Telegram: ' + (get('telegram') || '-'),
-            'Current Broker: ' + (get('broker') || '-'),
             'Message: ' + (get('message') || '-')
           ].join('\n');
           window.location.href = 'mailto:' + encodeURIComponent(mailto) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
@@ -372,10 +372,31 @@
     });
   }
 
+  /* ---- Scroll-down cue ----
+     A small bouncing arrow shown under the hero, hinting that there's
+     more content below. Hidden automatically if the page is short enough
+     that there's nothing to scroll to, and fades out permanently once the
+     visitor actually starts scrolling. Call after hero/content is in the
+     DOM (layout needs to be final for the height check to be accurate). */
+  function initScrollCue(id){
+    const cue = document.getElementById(id || 'scrollCue');
+    if(!cue || cue.dataset.wired) return;
+    cue.dataset.wired = '1';
+    const hasRoom = document.documentElement.scrollHeight > window.innerHeight + 60;
+    if(!hasRoom){ cue.classList.add('hide'); return; }
+    const onScroll = () => {
+      if(window.scrollY > 40){
+        cue.classList.add('hide');
+        window.removeEventListener('scroll', onScroll);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
   window.MTHSite = {
     escapeHtml, cardHref, isInternal, cardHtml, sectionHtml, sectionsHtml,
     renderTicker, loadData, findPage, videoEmbedHtml, blockHtml, blocksHtml,
-    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal
+    cloudinaryVideoPosterUrl, formBlockHtml, wireForms, initReveal, initScrollCue
   };
 
 })(window);
