@@ -246,9 +246,9 @@
     const telegramLink = String(block.telegramSupport || '').trim();
     const stepOne = (referralLink || referralCode) ? `
       <section class="registration-step">
-        <div class="step-heading"><span class="step-number">1</span><div><h3 data-en="Register using our referral" data-km="ចុះឈ្មោះតាមតំណយោងរបស់យើង">Register using our referral</h3><p data-en="Use the referral link or copy our referral code before you register with ${brokerName}." data-km="សូមប្រើតំណយោង ឬចម្លងលេខកូដយោងរបស់យើង មុនពេលអ្នកចុះឈ្មោះជាមួយ ${brokerName}។">Use the referral link or copy our referral code before you register with ${brokerName}.</p></div></div>
+        <div class="step-heading"><span class="step-number">1</span><div><h3 data-en="Register Via Referral" data-km="ចុះឈ្មោះក្រោម Referral">Register via referral</h3><p data-en="Use the referral link or copy our referral code before you register with ${brokerName}." data-km="សូមប្រើតំណយោង ឬចម្លងលេខកូដយោងរបស់យើង មុនពេលអ្នកចុះឈ្មោះជាមួយ ${brokerName}។">Use the referral link or copy our referral code before you register with ${brokerName}.</p></div></div>
         <div class="step-actions">
-          ${referralLink ? `<a class="step-button primary" href="${escapeHtml(referralLink)}" target="_blank" rel="noopener" data-en="Open referral link" data-km="បើកតំណយោង">Open referral link</a>` : ''}
+          ${referralLink ? `<a class="step-button primary" href="${escapeHtml(referralLink)}" target="_blank" rel="noopener" data-en="Open referral link" data-km="បើក Link Referral">Open referral link</a>` : ''}
           ${referralCode ? `<button class="step-button secondary copy-referral" type="button" data-referral-code="${escapeHtml(referralCode)}" data-en="Copy referral code: ${escapeHtml(referralCode)}" data-km="ចម្លងលេខកូដយោង៖ ${escapeHtml(referralCode)}">Copy referral code: ${escapeHtml(referralCode)}</button>` : ''}
         </div>
       </section>` : '';
