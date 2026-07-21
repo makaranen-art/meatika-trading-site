@@ -33,8 +33,6 @@ function doPost(e) {
   var name = p.name || '';
   var email = p.email || '';
   var phone = p.phone || '';
-  var telegram = p.telegram || '';
-  var broker = p.broker || '';
   var message = p.message || '';
   var subject = p.subject || 'New registration — Meatika Trading';
 
@@ -45,8 +43,6 @@ function doPost(e) {
     'Full Name: ' + name + '\n' +
     'Email: ' + email + '\n' +
     'Phone Number: ' + phone + '\n' +
-    'Current Broker: ' + broker + '\n' +
-    'Telegram: ' + (telegram || '-') + '\n' +
     'Message: ' + (message || '-') + '\n' +
     '\nSubmitted: ' + new Date();
 
@@ -65,9 +61,9 @@ function doPost(e) {
     if (ss) {
       var sheet = ss.getActiveSheet();
       if (sheet.getLastRow() === 0) {
-        sheet.appendRow(['Timestamp', 'Full Name', 'Email', 'Phone Number', 'Current Broker', 'Telegram Username', 'Message']);
+        sheet.appendRow(['Timestamp', 'Full Name', 'Email', 'Phone Number', 'Message']);
       }
-      sheet.appendRow([new Date(), name, email, phone, broker, telegram, message]);
+      sheet.appendRow([new Date(), name, email, phone, message]);
     }
   } catch (err) {
     // No bound sheet — that's fine, email above already went out.

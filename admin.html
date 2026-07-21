@@ -1080,17 +1080,17 @@ function renderBlockItem(page, block, bIdx, onChange){
     block.referral = block.referral || {brokerName:'', link:''};
     typeBody.innerHTML = `
       <p class="helptext" style="margin-bottom:10px;">
-        Shows a fixed registration form: Full Name, Email, Phone Number, Telegram Username (optional),
-        and a Short Message — good for a "register for exclusive content" page. Submissions are sent
-        straight from the visitor's browser, since this site has no backend of its own. Three ways to
-        receive them (pick one): send directly to your email (below, simplest — no signup), a form
-        service that emails you automatically (Formspree/Web3Forms), or a Google Sheet — see
-        <code>google-sheets-setup.md</code> in the project files.
+        Shows a fixed registration form: Full Name, Email, Phone Number, Registration Screenshot
+        (required), and a Short Message — good for a "register for exclusive content" page.
+        Submissions are sent straight from the visitor's browser, since this site has no backend of
+        its own. Three ways to receive them (pick one): send directly to your email (below, simplest
+        — no signup), a form service that emails you automatically (Formspree/Web3Forms), or a Google
+        Sheet — see <code>google-sheets-setup.md</code> in the project files.
       </p>
       <p class="helptext" style="margin:0 0 8px;">
         <strong>Referral link (optional):</strong> shows a "register with our broker" box above the
-        form with the broker name and a Copy button for the visitor's referral/affiliate link. Leave
-        both fields blank to hide this box.
+        form with the broker name and a single Register button that opens the visitor's
+        referral/affiliate link. Leave both fields blank to hide this box.
       </p>
       <div class="row" style="margin-bottom:12px;">
         <div class="field"><label>Broker name</label><input type="text" data-f="referral-broker" placeholder="e.g. Investizo" value="${escAttr(block.referral.brokerName)}"></div>
