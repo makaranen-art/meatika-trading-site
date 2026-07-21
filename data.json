@@ -493,8 +493,8 @@
           "notifyEmail": "",
           "accessKey": "",
           "referral": {
-            "brokerName": "",
-            "link": ""
+            "brokerName": "GTC FX",
+            "link": "https://web.mygtc.app/login/register?ref=130111321"
           }
         }
       ],
