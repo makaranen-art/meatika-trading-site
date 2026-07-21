@@ -208,6 +208,7 @@
       ? `<div class="referral-link-row">
            <input type="text" class="referral-link-input" readonly value="${linkAttr}" onclick="this.select()">
            <button type="button" class="referral-copy-btn" data-copy-link="${linkAttr}" data-en="Copy" data-km="ចម្លង">Copy</button>
+           <a class="referral-visit-btn" href="${linkAttr}" target="_blank" rel="noopener noreferrer" data-en="Visit" data-km="ចូលទស្សនា">Visit</a>
          </div>`
       : '';
     return `
@@ -269,6 +270,12 @@
             <input type="text" name="telegram" placeholder="@username">
           </div>
           <div class="field">
+            <label data-en="Registration Screenshot (optional)" data-km="រូបថតអេក្រង់នៃការចុះឈ្មោះ (អាចរំលងបាន)">Registration Screenshot (optional)</label>
+            <input type="file" name="screenshot" accept="image/*">
+            <p class="field-hint i18n-en">Attach a screenshot showing you've registered with the broker above.</p>
+            <p class="field-hint i18n-km">ភ្ជាប់រូបថតអេក្រង់បង្ហាញថាអ្នកបានចុះឈ្មោះជាមួយ broker ខាងលើរួចហើយ។</p>
+          </div>
+          <div class="field">
             <label data-en="Short Message" data-km="សារខ្លី">Short Message</label>
             <textarea name="message" rows="3"></textarea>
           </div>
@@ -319,6 +326,8 @@
           // instead of claiming delivery.
           const fd = new FormData(form);
           const get = k => String(fd.get(k) || '').trim();
+          const screenshotFile = fd.get('screenshot');
+          const hasScreenshot = !!(screenshotFile && screenshotFile.name);
           const subject = 'New registration — ' + (form.dataset.subject || 'Meatika Trading');
           const body = [
             'Full Name: ' + get('name'),
@@ -326,12 +335,17 @@
             'Phone Number: ' + get('phone'),
             'Current Broker: ' + get('broker'),
             'Telegram: ' + (get('telegram') || '-'),
-            'Message: ' + (get('message') || '-')
+            'Message: ' + (get('message') || '-'),
+            'Screenshot: ' + (hasScreenshot ? '(please attach "' + screenshotFile.name + '" to this email before sending — mailto links can\u2019t attach files automatically)' : '-')
           ].join('\n');
           window.location.href = 'mailto:' + encodeURIComponent(mailto) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
           setStatus(isKm()
-            ? 'ស្ទើររួចរាល់ហើយ — យើងបានបើកកម្មវិធីអ៊ីមែលរបស់អ្នក ដោយបំពេញអ៊ីមែលរួចជាស្រេច។ សូមចុច "ផ្ញើ" (Send) ដើម្បីបញ្ចប់ការចុះឈ្មោះ។'
-            : 'Almost done — we\u2019ve opened your email app with the message ready to go. Please press Send there to finish registering.', 'ok');
+            ? (hasScreenshot
+              ? 'ស្ទើររួចរាល់ហើយ — យើងបានបើកកម្មវិធីអ៊ីមែលរបស់អ្នក។ សូមកុំភ្លេចភ្ជាប់រូបថតអេក្រង់ដោយដៃ រួចចុច "ផ្ញើ" (Send)។'
+              : 'ស្ទើររួចរាល់ហើយ — យើងបានបើកកម្មវិធីអ៊ីមែលរបស់អ្នក ដោយបំពេញអ៊ីមែលរួចជាស្រេច។ សូមចុច "ផ្ញើ" (Send) ដើម្បីបញ្ចប់ការចុះឈ្មោះ។')
+            : (hasScreenshot
+              ? 'Almost done — we\u2019ve opened your email app. Don\u2019t forget to attach your screenshot manually, then press Send.'
+              : 'Almost done — we\u2019ve opened your email app with the message ready to go. Please press Send there to finish registering.'), 'ok');
           return;
         }
 
