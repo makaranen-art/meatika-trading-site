@@ -227,11 +227,11 @@
             <input type="tel" name="phone" required>
           </div>
           <div class="field">
-            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (អាចរំលងបាន)">Telegram Username (optional)</label>
+            <label data-en="Telegram Username (optional)" data-km="ឈ្មោះ Telegram (ជម្រើស)">Telegram Username (optional)</label>
             <input type="text" name="telegram" placeholder="@username">
           </div>
           <div class="field">
-            <label data-en="Your Current Broker (optional)" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក (អាចរំលងបាន)">Your Current Broker (optional)</label>
+            <label data-en="Your Current Broker (optional)" data-km="ឈ្មោះ Broker បច្ចុប្បន្នរបស់អ្នក ">Your Current Broker</label>
             <input type="text" name="broker" placeholder="e.g. Investizo, LiteFinance, GTC FX...">
           </div>
           <div class="field">
