@@ -142,6 +142,21 @@
     margin:0 auto; max-width:320px;
   }
 
+  /* ---- Scroll-down cue ---- */
+  .scroll-cue{
+    display:flex; justify-content:center; margin-top:20px;
+    color:var(--muted); opacity:.7;
+    animation:mthBounce 1.8s ease-in-out infinite;
+    transition:opacity .35s ease;
+  }
+  .scroll-cue svg{ width:20px; height:20px; }
+  .scroll-cue.hide{ opacity:0; pointer-events:none; }
+  @keyframes mthBounce{
+    0%,100%{ transform:translateY(0); opacity:.7; }
+    50%{ transform:translateY(8px); opacity:.3; }
+  }
+  @media (prefers-reduced-motion: reduce){ .scroll-cue{ animation:none; } }
+
   /* ---- Section ---- */
   .section{ margin-bottom:28px; }
   .section-label{
@@ -258,6 +273,9 @@
       </div>
       <h1 class="sr-only">Meatika Trading</h1>
       <p id="heroText" data-en="" data-km="">Loading…</p>
+      <div class="scroll-cue" id="scrollCue" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
     </div>
 
     <div id="sections"><!-- sections + cards filled from data.json --></div>
@@ -362,6 +380,7 @@
 
       document.getElementById('sections').innerHTML = MTHSite.sectionsHtml(data.sections || []);
       MTHSite.initReveal();
+      MTHSite.initScrollCue();
 
       applyLang(savedLang);
     }

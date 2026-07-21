@@ -79,6 +79,21 @@
   .page-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 8px; color:var(--paper); }
   .hero p{ color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 auto; max-width:340px; }
 
+  /* ---- Scroll-down cue ---- */
+  .scroll-cue{
+    display:flex; justify-content:center; margin-top:20px;
+    color:var(--muted); opacity:.7;
+    animation:mthBounce 1.8s ease-in-out infinite;
+    transition:opacity .35s ease;
+  }
+  .scroll-cue svg{ width:20px; height:20px; }
+  .scroll-cue.hide{ opacity:0; pointer-events:none; }
+  @keyframes mthBounce{
+    0%,100%{ transform:translateY(0); opacity:.7; }
+    50%{ transform:translateY(8px); opacity:.3; }
+  }
+  @media (prefers-reduced-motion: reduce){ .scroll-cue{ animation:none; } }
+
   .news-grid{ display:flex; flex-direction:column; gap:14px; }
   .news-card{
     display:flex; gap:12px; background:var(--ink-800); border:1px solid var(--ink-600);
@@ -129,6 +144,9 @@
     <div class="hero">
       <h1 class="page-title" data-en="News & Articles" data-km="ព័ត៌មាន និងអត្ថបទ">News & Articles</h1>
       <p data-en="Updates, insights, and announcements from Meatika Trading." data-km="ព័ត៌មានថ្មីៗ ការវិភាគ និងសេចក្តីប្រកាសពី Meatika Trading។">Updates, insights, and announcements from Meatika Trading.</p>
+      <div class="scroll-cue" id="scrollCue" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v14M6 13l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
     </div>
 
     <div id="newsList"><!-- filled from data.json --></div>
@@ -194,6 +212,7 @@
       const list = MTHNews.publishedNews(data);
       document.getElementById('newsList').innerHTML = MTHNews.newsListHtml(list);
       MTHSite.initReveal();
+      MTHSite.initScrollCue();
       applyLang(savedLang);
     }
     init();
