@@ -91,6 +91,14 @@
   .page-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 8px; color:var(--paper); }
   .hero p{ color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 auto; max-width:340px; }
 
+  .format-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:-6px 0 24px; }
+  .format-card{ display:flex; flex-direction:column; gap:8px; padding:13px; border-radius:var(--radius); text-decoration:none; color:var(--paper); background:var(--glass-1-bg); border:1px solid var(--glass-1-border); box-shadow:0 8px 24px rgba(0,0,0,.22); transition:.18s ease; }
+  .format-card:hover{ transform:translateY(-2px); border-color:var(--gold-500); }
+  .format-icon{ width:34px; height:34px; border-radius:10px; display:grid; place-items:center; }
+  .format-icon svg{ width:18px; height:18px; }
+  .format-card h2{ font-family:'Space Grotesk',sans-serif; font-size:14px; margin:0; }
+  .format-card p{ font-size:11.5px; line-height:1.45; color:var(--muted); margin:0; }
+
   .logo-mark{
     width:100%; max-width:200px; margin:0 auto 14px;
     display:flex; align-items:center; justify-content:center;
@@ -290,6 +298,8 @@
       <h1 class="page-title" data-en="Learning Center" data-km="មជ្ឈមណ្ឌលសិក្សា">Learning Center</h1>
       <p data-en="Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading." data-km="អត្ថបទ និងវីដេអូអំពីចិត្តវិទ្យាជួញដូរ យុទ្ធសាស្ត្រ និងការវិភាគទីផ្សារ ពី Meatika Trading។">Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading.</p>
     </div>
+
+    <div id="learningFormats" class="format-grid" aria-label="Learning formats"><!-- filled from data.json --></div>
 
     <div id="newsList"><!-- filled from data.json --></div>
 
@@ -528,6 +538,18 @@
       list.querySelectorAll('.tag-item').forEach(bindTagItem);
     }
 
+    function renderLearningFormats(formats){
+      const wrap = document.getElementById('learningFormats');
+      wrap.innerHTML = (formats || []).map(item => {
+        const title = (item.title && item.title.en) || item.id;
+        const titleKm = (item.title && item.title.km) || title;
+        const desc = (item.desc && item.desc.en) || '';
+        const descKm = (item.desc && item.desc.km) || desc;
+        const icon = window.mthIconSvg ? window.mthIconSvg(item.icon, item.iconColor || '#fff') : '';
+        return `<a class="format-card" href="news.html?format=${encodeURIComponent(item.id)}"><span class="format-icon" style="background:${MTHSite.escapeHtml(item.color || '#7a1640')}"><svg viewBox="0 0 24 24" fill="none">${icon}</svg></span><h2 data-en="${MTHSite.escapeHtml(title)}" data-km="${MTHSite.escapeHtml(titleKm)}">${MTHSite.escapeHtml(title)}</h2><p data-en="${MTHSite.escapeHtml(desc)}" data-km="${MTHSite.escapeHtml(descKm)}">${MTHSite.escapeHtml(desc)}</p></a>`;
+      }).join('');
+    }
+
     async function init(){
       let data;
       try{
@@ -539,6 +561,7 @@
       if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
       MTHNews.setTags(data.newsTags);
+      renderLearningFormats(data.learningFormats);
       try{
         const requested = new URLSearchParams(location.search).get('format') || '';
         activeFormat = ['article','video','audio','book'].includes(requested) ? requested : '';
