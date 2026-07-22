@@ -575,6 +575,35 @@
   ],
   "news": [
     {
+      "id": "news-mrwb3ft1",
+      "title": {
+        "en": "The Complete Guide to Trading",
+        "km": "មគ្គុទ្ទេសក៍ពេញលេញសម្រាប់ការជួញដូរ (Trading) "
+      },
+      "excerpt": {
+        "en": "The following eBook's purpose is to outline all the necessary fundament skills needed to understand the capital markets in a trading context.",
+        "km": "គោលបំណងរបស់ សៀវភៅអេឡិចត្រូនិក (eBook) នេះ គឺដើម្បីបង្ហាញអំពីជំនាញមូលដ្ឋានសំខាន់ៗទាំងអស់ ដែលចាំបាច់សម្រាប់ការយល់ដឹងអំពី ទីផ្សារមូលធន (Capital Markets) ក្នុងបរិបទនៃ ការជួញដូរ (Trading)។"
+      },
+      "body": {
+        "en": "The following eBook's purpose is to outline all the necessary fundament skills needed to understand the capital markets in a trading context.",
+        "km": "គោលបំណងរបស់ សៀវភៅអេឡិចត្រូនិក (eBook) នេះ គឺដើម្បីបង្ហាញអំពីជំនាញមូលដ្ឋានសំខាន់ៗទាំងអស់ ដែលចាំបាច់សម្រាប់ការយល់ដឹងអំពី ទីផ្សារមូលធន (Capital Markets) ក្នុងបរិបទនៃ ការជួញដូរ (Trading)។"
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "book",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "strategy",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T16:38:07.045Z"
+    },
+    {
       "id": "news-mrw8jehn",
       "title": {
         "en": "Trading Psychology Audio",
