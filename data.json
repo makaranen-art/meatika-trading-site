@@ -575,6 +575,35 @@
   ],
   "news": [
     {
+      "id": "news-mrwbi49u",
+      "title": {
+        "en": " កុំឱ្យ Greed គ្រប់គ្រងការសម្រេចចិត្ត!",
+        "km": " កុំឱ្យ Greed គ្រប់គ្រងការសម្រេចចិត្ត!"
+      },
+      "excerpt": {
+        "en": "\nកុំឱ្យ Greed គ្រប់គ្រងការសម្រេចចិត្ត!",
+        "km": "\nកុំឱ្យ Greed គ្រប់គ្រងការសម្រេចចិត្ត!"
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=qC_QmJsCJLs",
+        "file": ""
+      },
+      "format": "video",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T16:49:31.938Z"
+    },
+    {
       "id": "news-mrwbgngl",
       "title": {
         "en": " របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade!",
