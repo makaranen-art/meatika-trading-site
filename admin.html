@@ -266,14 +266,21 @@
       </div>
 
       <div class="panel">
-        <h2>News & articles</h2>
+        <h2>Learning Center posts</h2>
         <p class="helptext" style="margin-bottom:14px;">
-          Write news posts or articles with a cover photo, an optional video (paste a YouTube/Facebook/Vimeo
-          link, or upload a short video file), and text in English and Khmer. Each article gets a
+          Write education posts — articles or videos — with a cover photo, an optional video (paste a
+          YouTube/Facebook/Vimeo link, or upload a short video file), and text in English and Khmer. Pick a
+          <strong>Content tag</strong> below (Psychology, Strategy, Market Analysis, or Video) — this controls
+          which tab the post shows up under on the public Learning Center page. Each post also gets a
           <strong>Share this article</strong> row (Facebook, Telegram, X, WhatsApp, copy link) automatically —
           nothing to configure. Uncheck <strong>Published</strong> to keep working on a draft without it
           showing on the public <code>news.html</code> list (a draft is still viewable if you open its direct
           link, so you can preview it first).
+        </p>
+        <p class="helptext" style="margin-bottom:14px;">
+          This admin panel uses one shared password for the whole team, not separate per-person logins — anyone
+          with the password can post any content type. To credit who wrote a post, fill in
+          <strong>Posted by</strong> on that post; it's just a label, not a login.
         </p>
         <div id="newsList"></div>
         <button id="addNews">+ Add news / article</button>
@@ -1205,10 +1212,20 @@ function newArticle(){
     body: { en: '', km: '' },
     cover: '',
     video: { type: 'url', url: '', file: '' },
+    category: 'psychology',
+    author: '',
     published: true,
     publishedAt: nowIso
   };
 }
+
+/* Learning Center content tags — keep ids in sync with assets/news.js CATEGORIES. */
+const NEWS_CATEGORIES = [
+  { id: 'psychology',      label: 'Psychology' },
+  { id: 'strategy',        label: 'Strategy' },
+  { id: 'market-analysis', label: 'Market Analysis' },
+  { id: 'video',           label: 'Video' }
+];
 
 /* datetime-local wants "YYYY-MM-DDTHH:mm" in local time; ISO strings are UTC. */
 function isoToLocalInput(iso){
@@ -1232,19 +1249,34 @@ function renderNews(){
     article.excerpt = article.excerpt || { en:'', km:'' };
     article.body = article.body || { en:'', km:'' };
     article.video = article.video || { type:'url', url:'', file:'' };
+    article.category = article.category || 'psychology';
+    article.author = article.author || '';
 
     const el = document.createElement('details');
     el.className = 'section-card';
     const statusLabel = article.published === false ? 'Draft' : 'Published';
+    const catLabel = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
     el.innerHTML = `
       <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <strong>${escAttr(article.title.en || 'Untitled article')}</strong>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">${statusLabel}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;">${escAttr(catLabel)} · ${statusLabel}</span>
       </summary>
       <div style="margin-top:14px;">
         <div class="row">
           <div class="field"><label>Title (English)</label><input type="text" data-f="title-en" value="${escAttr(article.title.en)}"></div>
           <div class="field"><label>Title (Khmer)</label><input type="text" data-f="title-km" value="${escAttr(article.title.km)}"></div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Content tag</label>
+            <select data-f="category">
+              ${NEWS_CATEGORIES.map(c => `<option value="${escAttr(c.id)}">${escAttr(c.label)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Posted by (optional — shown on the post)</label>
+            <input type="text" data-f="author" placeholder="e.g. admin name" value="${escAttr(article.author)}">
+          </div>
         </div>
         <div class="row">
           <div class="field"><label>Short excerpt (English) — shown on the news list</label><textarea data-f="excerpt-en">${escText(article.excerpt.en)}</textarea></div>
@@ -1308,13 +1340,23 @@ function renderNews(){
       el.querySelector('summary strong').textContent = article.title.en || 'Untitled article';
     });
     el.querySelector('[data-f="title-km"]').addEventListener('input', e => article.title.km = e.target.value);
+    const catSelect = el.querySelector('[data-f="category"]');
+    catSelect.value = article.category;
+    catSelect.addEventListener('change', e => {
+      article.category = e.target.value;
+      const label = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
+      const statusText = article.published === false ? 'Draft' : 'Published';
+      el.querySelector('summary span').textContent = `${label} · ${statusText}`;
+    });
+    el.querySelector('[data-f="author"]').addEventListener('input', e => article.author = e.target.value);
     el.querySelector('[data-f="excerpt-en"]').addEventListener('input', e => article.excerpt.en = e.target.value);
     el.querySelector('[data-f="excerpt-km"]').addEventListener('input', e => article.excerpt.km = e.target.value);
     el.querySelector('[data-f="body-en"]').addEventListener('input', e => article.body.en = e.target.value);
     el.querySelector('[data-f="body-km"]').addEventListener('input', e => article.body.km = e.target.value);
     el.querySelector('[data-f="published"]').addEventListener('change', e => {
       article.published = e.target.checked;
-      el.querySelector('summary span').textContent = article.published === false ? 'Draft' : 'Published';
+      const label = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
+      el.querySelector('summary span').textContent = `${label} · ${article.published === false ? 'Draft' : 'Published'}`;
     });
     el.querySelector('[data-f="publishedAt"]').addEventListener('input', e => {
       article.publishedAt = localInputToIso(e.target.value);

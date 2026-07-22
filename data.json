@@ -537,7 +537,9 @@
         "file": ""
       },
       "published": true,
-      "publishedAt": "2026-07-22T09:18:21.527Z"
+      "publishedAt": "2026-07-22T09:18:21.527Z",
+      "category": "psychology",
+      "author": ""
     },
     {
       "id": "news-mrvv56rh",
@@ -560,7 +562,9 @@
         "file": ""
       },
       "published": true,
-      "publishedAt": "2026-07-22T09:11:34.781Z"
+      "publishedAt": "2026-07-22T09:11:34.781Z",
+      "category": "psychology",
+      "author": ""
     },
     {
       "id": "news-mrvrvwbk",
@@ -583,7 +587,9 @@
         "file": ""
       },
       "published": true,
-      "publishedAt": "2026-07-22T07:40:22.496Z"
+      "publishedAt": "2026-07-22T07:40:22.496Z",
+      "category": "strategy",
+      "author": ""
     },
     {
       "id": "news-mrthof5h",
@@ -606,7 +612,9 @@
         "file": ""
       },
       "published": true,
-      "publishedAt": "2026-07-20T17:19:05.141Z"
+      "publishedAt": "2026-07-20T17:19:05.141Z",
+      "category": "psychology",
+      "author": ""
     },
     {
       "id": "news-mrthg3s3",
@@ -629,7 +637,9 @@
         "file": ""
       },
       "published": true,
-      "publishedAt": "2026-07-20T17:12:37.155Z"
+      "publishedAt": "2026-07-20T17:12:37.155Z",
+      "category": "video",
+      "author": ""
     }
   ],
   "newsGateEndpoint": "https://script.google.com/macros/s/AKfycbwgIJ4FEkgIdLI68a-1Y3PxuvwFTAgo6TkHzt43Cay9M3rCjELD6C43VzW7sFVUP7jL/exec"

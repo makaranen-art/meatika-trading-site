@@ -94,7 +94,13 @@
   .art-meta{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
   .art-date{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--gold-300); letter-spacing:0.05em; }
   .art-draft-tag{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; color:var(--ink-900); background:var(--gold-300); padding:2px 7px; border-radius:5px; font-weight:700; }
+  .news-cat-tag{
+    font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--gold-300); background:rgba(255,143,168,0.14); border:1px solid var(--glass-1-border);
+    padding:1px 7px; border-radius:5px; font-weight:700;
+  }
   .art-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 16px; line-height:1.35; }
+  .art-author{ font-size:12px; color:var(--muted); margin:-10px 0 16px; }
 
   .news-video{ position:relative; width:100%; aspect-ratio:16/9; border-radius:var(--radius); overflow:hidden; margin-bottom:18px; background:#000; border:1px solid var(--ink-600); }
   .news-video iframe, .news-video video{ width:100%; height:100%; border:0; display:block; }
@@ -210,9 +216,9 @@
   <div class="page">
 
     <div class="topbar">
-      <a class="icon-btn back-btn" href="news.html" title="Back to news">
+      <a class="icon-btn back-btn" href="news.html" title="Back to Learning Center">
         <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span data-en="News" data-km="ព័ត៌មាន">News</span>
+        <span data-en="Learning Center" data-km="មជ្ឈមណ្ឌលសិក្សា">Learning Center</span>
       </a>
       <div class="topbar-actions">
         <button class="icon-btn lang-btn" id="langBtn" title="Switch to Khmer">
@@ -411,6 +417,10 @@
       document.getElementById('ogDesc').setAttribute('content', excerpt);
 
       const draftTag = article.published === false ? '<span class="art-draft-tag">DRAFT — not listed publicly yet</span>' : '';
+      const catTag = MTHNews.categoryBadgeHtml(article.category);
+      const authorLine = article.author
+        ? `<p class="art-author" data-en="By ${MTHSite.escapeHtml(article.author)}" data-km="ដោយ ${MTHSite.escapeHtml(article.author)}">By ${MTHSite.escapeHtml(article.author)}</p>`
+        : '';
       const cover = article.cover ? `<img class="art-cover" src="${MTHSite.escapeHtml(article.cover)}" alt="">` : '';
       const video = MTHNews.videoEmbedHtml(article.video);
       const body = MTHNews.bodyHtml((article.body && article.body.en) || '');
@@ -420,9 +430,11 @@
         ${cover}
         <div class="art-meta">
           ${draftTag}
+          ${catTag}
           <span class="art-date">${MTHSite.escapeHtml(MTHNews.formatDate(article.publishedAt))}</span>
         </div>
         <h1 class="art-title" data-en="${MTHSite.escapeHtml(title)}" data-km="${MTHSite.escapeHtml(titleKm)}">${MTHSite.escapeHtml(title)}</h1>
+        ${authorLine}
         ${video}
         <div class="art-body" id="artBody" data-en-html="1"></div>
         ${renderShareButtons(location.href, title)}
