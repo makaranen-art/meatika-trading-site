@@ -575,6 +575,34 @@
   ],
   "news": [
     {
+      "id": "news-mrw7p5gv",
+      "title": {
+        "en": "New Book / PDF",
+        "km": ""
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "book",
+      "audioUrl": "",
+      "bookUrl": "https://drive.google.com/uc?export=download&id=1DhyD3RkBj_Crb_w4NhO92l2LuD6YyPz5",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T15:03:01.615Z"
+    },
+    {
       "id": "news-mrw7h04s",
       "title": {
         "en": "New Video",
