@@ -91,22 +91,22 @@
   .page-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 8px; color:var(--paper); }
   .hero p{ color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 auto; max-width:340px; }
 
-  .page-logo{ display:flex; justify-content:center; margin-bottom:16px; }
-  .page-logo img{ height:32px; width:auto; display:block; filter:drop-shadow(0 4px 14px rgba(255,45,95,0.28)); }
-
-  /* ---- Topic filter: floating triple-line button + side drawer ---- */
-  .tag-fab{
-    position:fixed; right:18px; bottom:22px; z-index:60;
-    display:flex; align-items:center; gap:8px;
-    background:linear-gradient(135deg, var(--gold-500), var(--gold-300));
-    color:var(--ink-900); border:none; border-radius:999px;
-    padding:12px 16px 12px 14px; box-shadow:0 10px 26px rgba(0,0,0,0.35);
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:12.5px;
-    cursor:pointer; transition:.15s ease;
+  .logo-mark{
+    width:100%; max-width:200px; margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; padding:8px 6px;
+    background:radial-gradient(circle, rgba(255,45,95,0.18), transparent 70%);
+    border-radius:16px;
   }
-  body.km .tag-fab{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
-  .tag-fab:hover{ transform:translateY(-2px); filter:brightness(1.05); }
-  .tag-fab svg{ flex-shrink:0; }
+  .logo-img{ width:100%; height:auto; display:block; filter:drop-shadow(0 6px 18px rgba(255,45,95,0.30)); }
+
+  /* ---- Topic filter: triple-line icon button (in the topbar) + side drawer ---- */
+  .tag-fab{ position:relative; }
+  .tag-fab-dot{
+    position:absolute; top:-2px; right:-2px; width:8px; height:8px; border-radius:50%;
+    background:var(--gold-500); border:1.5px solid var(--ink-800); display:none;
+  }
+  .tag-fab.has-filter .tag-fab-dot{ display:block; }
 
   .tag-drawer-backdrop{
     position:fixed; inset:0; z-index:70; background:rgba(10,5,8,0.6);
@@ -128,6 +128,7 @@
     display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
     font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:14.5px; color:var(--paper);
   }
+  body.km .tag-drawer-head{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
   .tag-drawer-close{
     width:28px; height:28px; border-radius:8px; border:1px solid var(--ink-600); background:var(--ink-800);
     color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; line-height:1;
@@ -266,10 +267,6 @@
 
   <div class="page">
 
-    <div class="page-logo">
-      <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" id="pageLogoImg">
-    </div>
-
     <div class="topbar">
       <a class="icon-btn back-btn" href="index.html" title="Back to home">
         <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -283,24 +280,27 @@
           <svg viewBox="0 0 24 24" fill="none" id="themeIconMoon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
           <svg viewBox="0 0 24 24" fill="none" id="themeIconSun" style="display:none;"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
+        <button class="icon-btn tag-fab" id="tagFabBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Topic Selection">
+          <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="tag-fab-dot" id="tagFabDot"></span>
+        </button>
       </div>
     </div>
 
     <div class="hero">
+      <div class="logo-mark">
+        <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" class="logo-img" id="pageLogoImg">
+      </div>
       <h1 class="page-title" data-en="Learning Center" data-km="មជ្ឈមណ្ឌលសិក្សា">Learning Center</h1>
       <p data-en="Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading." data-km="អត្ថបទ និងវីដេអូអំពីចិត្តវិទ្យាជួញដូរ យុទ្ធសាស្ត្រ និងការវិភាគទីផ្សារ ពី Meatika Trading។">Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading.</p>
     </div>
 
     <div id="newsList"><!-- filled from data.json --></div>
 
-    <button class="tag-fab" id="tagFabBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Filter by topic">
-      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <span id="tagFabLabel" data-en="Topics" data-km="ប្រធានបទ">Topics</span>
-    </button>
     <div class="tag-drawer-backdrop" id="tagDrawerBackdrop"></div>
     <aside class="tag-drawer" id="tagDrawer" aria-hidden="true">
       <div class="tag-drawer-head">
-        <span data-en="Filter by topic" data-km="ត្រងតាមប្រធានបទ">Filter by topic</span>
+        <span data-en="Topic Selection" data-km="ជ្រើសរើសអត្ថបទ">Topic Selection</span>
         <button class="tag-drawer-close" id="tagDrawerClose" type="button" aria-label="Close">✕</button>
       </div>
       <div class="tag-drawer-list" id="tagDrawerList">
@@ -451,7 +451,6 @@
 
     /* ---- Topic filter drawer ---- */
     const tagFabBtn = document.getElementById('tagFabBtn');
-    const tagFabLabel = document.getElementById('tagFabLabel');
     const tagDrawer = document.getElementById('tagDrawer');
     const tagDrawerBackdrop = document.getElementById('tagDrawerBackdrop');
     const tagDrawerClose = document.getElementById('tagDrawerClose');
@@ -503,8 +502,7 @@
       });
 
       const activeInfo = activeCat === 'all' ? null : MTHNews.categoryInfo(activeCat);
-      tagFabLabel.setAttribute('data-en', activeInfo ? activeInfo.en : 'Topics');
-      tagFabLabel.setAttribute('data-km', activeInfo ? activeInfo.km : 'ប្រធានបទ');
+      tagFabBtn.classList.toggle('has-filter', !!activeInfo);
 
       MTHSite.initReveal();
       applyLang(savedLang);
