@@ -588,7 +588,7 @@
         "en": "The following eBook's purpose is to outline all the necessary fundament skills needed to understand the capital markets in a trading context.",
         "km": "គោលបំណងរបស់ សៀវភៅអេឡិចត្រូនិក (eBook) នេះ គឺដើម្បីបង្ហាញអំពីជំនាញមូលដ្ឋានសំខាន់ៗទាំងអស់ ដែលចាំបាច់សម្រាប់ការយល់ដឹងអំពី ទីផ្សារមូលធន (Capital Markets) ក្នុងបរិបទនៃ ការជួញដូរ (Trading)។"
       },
-      "cover": "",
+      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784738568/blob_jmftxm.png",
       "video": {
         "type": "url",
         "url": "",
@@ -597,7 +597,7 @@
       "format": "book",
       "audioUrl": "",
       "audioTracks": [],
-      "bookUrl": "",
+      "bookUrl": "https://drive.google.com/uc?export=download&id=1Ga8MaGBdL87Aam0VMfDdGvohuVS8QFCa",
       "category": "strategy",
       "author": "",
       "published": true,
