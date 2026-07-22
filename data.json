@@ -575,35 +575,6 @@
   ],
   "news": [
     {
-      "id": "news-mrw8209n",
-      "title": {
-        "en": "New Book / PDF",
-        "km": ""
-      },
-      "excerpt": {
-        "en": "",
-        "km": ""
-      },
-      "body": {
-        "en": "",
-        "km": ""
-      },
-      "cover": "",
-      "video": {
-        "type": "url",
-        "url": "",
-        "file": ""
-      },
-      "format": "book",
-      "audioUrl": "",
-      "audioTracks": [],
-      "bookUrl": "",
-      "category": "psychology",
-      "author": "",
-      "published": true,
-      "publishedAt": "2026-07-22T15:13:01.403Z"
-    },
-    {
       "id": "news-mrw81nqh",
       "title": {
         "en": "New Book / PDF",
