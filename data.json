@@ -588,15 +588,21 @@
         "en": "",
         "km": ""
       },
-      "cover": "",
+      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784734624/blob_zduozn.png",
       "video": {
         "type": "url",
         "url": "",
         "file": ""
       },
       "format": "audio",
-      "audioUrl": "",
-      "audioTracks": [],
+      "audioUrl": "https://res.cloudinary.com/lisxurk1/video/upload/v1784734615/EP2_j5zgnh.wav",
+      "audioTracks": [
+        {
+          "id": "track-1784734560985",
+          "title": "EP2-Psychology",
+          "url": "https://res.cloudinary.com/lisxurk1/video/upload/v1784734615/EP2_j5zgnh.wav"
+        }
+      ],
       "bookUrl": "",
       "category": "psychology",
       "author": "",
