@@ -1252,6 +1252,7 @@ function newArticle(){
     video: { type: 'url', url: '', file: '' },
     format: 'article',
     audioUrl: '',
+    audioTracks: [],
     bookUrl: '',
     category: (getNewsTags()[0] || {}).id || 'psychology',
     author: '',
@@ -1432,6 +1433,9 @@ function renderNews(){
     article.body = article.body || { en:'', km:'' };
     article.video = article.video || { type:'url', url:'', file:'' };
     article.format = articleFormat(article);
+    article.audioTracks = Array.isArray(article.audioTracks) ? article.audioTracks : (article.audioUrl ? [{ id:'track-'+Date.now(), title:'Track 1', url:article.audioUrl }] : []);
+    article.audioTracks = article.audioTracks.map((track, index) => ({ id: track.id || 'track-'+Date.now()+'-'+index, title: track.title || `Track ${index+1}`, url: track.url || '' }));
+    if(!article.audioUrl && article.audioTracks[0]) article.audioUrl = article.audioTracks[0].url;
     const tags = getNewsTags();
     article.category = article.category || tags[0].id;
     article.author = article.author || '';
@@ -1440,6 +1444,7 @@ function renderNews(){
     el.className = 'section-card';
     const statusLabel = article.published === false ? 'Draft' : 'Published';
     const catLabel = (tags.find(c => c.id === article.category) || tags[0]).en;
+    const audioTracksEditor = article.audioTracks.map((track, index) => `<div class="row audio-track-row" data-track-index="${index}" style="margin-bottom:8px;"><div class="field" style="margin:0;"><label>Track ${index+1} title</label><input type="text" data-track-title value="${escAttr(track.title)}"></div><div class="field" style="margin:0;"><label>Google Drive or direct audio link</label><div style="display:flex;gap:6px;"><input type="url" data-track-url value="${escAttr(track.url)}" style="flex:1;"><button class="small danger" data-act="removeAudioTrack" type="button">✕</button></div></div></div>`).join('');
     el.innerHTML = `
       <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <strong>${escAttr(article.title.en || 'Untitled article')}</strong>
@@ -1505,9 +1510,10 @@ function renderNews(){
           <div class="status" data-video-status style="min-height:14px;">${article.video.file ? 'Currently: ' + article.video.file : ''}</div>
         </div>
         <div class="field" data-audio-field style="display:none;">
-          <label>Audio link (MP3, M4A, podcast episode, or hosted audio URL)</label>
-          <input type="url" data-f="audioUrl" placeholder="https://.../lesson.mp3" value="${escAttr(article.audioUrl || '')}">
-          <p class="helptext">Paste a normal Google Drive share link or a direct audio link. Google Drive links are converted to a live player link automatically when you finish editing the field.</p>
+          <label>Album tracks</label>
+          <p class="helptext">Add one Google Drive share link for each song. These tracks become the MP3 player's previous/next playlist. Google Drive links are converted automatically.</p>
+          <div data-audio-tracks-list>${audioTracksEditor}</div>
+          <button class="small" data-act="addAudioTrack" type="button">+ Add album track</button>
         </div>
         <div class="field" data-book-field style="display:none;">
           <label>PDF book link</label>
@@ -1570,8 +1576,27 @@ function renderNews(){
         e.target.value = liveUrl;
       });
     };
-    saveMediaLink(el.querySelector('[data-f="audioUrl"]'), 'audioUrl');
     saveMediaLink(el.querySelector('[data-f="bookUrl"]'), 'bookUrl');
+    el.querySelectorAll('.audio-track-row').forEach(row => {
+      const index = parseInt(row.dataset.trackIndex, 10);
+      const track = article.audioTracks[index];
+      row.querySelector('[data-track-title]').addEventListener('input', e => track.title = e.target.value);
+      row.querySelector('[data-track-url]').addEventListener('input', e => track.url = e.target.value);
+      row.querySelector('[data-track-url]').addEventListener('change', e => {
+        track.url = normalizeGoogleDriveMediaLink(e.target.value);
+        e.target.value = track.url;
+        if(index === 0) article.audioUrl = track.url;
+      });
+      row.querySelector('[data-act="removeAudioTrack"]').addEventListener('click', () => {
+        article.audioTracks.splice(index, 1);
+        article.audioUrl = article.audioTracks[0] ? article.audioTracks[0].url : '';
+        renderNews();
+      });
+    });
+    el.querySelector('[data-act="addAudioTrack"]').addEventListener('click', () => {
+      article.audioTracks.push({ id:'track-'+Date.now(), title:`Track ${article.audioTracks.length+1}`, url:'' });
+      renderNews();
+    });
     syncFormatFields();
     el.querySelector('[data-f="author"]').addEventListener('input', e => article.author = e.target.value);
     el.querySelector('[data-f="excerpt-en"]').addEventListener('input', e => article.excerpt.en = e.target.value);

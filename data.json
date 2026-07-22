@@ -31,62 +31,10 @@
     "km": "បណ្តាញដៃគូហ្វរិច និងគ្រីបតូគុណភាពខ្ពស់នៅកម្ពុជា។ ចូលរួមឆានែល និងដៃគូរបស់យើង។"
   },
   "learningFormats": [
-    {
-      "id": "article",
-      "title": {
-        "en": "Articles",
-        "km": "Articles"
-      },
-      "desc": {
-        "en": "Clear trading lessons, guides, and market insights.",
-        "km": "Trading lessons and market insights"
-      },
-      "icon": "star",
-      "color": "#7a1640",
-      "iconColor": "#ffffff"
-    },
-    {
-      "id": "video",
-      "title": {
-        "en": "Videos",
-        "km": "Videos"
-      },
-      "desc": {
-        "en": "Watch step-by-step market and strategy lessons.",
-        "km": "Watch market and strategy lessons"
-      },
-      "icon": "youtube",
-      "color": "#b3133f",
-      "iconColor": "#ffffff"
-    },
-    {
-      "id": "audio",
-      "title": {
-        "en": "Audio",
-        "km": "Audio"
-      },
-      "desc": {
-        "en": "Listen to podcast-style lessons anywhere.",
-        "km": "Listen to lessons anywhere"
-      },
-      "icon": "headset",
-      "color": "#4a2a70",
-      "iconColor": "#ffffff"
-    },
-    {
-      "id": "book",
-      "title": {
-        "en": "Books & PDFs",
-        "km": "Books & PDFs"
-      },
-      "desc": {
-        "en": "Read online or download learning books and guides.",
-        "km": "Read or download books and guides"
-      },
-      "icon": "star",
-      "color": "#87521f",
-      "iconColor": "#ffffff"
-    }
+    { "id": "article", "title": { "en": "Articles", "km": "Articles" }, "desc": { "en": "Clear trading lessons, guides, and market insights.", "km": "Trading lessons and market insights" }, "icon": "star", "color": "#7a1640", "iconColor": "#ffffff" },
+    { "id": "video", "title": { "en": "Videos", "km": "Videos" }, "desc": { "en": "Watch step-by-step market and strategy lessons.", "km": "Watch market and strategy lessons" }, "icon": "youtube", "color": "#b3133f", "iconColor": "#ffffff" },
+    { "id": "audio", "title": { "en": "Audio", "km": "Audio" }, "desc": { "en": "Listen to podcast-style lessons anywhere.", "km": "Listen to lessons anywhere" }, "icon": "headset", "color": "#4a2a70", "iconColor": "#ffffff" },
+    { "id": "book", "title": { "en": "Books & PDFs", "km": "Books & PDFs" }, "desc": { "en": "Read online or download learning books and guides.", "km": "Read or download books and guides" }, "icon": "star", "color": "#87521f", "iconColor": "#ffffff" }
   ],
   "sections": [
     {
@@ -575,90 +523,6 @@
   ],
   "news": [
     {
-      "id": "news-mrw7p5gv",
-      "title": {
-        "en": "New Book / PDF",
-        "km": ""
-      },
-      "excerpt": {
-        "en": "",
-        "km": ""
-      },
-      "body": {
-        "en": "",
-        "km": ""
-      },
-      "cover": "",
-      "video": {
-        "type": "url",
-        "url": "",
-        "file": ""
-      },
-      "format": "book",
-      "audioUrl": "",
-      "bookUrl": "https://drive.google.com/uc?export=download&id=1DhyD3RkBj_Crb_w4NhO92l2LuD6YyPz5",
-      "category": "psychology",
-      "author": "",
-      "published": true,
-      "publishedAt": "2026-07-22T15:03:01.615Z"
-    },
-    {
-      "id": "news-mrw7h04s",
-      "title": {
-        "en": "New Video",
-        "km": ""
-      },
-      "excerpt": {
-        "en": "",
-        "km": ""
-      },
-      "body": {
-        "en": "",
-        "km": ""
-      },
-      "cover": "",
-      "video": {
-        "type": "url",
-        "url": "https://www.youtube.com/watch?v=GkAGew19sB4",
-        "file": ""
-      },
-      "format": "video",
-      "audioUrl": "",
-      "bookUrl": "",
-      "category": "psychology",
-      "author": "",
-      "published": true,
-      "publishedAt": "2026-07-22T14:56:41.452Z"
-    },
-    {
-      "id": "news-mrw7em8c",
-      "title": {
-        "en": "New Audio",
-        "km": ""
-      },
-      "excerpt": {
-        "en": "",
-        "km": ""
-      },
-      "body": {
-        "en": "",
-        "km": ""
-      },
-      "cover": "",
-      "video": {
-        "type": "url",
-        "url": "",
-        "file": ""
-      },
-      "format": "audio",
-      "audioUrl": "https://drive.google.com/uc?export=download&id=1Gvcay2yUQ02cZH9crMmKTCVJemw0lnib",
-      "bookUrl": "",
-      "category": "psychology",
-      "author": "",
-      "published": true,
-      "publishedAt": "2026-07-22T14:54:50.124Z"
-    },
-    {
       "id": "news-mrvvdwlz",
       "title": {
         "en": "Don't Let Greed Control Your Decisions",
@@ -681,8 +545,7 @@
       "published": true,
       "publishedAt": "2026-07-22T09:18:21.527Z",
       "category": "psychology",
-      "author": "",
-      "format": "article"
+      "author": ""
     },
     {
       "id": "news-mrvv56rh",
@@ -707,8 +570,7 @@
       "published": true,
       "publishedAt": "2026-07-22T09:11:34.781Z",
       "category": "psychology",
-      "author": "",
-      "format": "article"
+      "author": ""
     },
     {
       "id": "news-mrvrvwbk",
@@ -733,8 +595,7 @@
       "published": true,
       "publishedAt": "2026-07-22T07:40:22.496Z",
       "category": "strategy",
-      "author": "",
-      "format": "article"
+      "author": ""
     },
     {
       "id": "news-mrthof5h",
@@ -759,8 +620,7 @@
       "published": true,
       "publishedAt": "2026-07-20T17:19:05.141Z",
       "category": "psychology",
-      "author": "",
-      "format": "article"
+      "author": ""
     },
     {
       "id": "news-mrthg3s3",
@@ -785,8 +645,7 @@
       "published": true,
       "publishedAt": "2026-07-20T17:12:37.155Z",
       "category": "video",
-      "author": "",
-      "format": "article"
+      "author": ""
     }
   ],
   "newsTags": [

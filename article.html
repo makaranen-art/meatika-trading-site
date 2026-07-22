@@ -444,9 +444,10 @@
         : '';
       const format = MTHNews.formatInfo(article);
       const cover = article.cover && format.label !== 'Audio' ? `<img class="art-cover" src="${MTHSite.escapeHtml(article.cover)}" alt="">` : '';
-      const audioTracks = MTHNews.publishedNews(data).filter(item => MTHNews.formatInfo(item).label === 'Audio' && item.audioUrl);
-      const audioIndex = Math.max(0, audioTracks.findIndex(item => item.id === article.id));
-      const audioPlayer = format.label === 'Audio' && article.audioUrl ? `<div class="audio-player" data-audio-index="${audioIndex}"><div class="audio-album"><img data-audio-cover src="${MTHSite.escapeHtml(article.cover || 'assets/mth-logo.png')}" alt="Album cover"></div><div><div class="media-title">MP3 Player</div><div class="audio-now" data-audio-title>${MTHSite.escapeHtml(title)}</div><audio data-audio-element preload="metadata" src="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(article.audioUrl))}"></audio><div class="audio-controls"><button type="button" data-audio-prev title="Previous">‹‹</button><button type="button" data-audio-play title="Play">▶</button><button type="button" data-audio-next title="Next">››</button></div><a class="audio-open" data-audio-open href="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(article.audioUrl))}" target="_blank" rel="noopener">Open audio file</a></div></div>` : '';
+      const audioTracks = (Array.isArray(article.audioTracks) && article.audioTracks.length ? article.audioTracks : (article.audioUrl ? [{ title:title, url:article.audioUrl }] : [])).filter(track => track && track.url);
+      const audioIndex = 0;
+      const firstAudioTrack = audioTracks[0];
+      const audioPlayer = format.label === 'Audio' && firstAudioTrack ? `<div class="audio-player" data-audio-index="${audioIndex}"><div class="audio-album"><img data-audio-cover src="${MTHSite.escapeHtml(article.cover || 'assets/mth-logo.png')}" alt="Album cover"></div><div><div class="media-title">MP3 Player · ${audioTracks.length} track${audioTracks.length === 1 ? '' : 's'}</div><div class="audio-now" data-audio-title>${MTHSite.escapeHtml(firstAudioTrack.title || title)}</div><audio data-audio-element preload="metadata" src="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(firstAudioTrack.url))}"></audio><div class="audio-controls"><button type="button" data-audio-prev title="Previous">‹‹</button><button type="button" data-audio-play title="Play">▶</button><button type="button" data-audio-next title="Next">››</button></div><a class="audio-open" data-audio-open href="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(firstAudioTrack.url))}" target="_blank" rel="noopener">Open audio file</a></div></div>` : '';
       const media = format.label === 'Video' ? `<div class="video-app">${MTHNews.videoEmbedHtml(article.video)}<div class="video-app-meta"><span>▶ Video lesson</span><span>Meatika Learning</span></div></div>`
         : format.label === 'Audio' ? audioPlayer
         : format.label === 'Book' ? MTHNews.bookReaderHtml(article.bookUrl) : '';
@@ -492,10 +493,10 @@
           if(!audioTracks.length) return;
           trackIndex = (nextIndex + audioTracks.length) % audioTracks.length;
           const track = audioTracks[trackIndex];
-          audioEl.src = MTHNews.liveMediaUrl(track.audioUrl);
-          document.querySelector('[data-audio-title]').textContent = (track.title && track.title.en) || 'Audio lesson';
-          document.querySelector('[data-audio-cover]').src = track.cover || 'assets/mth-logo.png';
-          document.querySelector('[data-audio-open]').href = MTHNews.liveMediaUrl(track.audioUrl);
+          audioEl.src = MTHNews.liveMediaUrl(track.url);
+          document.querySelector('[data-audio-title]').textContent = track.title || 'Audio lesson';
+          document.querySelector('[data-audio-cover]').src = article.cover || 'assets/mth-logo.png';
+          document.querySelector('[data-audio-open]').href = MTHNews.liveMediaUrl(track.url);
           if(autoplay) audioEl.play();
         };
         playBtn.addEventListener('click', () => audioEl.paused ? audioEl.play() : audioEl.pause());
@@ -505,7 +506,7 @@
           const current = audioTracks[trackIndex];
           const fallback = document.createElement('iframe');
           fallback.className = 'drive-audio-fallback';
-          fallback.src = MTHNews.pdfPreviewUrl(current.audioUrl);
+          fallback.src = MTHNews.pdfPreviewUrl(current.url);
           fallback.title = 'Google Drive audio player';
           fallback.allow = 'autoplay';
           audioEl.replaceWith(fallback);
