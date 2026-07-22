@@ -139,13 +139,32 @@
     return `<p class="news-video-link"><a href="${esc(url)}" target="_blank" rel="noopener">▶ Watch video</a></p>`;
   }
 
+  function googleDriveFileId(url){
+    const value = String(url || '').trim();
+    let m = value.match(/drive\.google\.com\/file\/d\/([\w-]+)/i);
+    if(m) return m[1];
+    m = value.match(/[?&]id=([\w-]+)/i);
+    return m ? m[1] : '';
+  }
+  function liveMediaUrl(url){
+    const id = googleDriveFileId(url);
+    return id ? `https://drive.google.com/uc?export=download&id=${id}` : String(url || '').trim();
+  }
+  function pdfPreviewUrl(url){
+    const id = googleDriveFileId(url);
+    return id ? `https://drive.google.com/file/d/${id}/preview` : String(url || '').trim();
+  }
+
   function audioPlayerHtml(url){
     if(!url) return '';
-    return `<div class="news-audio"><div class="media-title">♫ Listen to this lesson</div><audio controls preload="metadata" src="${esc(url)}">Your browser does not support audio playback.</audio><a href="${esc(url)}" target="_blank" rel="noopener">Open audio in a new tab</a></div>`;
+    const liveUrl = liveMediaUrl(url);
+    return `<div class="news-audio"><div class="media-title">♫ Listen to this lesson</div><audio controls preload="metadata" src="${esc(liveUrl)}">Your browser does not support audio playback.</audio><a href="${esc(liveUrl)}" target="_blank" rel="noopener">Open audio in a new tab</a></div>`;
   }
   function bookReaderHtml(url){
     if(!url) return '';
-    return `<div class="news-book"><div class="media-title">▧ Read this PDF book</div><iframe src="${esc(url)}#view=FitH" title="PDF book" loading="lazy"></iframe><div class="book-actions"><a href="${esc(url)}" target="_blank" rel="noopener">Read full screen</a><a href="${esc(url)}" download>Download PDF</a></div></div>`;
+    const previewUrl = pdfPreviewUrl(url);
+    const downloadUrl = liveMediaUrl(url);
+    return `<div class="news-book"><div class="media-title">▧ Read this PDF book</div><iframe src="${esc(previewUrl)}" title="PDF book" loading="lazy"></iframe><div class="book-actions"><a href="${esc(previewUrl)}" target="_blank" rel="noopener">Read full screen</a><a href="${esc(downloadUrl)}" download>Download PDF</a></div></div>`;
   }
 
   /* Plain-text body -> paragraphs. Blank lines separate paragraphs; single
@@ -171,7 +190,7 @@
   window.MTHNews = {
     setTags, getTags, categoryInfo, categoryBadgeHtml, newsByCategory,
     publishedNews, allNews, findNews, formatDate,
-    newsCardHtml, newsListHtml, videoEmbedHtml, audioPlayerHtml, bookReaderHtml, formatInfo, bodyHtml, shareLinks
+    newsCardHtml, newsListHtml, videoEmbedHtml, audioPlayerHtml, bookReaderHtml, formatInfo, googleDriveFileId, liveMediaUrl, pdfPreviewUrl, bodyHtml, shareLinks
   };
 
 })(window);
