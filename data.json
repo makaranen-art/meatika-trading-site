@@ -575,6 +575,35 @@
   ],
   "news": [
     {
+      "id": "news-mrwbfkro",
+      "title": {
+        "en": " ការពិតក្នុងការ Trade ដែលអ្នកចាប់ផ្តើមថ្មីថ្មោង តែងតែជួបដូចគ្នា!",
+        "km": " ការពិតក្នុងការ Trade ដែលអ្នកចាប់ផ្តើមថ្មីថ្មោង តែងតែជួបដូចគ្នា!"
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=C9DUglwXVb0",
+        "file": ""
+      },
+      "format": "video",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T16:47:33.348Z"
+    },
+    {
       "id": "news-mrwb3ft1",
       "title": {
         "en": "The Complete Guide to Trading",
