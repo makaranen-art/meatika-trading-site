@@ -20,16 +20,18 @@
   function cardHtml(card){
     const iconSvg = window.mthIconSvg(card.icon, card.iconColor);
     const wideClass = card.wide ? ' wide' : '';
+    const socialClass = card.platform && card.platform !== 'none' ? ' social-card platform-' + escapeHtml(card.platform) : '';
     const href = escapeHtml(cardHref(card));
     const internal = isInternal(card);
     const targetAttrs = internal ? '' : ' target="_blank" rel="noopener"';
     const desc = card.desc || {};
     return `
-      <div class="card${wideClass}">
+      <div class="card${wideClass}${socialClass}">
         <div class="avatar" style="background:${escapeHtml(card.color || '#24262b')};">
           <svg viewBox="0 0 24 24" fill="none">${iconSvg}</svg>
         </div>
         <div class="card-body">
+          ${card.platform && card.platform !== 'none' ? `<span class="platform-name">${escapeHtml(card.platform)}</span>` : ''}
           <h3>${escapeHtml(card.title)}</h3>
           <p data-en="${escapeHtml(desc.en)}" data-km="${escapeHtml(desc.km || desc.en)}">${escapeHtml(desc.en)}</p>
         </div>
