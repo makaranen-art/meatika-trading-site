@@ -6,6 +6,33 @@
   const esc = window.MTHSite.escapeHtml;
   const cloudinaryVideoPosterUrl = window.MTHSite.cloudinaryVideoPosterUrl;
 
+  /* Learning Center content tags. Every article/video post carries exactly
+     one of these. Keep the `id` values in sync with admin.html's category
+     <select> and with data.json's "category" field on each news item. */
+  const CATEGORIES = [
+    { id: 'psychology',       en: 'Psychology',      km: 'ចិត្តវិទ្យា' },
+    { id: 'strategy',         en: 'Strategy',         km: 'យុទ្ធសាស្ត្រ' },
+    { id: 'market-analysis',  en: 'Market Analysis',  km: 'វិភាគទីផ្សារ' },
+    { id: 'video',            en: 'Video',            km: 'វីដេអូ' }
+  ];
+
+  function categoryInfo(id){
+    return CATEGORIES.find(c => c.id === id) || null;
+  }
+
+  function categoryBadgeHtml(id){
+    const c = categoryInfo(id);
+    if(!c) return '';
+    return `<span class="news-cat-tag" data-en="${esc(c.en)}" data-km="${esc(c.km)}">${esc(c.en)}</span>`;
+  }
+
+  /* Filters an already-published list down to one tag. 'all' (or empty)
+     returns the list untouched. */
+  function newsByCategory(list, categoryId){
+    if(!categoryId || categoryId === 'all') return list;
+    return (list || []).filter(n => n.category === categoryId);
+  }
+
   /* Published articles, newest first. Admin-created drafts (published:false)
      are excluded from public listings but still reachable directly if linked,
      so a "Preview" link from the admin panel keeps working before publishing. */
@@ -44,11 +71,12 @@
       : `<div class="news-thumb news-thumb-empty"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16v14H4z" stroke="currentColor" stroke-width="1.6"/><path d="m4 15 4.5-4.5L12 14l3-3 5 5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/></svg></div>`;
     const draftTag = article.published === false
       ? '<span class="news-draft-tag">DRAFT</span>' : '';
+    const catTag = categoryBadgeHtml(article.category);
     return `
       <a class="news-card" href="article.html?id=${encodeURIComponent(article.id)}">
         ${cover}
         <div class="news-card-body">
-          <div class="news-meta">${draftTag}<span class="news-date">${esc(formatDate(article.publishedAt))}</span></div>
+          <div class="news-meta">${draftTag}${catTag}<span class="news-date">${esc(formatDate(article.publishedAt))}</span></div>
           <h3 data-en="${esc(title)}" data-km="${esc(titleKm)}">${esc(title)}</h3>
           <p data-en="${esc(excerpt)}" data-km="${esc(excerptKm)}">${esc(excerpt)}</p>
         </div>
@@ -111,6 +139,7 @@
   }
 
   window.MTHNews = {
+    CATEGORIES, categoryInfo, categoryBadgeHtml, newsByCategory,
     publishedNews, allNews, findNews, formatDate,
     newsCardHtml, newsListHtml, videoEmbedHtml, bodyHtml, shareLinks
   };
