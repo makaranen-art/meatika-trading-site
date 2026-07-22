@@ -16,14 +16,14 @@
 <meta property="og:type" content="article">
 <style>
   :root{
-    --ink-900:#0a0508; --ink-800:#1c1116; --ink-700:#2a1b21; --ink-600:#4a2a35;
-    --bg-grad-end:#2b0313; --gold-500:#ff2f5f; --gold-300:#ff8fa8;
-    --green-500:#c9b3ba; --green-300:#efe3e6; --up:#ff5577;
-    --paper:#f5eef0; --muted:#b99aa3; --radius:16px; --maxw:480px;
+    --ink-900:#05070f; --ink-800:#0b0f1e; --ink-700:#0f1526; --ink-600:#253052;
+    --bg-grad-end:#080b16; --gold-500:#4c7fff; --gold-300:#7fc4ff;
+    --green-500:#84b6ff; --green-300:#d7e7ff; --up:#6fa9ff;
+    --paper:#f2f5fc; --muted:#8d96b3; --radius:16px; --maxw:480px;
     --glass-1-bg:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
     --glass-1-border:rgba(255,255,255,0.10);
-    --glass-2-bg:linear-gradient(135deg, rgba(255,30,80,0.40), rgba(90,8,32,0.30));
-    --glass-2-border:rgba(255,70,110,0.45);
+    --glass-2-bg:linear-gradient(135deg, rgba(76,127,255,0.28), rgba(15,21,38,0.72));
+    --glass-2-border:rgba(127,196,255,0.35);
     --glass-3-bg:linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
     --glass-3-border:rgba(255,255,255,0.22);
     font-size:16px;
@@ -31,20 +31,20 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body.light{
-    --ink-900:#fdf3f5; --ink-800:#ffffff; --ink-700:#fbeef1; --ink-600:#f0d3da;
-    --bg-grad-end:#fdf3f5; --paper:#2a0f16; --muted:#8a6670;
-    --gold-300:#c81b4a; --green-500:#8a6670; --green-300:#5c3c44;
+    --ink-900:#f4f7ff; --ink-800:#ffffff; --ink-700:#edf2ff; --ink-600:#d6e1f7;
+    --bg-grad-end:#f4f7ff; --paper:#11182b; --muted:#59647c;
+    --gold-300:#2457bd; --green-500:#59647c; --green-300:#33415f;
     --glass-1-bg:linear-gradient(135deg, rgba(255,255,255,0.75), rgba(255,255,255,0.35));
-    --glass-1-border:rgba(42,15,22,0.10);
-    --glass-2-bg:linear-gradient(135deg, rgba(255,30,85,0.16), rgba(255,30,85,0.06));
-    --glass-2-border:rgba(200,27,74,0.35);
-    --glass-3-bg:linear-gradient(135deg, rgba(230,205,210,0.55), rgba(255,255,255,0.30));
-    --glass-3-border:rgba(42,15,22,0.14);
+    --glass-1-border:rgba(17,24,43,0.10);
+    --glass-2-bg:linear-gradient(135deg, rgba(76,127,255,0.16), rgba(127,196,255,0.06));
+    --glass-2-border:rgba(76,127,255,0.35);
+    --glass-3-bg:linear-gradient(135deg, rgba(214,225,247,0.55), rgba(255,255,255,0.30));
+    --glass-3-border:rgba(17,24,43,0.14);
   }
   body{
     background:
-      radial-gradient(circle at 20% -10%, rgba(255,20,80,0.20), transparent 45%),
-      radial-gradient(circle at 100% 15%, rgba(255,60,110,0.14), transparent 42%),
+      radial-gradient(circle at 20% -10%, rgba(76,127,255,0.25), transparent 45%),
+      radial-gradient(circle at 100% 15%, rgba(127,196,255,0.16), transparent 42%),
       repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 32px),
       linear-gradient(180deg, var(--ink-900) 0%, var(--bg-grad-end) 100%);
     color:var(--paper); font-family:'Inter', system-ui, sans-serif;
@@ -96,7 +96,7 @@
   .art-draft-tag{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; color:var(--ink-900); background:var(--gold-300); padding:2px 7px; border-radius:5px; font-weight:700; }
   .news-cat-tag{
     font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase;
-    color:var(--gold-300); background:rgba(255,143,168,0.14); border:1px solid var(--glass-1-border);
+    color:var(--gold-300); background:rgba(127,196,255,0.14); border:1px solid var(--glass-1-border);
     padding:1px 7px; border-radius:5px; font-weight:700;
   }
   .art-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 16px; line-height:1.35; }
@@ -114,14 +114,35 @@
   .book-actions{ display:flex; gap:14px; margin-top:12px; }
   .book-actions a{ flex:1; text-align:center; padding:10px; border:1px solid var(--ink-600); border-radius:9px; }
   .book-actions a:first-child{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
-  .audio-player{ display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center; padding:14px; margin-bottom:18px; background:var(--glass-2-bg); border:1px solid var(--glass-2-border); border-radius:var(--radius); }
-  .audio-album{ width:88px; height:88px; border-radius:11px; overflow:hidden; background:var(--ink-700); }
+  .audio-player{ margin-bottom:18px; padding:16px; background:var(--glass-2-bg); border:1px solid var(--glass-2-border); border-radius:var(--radius); box-shadow:0 12px 30px rgba(0,0,0,.18); }
+  .audio-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
+  .audio-panel-label{ font:700 11px 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-300); }
+  .audio-track-count{ font:500 10.5px 'JetBrains Mono',monospace; color:var(--muted); }
+  .audio-tracklist{ display:flex; flex-direction:column; gap:4px; max-height:248px; overflow:auto; padding-right:3px; }
+  .audio-tracklist::-webkit-scrollbar{ width:5px; }
+  .audio-tracklist::-webkit-scrollbar-thumb{ background:var(--ink-600); border-radius:4px; }
+  .audio-track{ display:grid; grid-template-columns:22px 1fr 28px; gap:9px; align-items:center; width:100%; padding:10px 9px; border:0; border-radius:10px; background:transparent; color:var(--paper); text-align:left; cursor:pointer; font:inherit; transition:background .15s ease, transform .15s ease; }
+  .audio-track:hover{ background:var(--glass-1-bg); }
+  .audio-track.is-active{ background:var(--gold-500); color:var(--ink-900); }
+  .audio-track-number,.audio-track-duration{ font:500 10.5px 'JetBrains Mono',monospace; color:var(--muted); }
+  .audio-track.is-active .audio-track-number,.audio-track.is-active .audio-track-duration{ color:rgba(10,5,8,.7); }
+  .audio-track-title{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:600; }
+  .audio-track-state{ justify-self:end; width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:var(--ink-800); color:var(--paper); font-size:10px; }
+  .audio-track.is-active .audio-track-state{ background:rgba(10,5,8,.16); color:var(--ink-900); }
+  .audio-now-playing{ display:grid; grid-template-columns:48px 1fr; gap:11px; align-items:center; margin-top:15px; padding:12px; background:rgba(10,5,8,.2); border:1px solid var(--glass-1-border); border-radius:12px; }
+  .audio-album{ width:48px; height:48px; border-radius:10px; overflow:hidden; background:var(--ink-700); }
   .audio-album img{ width:100%; height:100%; object-fit:cover; }
-  .audio-now{ font-family:'Space Grotesk',sans-serif; font-size:14px; margin:2px 0 10px; }
-  .audio-controls{ display:flex; align-items:center; gap:8px; }
-  .audio-controls button{ width:34px; height:34px; border:1px solid var(--ink-600); border-radius:50%; background:var(--ink-800); color:var(--paper); font-weight:700; cursor:pointer; }
-  .audio-controls button[data-audio-play]{ width:42px; height:42px; background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
-  .audio-open{ display:inline-block; color:var(--gold-300); font-size:11.5px; text-decoration:none; margin-top:8px; }
+  .audio-now{ min-width:0; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .audio-progress-row{ display:flex; align-items:center; gap:8px; margin-top:7px; }
+  .audio-time{ width:31px; font:500 10px 'JetBrains Mono',monospace; color:var(--muted); }
+  .audio-time:last-child{ text-align:right; }
+  .audio-progress{ position:relative; flex:1; height:5px; border:0; padding:0; border-radius:99px; background:var(--ink-600); cursor:pointer; overflow:hidden; }
+  .audio-progress-fill{ width:0; height:100%; background:var(--gold-300); border-radius:inherit; }
+  .audio-controls{ display:flex; justify-content:center; align-items:center; gap:22px; margin-top:13px; }
+  .audio-controls button{ width:30px; height:30px; border:0; border-radius:50%; background:transparent; color:var(--paper); font-size:15px; font-weight:700; cursor:pointer; }
+  .audio-controls button[data-audio-play]{ width:38px; height:38px; background:var(--gold-500); color:var(--ink-900); }
+  .audio-open{ display:block; margin-top:11px; color:var(--gold-300); text-align:center; font-size:11.5px; text-decoration:none; }
+  @media (prefers-reduced-motion: reduce){ .audio-track{ transition:none; } }
   .drive-audio-fallback{ width:100%; height:58px; border:0; border-radius:8px; background:var(--ink-800); }
   .video-app{ margin-bottom:18px; border:1px solid var(--ink-600); border-radius:var(--radius); overflow:hidden; background:#080608; }
   .video-app .news-video{ margin:0; border:0; border-radius:0; }
@@ -447,7 +468,14 @@
       const audioTracks = (Array.isArray(article.audioTracks) && article.audioTracks.length ? article.audioTracks : (article.audioUrl ? [{ title:title, url:article.audioUrl }] : [])).filter(track => track && track.url);
       const audioIndex = 0;
       const firstAudioTrack = audioTracks[0];
-      const audioPlayer = format.label === 'Audio' && firstAudioTrack ? `<div class="audio-player" data-audio-index="${audioIndex}"><div class="audio-album"><img data-audio-cover src="${MTHSite.escapeHtml(article.cover || 'assets/mth-logo.png')}" alt="Album cover"></div><div><div class="media-title">MP3 Player · ${audioTracks.length} track${audioTracks.length === 1 ? '' : 's'}</div><div class="audio-now" data-audio-title>${MTHSite.escapeHtml(firstAudioTrack.title || title)}</div><audio data-audio-element preload="metadata" src="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(firstAudioTrack.url))}"></audio><div class="audio-controls"><button type="button" data-audio-prev title="Previous">‹‹</button><button type="button" data-audio-play title="Play">▶</button><button type="button" data-audio-next title="Next">››</button></div><a class="audio-open" data-audio-open href="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(firstAudioTrack.url))}" target="_blank" rel="noopener">Open audio file</a></div></div>` : '';
+      const audioPlayer = format.label === 'Audio' && firstAudioTrack ? `<section class="audio-player" aria-label="Audio lesson player" data-audio-index="${audioIndex}">
+        <div class="audio-panel-head"><span class="audio-panel-label">Lesson playlist</span><span class="audio-track-count">${audioTracks.length} track${audioTracks.length === 1 ? '' : 's'}</span></div>
+        <div class="audio-tracklist" data-audio-tracklist></div>
+        <div class="audio-now-playing"><div class="audio-album"><img data-audio-cover src="${MTHSite.escapeHtml(article.cover || 'assets/mth-logo.png')}" alt="Lesson cover"></div><div><div class="audio-now" data-audio-title>${MTHSite.escapeHtml(firstAudioTrack.title || title)}</div><div class="audio-progress-row"><span class="audio-time" data-audio-current>0:00</span><button class="audio-progress" type="button" data-audio-progress aria-label="Seek within lesson"><span class="audio-progress-fill" data-audio-progress-fill></span></button><span class="audio-time" data-audio-duration>0:00</span></div></div></div>
+        <audio data-audio-element preload="metadata" src="${MTHNews.liveMediaUrl(firstAudioTrack.url)}"></audio>
+        <div class="audio-controls"><button type="button" data-audio-prev title="Previous lesson" aria-label="Previous lesson">‹‹</button><button type="button" data-audio-play title="Play" aria-label="Play">▶</button><button type="button" data-audio-next title="Next lesson" aria-label="Next lesson">››</button></div>
+        <a class="audio-open" data-audio-open href="${MTHNews.liveMediaUrl(firstAudioTrack.url)}" target="_blank" rel="noopener">Open audio file</a>
+      </section>` : '';
       const media = format.label === 'Video' ? `<div class="video-app">${MTHNews.videoEmbedHtml(article.video)}<div class="video-app-meta"><span>▶ Video lesson</span><span>Meatika Learning</span></div></div>`
         : format.label === 'Audio' ? audioPlayer
         : format.label === 'Book' ? MTHNews.bookReaderHtml(article.bookUrl) : '';
@@ -489,6 +517,25 @@
       if(audioEl){
         let trackIndex = audioIndex;
         const playBtn = document.querySelector('[data-audio-play]');
+        const trackList = document.querySelector('[data-audio-tracklist]');
+        const fmtTime = value => {
+          const seconds = Number.isFinite(value) ? Math.floor(value) : 0;
+          return Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+        };
+        const renderTrackList = () => {
+          trackList.innerHTML = audioTracks.map((track, index) => `<button class="audio-track${index === trackIndex ? ' is-active' : ''}" type="button" data-audio-track="${index}" aria-current="${index === trackIndex ? 'true' : 'false'}"><span class="audio-track-number">${String(index + 1).padStart(2, '0')}</span><span class="audio-track-title">${MTHSite.escapeHtml(track.title || 'Audio lesson ' + (index + 1))}</span><span class="audio-track-state">${index === trackIndex && !audioEl.paused ? '❚❚' : '▶'}</span></button>`).join('');
+          trackList.querySelectorAll('[data-audio-track]').forEach(button => button.addEventListener('click', () => {
+            const nextIndex = Number(button.dataset.audioTrack);
+            if(nextIndex === trackIndex) audioEl.paused ? audioEl.play() : audioEl.pause();
+            else updateTrack(nextIndex, true);
+          }));
+        };
+        const updateProgress = () => {
+          const duration = audioEl.duration;
+          document.querySelector('[data-audio-current]').textContent = fmtTime(audioEl.currentTime);
+          document.querySelector('[data-audio-duration]').textContent = fmtTime(duration);
+          document.querySelector('[data-audio-progress-fill]').style.width = duration ? (audioEl.currentTime / duration * 100) + '%' : '0%';
+        };
         const updateTrack = (nextIndex, autoplay) => {
           if(!audioTracks.length) return;
           trackIndex = (nextIndex + audioTracks.length) % audioTracks.length;
@@ -497,9 +544,15 @@
           document.querySelector('[data-audio-title]').textContent = track.title || 'Audio lesson';
           document.querySelector('[data-audio-cover]').src = article.cover || 'assets/mth-logo.png';
           document.querySelector('[data-audio-open]').href = MTHNews.liveMediaUrl(track.url);
+          updateProgress();
+          renderTrackList();
           if(autoplay) audioEl.play();
         };
         playBtn.addEventListener('click', () => audioEl.paused ? audioEl.play() : audioEl.pause());
+        audioEl.addEventListener('play', () => { playBtn.title = playBtn.ariaLabel = 'Pause'; renderTrackList(); });
+        audioEl.addEventListener('pause', () => { playBtn.title = playBtn.ariaLabel = 'Play'; renderTrackList(); });
+        audioEl.addEventListener('loadedmetadata', updateProgress);
+        audioEl.addEventListener('timeupdate', updateProgress);
         audioEl.addEventListener('play', () => playBtn.textContent = '❚❚');
         audioEl.addEventListener('pause', () => playBtn.textContent = '▶');
         audioEl.addEventListener('error', () => {
@@ -518,6 +571,12 @@
         audioEl.addEventListener('ended', () => updateTrack(trackIndex + 1, true));
         document.querySelector('[data-audio-prev]').addEventListener('click', () => updateTrack(trackIndex - 1, true));
         document.querySelector('[data-audio-next]').addEventListener('click', () => updateTrack(trackIndex + 1, true));
+        document.querySelector('[data-audio-progress]').addEventListener('click', event => {
+          if(!Number.isFinite(audioEl.duration)) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          audioEl.currentTime = audioEl.duration * Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+        });
+        renderTrackList();
       }
 
       applyLangWithBody(savedLang);
