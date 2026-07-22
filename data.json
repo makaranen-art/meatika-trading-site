@@ -575,6 +575,34 @@
   ],
   "news": [
     {
+      "id": "news-mrw7h04s",
+      "title": {
+        "en": "New Video",
+        "km": ""
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=GkAGew19sB4",
+        "file": ""
+      },
+      "format": "video",
+      "audioUrl": "",
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T14:56:41.452Z"
+    },
+    {
       "id": "news-mrw7em8c",
       "title": {
         "en": "New Audio",
