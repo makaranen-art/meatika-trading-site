@@ -575,6 +575,35 @@
   ],
   "news": [
     {
+      "id": "news-mrwbgngl",
+      "title": {
+        "en": " របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade!",
+        "km": " របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade!"
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=N6-JCJkw-TI",
+        "file": ""
+      },
+      "format": "video",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T16:48:23.493Z"
+    },
+    {
       "id": "news-mrwbfkro",
       "title": {
         "en": " ការពិតក្នុងការ Trade ដែលអ្នកចាប់ផ្តើមថ្មីថ្មោង តែងតែជួបដូចគ្នា!",
