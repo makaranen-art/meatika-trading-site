@@ -575,6 +575,34 @@
   ],
   "news": [
     {
+      "id": "news-mrw5ocgb",
+      "title": {
+        "en": "New Book / PDF",
+        "km": ""
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "book",
+      "audioUrl": "",
+      "bookUrl": "https://drive.google.com/uc?export=download&id=1DhyD3RkBj_Crb_w4NhO92l2LuD6YyPz5",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T14:06:24.779Z"
+    },
+    {
       "id": "news-mrw5jlrx",
       "title": {
         "en": "EP1-ហេតុអ្វីអារម្មណ៍ជាសត្រូវធំបំផុតរបស់ Trader",
