@@ -301,10 +301,7 @@
       </div>
       <div class="tag-drawer-list" id="tagDrawerList">
         <button type="button" class="tag-item is-active" data-cat="all" data-en="All" data-km="ទាំងអស់">All</button>
-        <button type="button" class="tag-item" data-cat="psychology" data-en="Psychology" data-km="ចិត្តវិទ្យា">Psychology</button>
-        <button type="button" class="tag-item" data-cat="strategy" data-en="Strategy" data-km="យុទ្ធសាស្ត្រ">Strategy</button>
-        <button type="button" class="tag-item" data-cat="market-analysis" data-en="Market Analysis" data-km="វិភាគទីផ្សារ">Market Analysis</button>
-        <button type="button" class="tag-item" data-cat="video" data-en="Video" data-km="វីដេអូ">Video</button>
+        <!-- remaining tags are rendered from data.json's newsTags at load time -->
       </div>
     </aside>
 
@@ -435,15 +432,11 @@
       try{ localStorage.setItem('mth-theme', nowLight ? 'light' : 'dark'); }catch(e){ /* storage unavailable */ }
     });
 
-    const CAT_TAB_IDS = ['all', 'psychology', 'strategy', 'market-analysis', 'video'];
+    let CAT_TAB_IDS = ['all'];
     const PAGE_SIZE = 6;
     let allPublished = [];
     let activeCat = 'all';
     let currentPage = 1;
-    try{
-      const fromHash = (location.hash || '').replace('#', '');
-      if(CAT_TAB_IDS.includes(fromHash)) activeCat = fromHash;
-    }catch(e){ /* ignore */ }
 
     /* ---- Topic filter drawer ---- */
     const tagFabBtn = document.getElementById('tagFabBtn');
@@ -506,7 +499,7 @@
       applyLang(savedLang);
     }
 
-    document.querySelectorAll('.tag-item').forEach(btn => {
+    function bindTagItem(btn){
       btn.classList.toggle('is-active', btn.dataset.cat === activeCat);
       btn.addEventListener('click', () => {
         activeCat = btn.dataset.cat;
@@ -516,7 +509,22 @@
         renderNewsList();
         closeTagDrawer();
       });
-    });
+    }
+
+    /* Builds the "All" + one button per Learning Center tag from data.json,
+       so newly created/renamed/deleted tags (managed in the admin panel)
+       show up here without any code change. */
+    function renderTagDrawer(tags){
+      const list = document.getElementById('tagDrawerList');
+      list.innerHTML = '<button type="button" class="tag-item" data-cat="all" data-en="All" data-km="ទាំងអស់">All</button>' +
+        (tags || []).map(t => `<button type="button" class="tag-item" data-cat="${MTHSite.escapeHtml(t.id)}" data-en="${MTHSite.escapeHtml(t.en)}" data-km="${MTHSite.escapeHtml(t.km || t.en)}">${MTHSite.escapeHtml(t.en)}</button>`).join('');
+      CAT_TAB_IDS = ['all'].concat((tags || []).map(t => t.id));
+      try{
+        const fromHash = (location.hash || '').replace('#', '');
+        if(CAT_TAB_IDS.includes(fromHash)) activeCat = fromHash;
+      }catch(e){ /* ignore */ }
+      list.querySelectorAll('.tag-item').forEach(bindTagItem);
+    }
 
     async function init(){
       let data;
@@ -528,8 +536,11 @@
       }
       if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
+      MTHNews.setTags(data.newsTags);
+      renderTagDrawer(MTHNews.getTags());
       allPublished = MTHNews.publishedNews(data);
       renderNewsList();
+      applyLang(savedLang);
     }
     init();
   </script>

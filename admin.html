@@ -273,12 +273,30 @@
       </div>
 
       <div class="panel">
+        <h2>Learning Center tags</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          These are the content tags Learning Center posts can be filed under — they show up as the filter
+          tabs on the public Learning Center page. Add a new one, rename an existing tag's English and/or
+          Khmer label, or delete one you no longer need. If you delete a tag that posts are still using,
+          those posts are automatically moved to another tag instead of being left unset.
+        </p>
+        <div id="newsTagsList"></div>
+        <div class="row" style="margin-top:2px;">
+          <div class="field"><label>New tag — English label</label><input type="text" id="newTagEn" placeholder="e.g. Risk Management"></div>
+          <div class="field"><label>New tag — Khmer label (optional)</label><input type="text" id="newTagKm" placeholder="e.g. ការគ្រប់គ្រងហានិភ័យ"></div>
+        </div>
+        <button class="small" id="addNewsTag" type="button">+ Add tag</button>
+        <div class="status" id="newsTagsStatus" style="min-height:14px;"></div>
+      </div>
+
+      <div class="panel">
         <h2>Learning Center posts</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Write education posts — articles or videos — with a cover photo, an optional video (paste a
           YouTube/Facebook/Vimeo link, or upload a short video file), and text in English and Khmer. Pick a
-          <strong>Content tag</strong> below (Psychology, Strategy, Market Analysis, or Video) — this controls
-          which tab the post shows up under on the public Learning Center page. Each post also gets a
+          <strong>Content tag</strong> below — this controls which tab the post shows up under on the public
+          Learning Center page. Manage the list of available tags in <strong>Learning Center tags</strong>
+          above. Each post also gets a
           <strong>Share this article</strong> row (Facebook, Telegram, X, WhatsApp, copy link) automatically —
           nothing to configure. Uncheck <strong>Published</strong> to keep working on a draft without it
           showing on the public <code>news.html</code> list (a draft is still viewable if you open its direct
@@ -580,6 +598,7 @@ function renderEditor(){
   renderHomeSections = makeSectionsRenderer(document.getElementById('sectionsList'), state.sections);
   renderHomeSections();
   renderPages();
+  renderNewsTags();
   renderNews();
 }
 
@@ -1219,20 +1238,132 @@ function newArticle(){
     body: { en: '', km: '' },
     cover: '',
     video: { type: 'url', url: '', file: '' },
-    category: 'psychology',
+    category: (getNewsTags()[0] || {}).id || 'psychology',
     author: '',
     published: true,
     publishedAt: nowIso
   };
 }
 
-/* Learning Center content tags — keep ids in sync with assets/news.js CATEGORIES. */
-const NEWS_CATEGORIES = [
-  { id: 'psychology',      label: 'Psychology' },
-  { id: 'strategy',        label: 'Strategy' },
-  { id: 'market-analysis', label: 'Market Analysis' },
-  { id: 'video',           label: 'Video' }
+/* Learning Center content tags — the working list now lives in state.newsTags
+   (each { id, en, km }) and is managed from the "Learning Center tags" panel.
+   This is only the fallback used to seed state.newsTags the first time an
+   older data.json (without a newsTags array) is loaded. Keep the `id` values
+   in sync with assets/news.js's FALLBACK_CATEGORIES. */
+const DEFAULT_NEWS_TAGS = [
+  { id: 'psychology',      en: 'Psychology',      km: 'ចិត្តវិទ្យា' },
+  { id: 'strategy',        en: 'Strategy',         km: 'យុទ្ធសាស្ត្រ' },
+  { id: 'market-analysis', en: 'Market Analysis',  km: 'វិភាគទីផ្សារ' },
+  { id: 'video',           en: 'Video',            km: 'វីដេអូ' }
 ];
+
+/* Always returns a non-empty array — creates state.newsTags from the
+   defaults above if it's missing (older saved data.json) or has been
+   emptied out. */
+function getNewsTags(){
+  if(!state.newsTags || !state.newsTags.length){
+    state.newsTags = DEFAULT_NEWS_TAGS.map(t => Object.assign({}, t));
+  }
+  return state.newsTags;
+}
+
+/* After a tag is added/renamed/deleted, every already-rendered article's
+   category <select> (and its summary label) needs to reflect the current
+   tag list. Doing this in place — instead of a full renderNews() — keeps
+   any article panels the admin has open from collapsing mid-edit. */
+function refreshCategorySelects(){
+  const tags = getNewsTags();
+  document.querySelectorAll('#newsList [data-f="category"]').forEach(sel => {
+    const prevValue = sel.value;
+    sel.innerHTML = tags.map(c => `<option value="${escAttr(c.id)}">${escAttr(c.en)}</option>`).join('');
+    sel.value = tags.some(c => c.id === prevValue) ? prevValue : tags[0].id;
+    if(sel.value !== prevValue) sel.dispatchEvent(new Event('change'));
+    else{
+      const summarySpan = sel.closest('.section-card').querySelector('summary span');
+      if(summarySpan){
+        const label = (tags.find(c => c.id === sel.value) || tags[0]).en;
+        const statusText = summarySpan.textContent.split('·')[1] ? summarySpan.textContent.split('·')[1].trim() : '';
+        summarySpan.textContent = statusText ? `${label} · ${statusText}` : label;
+      }
+    }
+  });
+}
+
+function newsTagUsageCount(tagId){
+  return (state.news || []).filter(a => a.category === tagId).length;
+}
+
+function renderNewsTags(){
+  const wrap = document.getElementById('newsTagsList');
+  const tags = getNewsTags();
+  wrap.innerHTML = '';
+  tags.forEach((tag, idx) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.style.marginBottom = '8px';
+    row.innerHTML = `
+      <div class="field" style="margin-bottom:0;"><label>English label</label><input type="text" data-f="en" value="${escAttr(tag.en)}"></div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Khmer label</label>
+        <div style="display:flex;gap:6px;">
+          <input type="text" data-f="km" value="${escAttr(tag.km)}" style="flex:1;">
+          <button class="small danger" data-act="removeTag" type="button" title="Delete tag">✕</button>
+        </div>
+      </div>
+    `;
+    row.querySelector('[data-f="en"]').addEventListener('input', e => {
+      tag.en = e.target.value;
+      refreshCategorySelects();
+    });
+    row.querySelector('[data-f="km"]').addEventListener('input', e => {
+      tag.km = e.target.value;
+      refreshCategorySelects();
+    });
+    row.querySelector('[data-act="removeTag"]').addEventListener('click', () => {
+      const statusEl = document.getElementById('newsTagsStatus');
+      if(tags.length <= 1){
+        statusEl.textContent = 'At least one tag needs to stay — add a replacement before deleting this one.';
+        statusEl.className = 'status bad';
+        return;
+      }
+      const usedBy = newsTagUsageCount(tag.id);
+      if(usedBy > 0){
+        const fallback = tags.find(t => t.id !== tag.id);
+        const ok = confirm(`"${tag.en || 'This tag'}" is used by ${usedBy} post${usedBy === 1 ? '' : 's'}. Deleting it will move ${usedBy === 1 ? 'that post' : 'those posts'} to "${fallback.en}". Continue?`);
+        if(!ok) return;
+        (state.news || []).forEach(a => { if(a.category === tag.id) a.category = fallback.id; });
+      }
+      state.newsTags.splice(idx, 1);
+      renderNewsTags();
+      renderNews();
+      statusEl.textContent = 'Tag deleted — click "Save changes" below to publish.';
+      statusEl.className = 'status ok';
+    });
+    wrap.appendChild(row);
+  });
+}
+
+document.getElementById('addNewsTag').addEventListener('click', () => {
+  const enInput = document.getElementById('newTagEn');
+  const kmInput = document.getElementById('newTagKm');
+  const statusEl = document.getElementById('newsTagsStatus');
+  const en = enInput.value.trim();
+  if(!en){
+    statusEl.textContent = 'Enter an English label for the new tag.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  const tags = getNewsTags();
+  let id = slugify(en);
+  if(tags.some(t => t.id === id)) id = id + '-' + Date.now().toString(36);
+  tags.push({ id, en, km: kmInput.value.trim() });
+  enInput.value = '';
+  kmInput.value = '';
+  renderNewsTags();
+  refreshCategorySelects();
+  statusEl.textContent = 'Tag added — click "Save changes" below to publish.';
+  statusEl.className = 'status ok';
+});
 
 /* Paginate the news editor list once posts reach 6 — keeps this panel
    scrollable/manageable as the Learning Center grows. */
@@ -1270,13 +1401,14 @@ function renderNews(){
     article.excerpt = article.excerpt || { en:'', km:'' };
     article.body = article.body || { en:'', km:'' };
     article.video = article.video || { type:'url', url:'', file:'' };
-    article.category = article.category || 'psychology';
+    const tags = getNewsTags();
+    article.category = article.category || tags[0].id;
     article.author = article.author || '';
 
     const el = document.createElement('details');
     el.className = 'section-card';
     const statusLabel = article.published === false ? 'Draft' : 'Published';
-    const catLabel = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
+    const catLabel = (tags.find(c => c.id === article.category) || tags[0]).en;
     el.innerHTML = `
       <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <strong>${escAttr(article.title.en || 'Untitled article')}</strong>
@@ -1291,7 +1423,7 @@ function renderNews(){
           <div class="field">
             <label>Content tag</label>
             <select data-f="category">
-              ${NEWS_CATEGORIES.map(c => `<option value="${escAttr(c.id)}">${escAttr(c.label)}</option>`).join('')}
+              ${tags.map(c => `<option value="${escAttr(c.id)}">${escAttr(c.en)}</option>`).join('')}
             </select>
           </div>
           <div class="field">
@@ -1365,7 +1497,7 @@ function renderNews(){
     catSelect.value = article.category;
     catSelect.addEventListener('change', e => {
       article.category = e.target.value;
-      const label = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
+      const label = (getNewsTags().find(c => c.id === article.category) || getNewsTags()[0]).en;
       const statusText = article.published === false ? 'Draft' : 'Published';
       el.querySelector('summary span').textContent = `${label} · ${statusText}`;
     });
@@ -1376,7 +1508,7 @@ function renderNews(){
     el.querySelector('[data-f="body-km"]').addEventListener('input', e => article.body.km = e.target.value);
     el.querySelector('[data-f="published"]').addEventListener('change', e => {
       article.published = e.target.checked;
-      const label = (NEWS_CATEGORIES.find(c => c.id === article.category) || NEWS_CATEGORIES[0]).label;
+      const label = (getNewsTags().find(c => c.id === article.category) || getNewsTags()[0]).en;
       el.querySelector('summary span').textContent = `${label} · ${article.published === false ? 'Draft' : 'Published'}`;
     });
     el.querySelector('[data-f="publishedAt"]').addEventListener('input', e => {

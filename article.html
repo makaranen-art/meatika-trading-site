@@ -398,6 +398,7 @@
       }
       if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
+      MTHNews.setTags(data.newsTags);
 
       const article = id ? MTHNews.findNews(data, id) : null;
       const wrap = document.getElementById('article');

@@ -642,5 +642,27 @@
       "author": ""
     }
   ],
+  "newsTags": [
+    {
+      "id": "psychology",
+      "en": "Psychology",
+      "km": "ចិត្តវិទ្យា"
+    },
+    {
+      "id": "strategy",
+      "en": "Strategy",
+      "km": "យុទ្ធសាស្ត្រ"
+    },
+    {
+      "id": "market-analysis",
+      "en": "Market Analysis",
+      "km": "វិភាគទីផ្សារ"
+    },
+    {
+      "id": "video",
+      "en": "Video",
+      "km": "វីដេអូ"
+    }
+  ],
   "newsGateEndpoint": "https://script.google.com/macros/s/AKfycbwgIJ4FEkgIdLI68a-1Y3PxuvwFTAgo6TkHzt43Cay9M3rCjELD6C43VzW7sFVUP7jL/exec"
 }
