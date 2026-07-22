@@ -585,5 +585,6 @@
       "published": true,
       "publishedAt": "2026-07-20T17:12:37.155Z"
     }
-  ]
+  ],
+  "newsGateEndpoint": "https://script.google.com/macros/s/AKfycbwgIJ4FEkgIdLI68a-1Y3PxuvwFTAgo6TkHzt43Cay9M3rCjELD6C43VzW7sFVUP7jL/exec"
 }
