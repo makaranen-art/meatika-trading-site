@@ -50,7 +50,8 @@
           "color": "#000105",
           "iconColor": "#ffffff",
           "wide": false,
-          "linkType": "url"
+          "linkType": "url",
+          "platform": "none"
         },
         {
           "id": "gtcfx",
@@ -64,7 +65,8 @@
           "color": "#000000",
           "iconColor": "#ffffff",
           "wide": false,
-          "linkType": "url"
+          "linkType": "url",
+          "platform": "none"
         },
         {
           "id": "litefinance",
@@ -78,7 +80,8 @@
           "color": "#2a2418",
           "iconColor": "#d4af37",
           "wide": true,
-          "linkType": "url"
+          "linkType": "url",
+          "platform": "none"
         }
       ]
     },
@@ -213,7 +216,8 @@
           "icon": "star",
           "color": "#24262b",
           "iconColor": "#d4af37",
-          "wide": true
+          "wide": true,
+          "platform": "none"
         },
         {
           "id": "card-1784463384426",
@@ -228,7 +232,8 @@
           "icon": "star",
           "color": "#24262b",
           "iconColor": "#d4af37",
-          "wide": true
+          "wide": true,
+          "platform": "none"
         }
       ]
     },
@@ -252,7 +257,8 @@
           "color": "#2a2418",
           "iconColor": "#d4af37",
           "wide": true,
-          "linkType": "page"
+          "linkType": "page",
+          "platform": "none"
         }
       ]
     }
@@ -510,6 +516,29 @@
     }
   ],
   "news": [
+    {
+      "id": "news-mrvrvwbk",
+      "title": {
+        "en": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច? #Technical Trading ជាអ្វី?",
+        "km": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច? #Technical Trading ជាអ្វី?"
+      },
+      "excerpt": {
+        "en": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច?\n#Technical Trading ជាអ្វី?\nTechnical Trading គឺជាការវិភាគទីផ្សារដោយប្រើ Price Chart និង Historical Data ដើម្បីស្វែងយល់ថាតម្លៃអាចនឹងទៅទិសណាបន្ទាប់។",
+        "km": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច?\n#Technical Trading ជាអ្វី?\nTechnical Trading គឺជាការវិភាគទីផ្សារដោយប្រើ Price Chart និង Historical Data ដើម្បីស្វែងយល់ថាតម្លៃអាចនឹងទៅទិសណាបន្ទាប់។"
+      },
+      "body": {
+        "en": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច?\n#Technical Trading ជាអ្វី?\nTechnical Trading គឺជាការវិភាគទីផ្សារដោយប្រើ Price Chart និង Historical Data ដើម្បីស្វែងយល់ថាតម្លៃអាចនឹងទៅទិសណាបន្ទាប់។\nTechnical Trading មិនប្រាប់ថា “ចូល Trade ឥឡូវនេះ” ទេ។\nវាគ្រាន់តែផ្តល់ព័ត៌មានដូចជា៖\n* Trend កំពុងឡើង ឬចុះ\n* Market Structure\n* Support & Resistance\n* Supply & Demand\n* Liquidity\n* Volume\n* Candlestick Pattern\n* Chart Pattern\n* Indicators (EMA, RSI, MACD…)\n* Smart Money Concept\n* ICT Concepts\nនិយាយឲ្យងាយ…Technical Trading គឺដូចជា គ្រូពេទ្យពិនិត្យរោគ។\nគ្រូពេទ្យមើល\n* សម្ពាធឈាម\n* ឈាម\n* X-Ray\n* MRI\nទាំងអស់នេះគឺជាទិន្នន័យ។ ប៉ុន្តែ…ទិន្នន័យមិនទាន់ជាការព្យាបាលទេ។\nឧទាហរណ៍៖\nអ្នកបើក Chart XAUUSDអ្នកឃើញ\nEMA50 > EMA200,Higher High,Higher Low,Bullish Order Block,Liquidity ខាងលើ, Fair Value Gap,BOS\nទាំងអស់នេះគឺជាTechnical Analysis មិនទាន់មាន Entry ទេ។\n#Trading Strategy ជាអ្វី?\nTrading Strategy គឺជា Rule Set ឬផែនការច្បាស់លាស់ ដែលកំណត់ថា៖\n* ពេលណាចូល Trade\n* ពេលណាមិនចូល\n* Stop Loss ដាក់កន្លែងណា\n* Take Profit ដាក់កន្លែងណា\n* Risk ប៉ុន្មាន\n* ចូល Buy ឬ Sell\n* ចូលនៅ Timeframe ណា\n* ចេញពី Trade ពេលណា\nStrategy គឺយក Technical Trading មកផ្សំគ្នា រួចបង្កើតជា System មួយ។\nឧទាហរណ៍៖Technical Trading និយាយថា\n* Trend = Uptrend\n* BOS\n* FVG\n* Liquidity Sweep\nStrategy និយាយថា\n“ខ្ញុំនឹង Buy លុះត្រាតែ…”\n1. EMA50 > EMA200\n2. Price Sweep Low\n3. BOS\n4. Return មក FVG\n5. Bullish Engulfing\n6. Risk 1%\n7. TP = RR 1:3\nនេះហើយហៅថាTrading Strategy\n#ប្រៀបធៀបជាមួយការធ្វើម្ហូប\nTechnical Trading ដូចជាអ្នកស្គាល់៖\n* អំបិល\n* ស្ករ\n* ម្ទេស\n* ខ្ទឹម\n* សាច់\n* បន្លែ\nអ្នកស្គាល់គ្រឿងផ្សំទាំងអស់។\n#Trading Strategy គឺ\nរូបមន្តធ្វើម្ហូប\nដាក់អ្វីមុន\nដាក់អ្វីក្រោយ\nប៉ុន្មានក្រាម\nចម្អិនប៉ុន្មាននាទី\nនេះហើយជារូបមន្តដែលអាចធ្វើឡើងវិញបាន។\nTechnical Trading មានអ្វីខ្លះ?\n1. Trend Analysis\n* Uptrend\n* Downtrend\n* Sideway\n2. Market Structure\n* HH\n* HL\n* LH\n* LL\n* BOS\n* CHOCH\n3. Support & Resistance\n* Daily Level\n* Weekly Level\n* Monthly Level\n4. Supply & Demand\n* Fresh Zone\n* Tested Zone\n5. Liquidity\n* Equal High\n* Equal Low\n* Stop Hunt\n* Liquidity Sweep\n6. Candlestick\n* Pin Bar\n* Engulfing\n* Doji\n* Morning Star\n7. Indicators\n* EMA\n* RSI\n* MACD\n* ATR\n* Bollinger Bands\n8. Smart Money Concept\n* Order Block\n* Fair Value Gap\n* Breaker Block\n* Mitigation Block\n* Liquidity\n* Premium / Discount\nទាំងអស់នេះគឺជា ឧបករណ៍វិភាគ។\n#Trading Strategy មានអ្វីខ្លះ?\nStrategy ត្រូវមានច្បាប់ច្បាស់លាស់។\nEntry Rules\n* Trend\n* Confirmation\n* Timeframe\n* Session\nExit Rules\n* TP\n* SL\n* Trailing Stop\nRisk Management\n* Risk 1%\n* RR 1:2\n* RR 1:3\nTrade Management\n* Break Even\n* Partial Close\n* Hold\nFilter\n* No News\n* London Session\n* New York Session\n* Avoid Sideway\nPsychology Rules\n* Max 2 Losses/Day\n* No Revenge Trade\n* Wait for Confirmation\nឧទាហរណ៍៖\nTechnical Analysis បង្ហាញថា\n* Daily Uptrend\n* H1 Bullish\n* H15 Liquidity Sweep\n* BOS\n* FVG\nប៉ុន្តែ…\nStrategy របស់អ្នកអាចនិយាយថា\n“ខ្ញុំចូល Buy តែបើតម្លៃត្រឡប់មក Fill 50% នៃ FVG ហើយមាន Bullish Engulfing Candle នៅ M5 ក្នុង London ឬ New York Session ប៉ុណ្ណោះ។ Risk 1%, RR 1:3, មិន Trade ពេលមាន High Impact News។”\nនេះជា Strategy ព្រោះវាអាចអនុវត្តបានដដែលៗដោយគ្មានការសម្រេចចិត្តតាមអារម្មណ៍។\n៚ហេតុអ្វី Trader ជាច្រើនចេះ Technical តែខាតលុយ?\nព្រោះពួកគេដឹងថា\n* BOS ជាអ្វី\n* FVG ជាអ្វី\n* EMA ជាអ្វី\n* RSI ជាអ្វី\nប៉ុន្តែមិនមានច្បាប់ថា\n* ពេលណាចូល\n* ពេលណាមិនចូល\n* Risk ប៉ុន្មាន\n* ចាញ់ ២ ដងត្រូវឈប់ឬអត់\nលទ្ធផលគឺ ចូល Trade តាមអារម្មណ៍ ហើយលទ្ធផលមិនស្ថិតស្ថេរ។\n៚តើគួររៀនមួយណាមុន?\n1. Technical Trading — រៀនពីរបៀបអានទីផ្សារ (Trend, Structure, Liquidity, Candlestick, Support & Resistance, Smart Money Concepts)\n2. Trading Strategy — យកចំណេះដឹងទាំងនោះមកបង្កើតជាច្បាប់ Entry, Exit និង Risk Management\n3. Risk Management — គ្រប់គ្រងហានិភ័យ និងទំហំ Position\n4. Trading Psychology — អនុវត្ត Strategy ដោយវិន័យ និងគ្រប់គ្រងអារម្មណ៍\n5. Backtesting និង Journaling — សាកល្បងលើយុទ្ធសាស្ត្រលើទិន្នន័យអតីតកាល និងកត់ត្រាលទ្ធផល ដើម្បីកែលម្អជាបន្តបន្ទាប់\n៚សរុបខ្លី\nTechnical Trading Trading Strategy\nវិភាគទីផ្សារ ផែនការជួញដូរ\nរៀនអាន Chart រៀនអនុវត្តលើ Chart\nផ្តល់ព័ត៌មាន ផ្តល់សកម្មភាព\nមានឧបករណ៍ជាច្រើន មានច្បាប់ច្បាស់លាស់\nមិនប្រាប់ Entry ដោយខ្លួនឯង ប្រាប់ Entry, Exit, SL, TP, Risk\nអាចមានការបកស្រាយខុសគ្នា ត្រូវអាចធ្វើឡើងវិញបានជាប្រព័ន្ធ\n“Technical Trading បង្រៀនអ្នក “អាន” ទីផ្សារ។ Trading Strategy បង្រៀនអ្នក “ធ្វើសកម្មភាព” នៅលើទីផ្សារ។\nអ្នកអាចចេះអាន Chart បានល្អ ប៉ុន្តែបើគ្មាន Strategy និង Risk Management ច្បាស់លាស់ អ្នកនៅតែពិបាករកប្រាក់បានស្ថិតស្ថេរ។”",
+        "km": "តើ Technical Trading និង Trading Strategy ខុសគ្នាដូចម្តេច?\n#Technical Trading ជាអ្វី?\nTechnical Trading គឺជាការវិភាគទីផ្សារដោយប្រើ Price Chart និង Historical Data ដើម្បីស្វែងយល់ថាតម្លៃអាចនឹងទៅទិសណាបន្ទាប់។\nTechnical Trading មិនប្រាប់ថា “ចូល Trade ឥឡូវនេះ” ទេ។\nវាគ្រាន់តែផ្តល់ព័ត៌មានដូចជា៖\n* Trend កំពុងឡើង ឬចុះ\n* Market Structure\n* Support & Resistance\n* Supply & Demand\n* Liquidity\n* Volume\n* Candlestick Pattern\n* Chart Pattern\n* Indicators (EMA, RSI, MACD…)\n* Smart Money Concept\n* ICT Concepts\nនិយាយឲ្យងាយ…Technical Trading គឺដូចជា គ្រូពេទ្យពិនិត្យរោគ។\nគ្រូពេទ្យមើល\n* សម្ពាធឈាម\n* ឈាម\n* X-Ray\n* MRI\nទាំងអស់នេះគឺជាទិន្នន័យ។ ប៉ុន្តែ…ទិន្នន័យមិនទាន់ជាការព្យាបាលទេ។\nឧទាហរណ៍៖\nអ្នកបើក Chart XAUUSDអ្នកឃើញ\nEMA50 > EMA200,Higher High,Higher Low,Bullish Order Block,Liquidity ខាងលើ, Fair Value Gap,BOS\nទាំងអស់នេះគឺជាTechnical Analysis មិនទាន់មាន Entry ទេ។\n#Trading Strategy ជាអ្វី?\nTrading Strategy គឺជា Rule Set ឬផែនការច្បាស់លាស់ ដែលកំណត់ថា៖\n* ពេលណាចូល Trade\n* ពេលណាមិនចូល\n* Stop Loss ដាក់កន្លែងណា\n* Take Profit ដាក់កន្លែងណា\n* Risk ប៉ុន្មាន\n* ចូល Buy ឬ Sell\n* ចូលនៅ Timeframe ណា\n* ចេញពី Trade ពេលណា\nStrategy គឺយក Technical Trading មកផ្សំគ្នា រួចបង្កើតជា System មួយ។\nឧទាហរណ៍៖Technical Trading និយាយថា\n* Trend = Uptrend\n* BOS\n* FVG\n* Liquidity Sweep\nStrategy និយាយថា\n“ខ្ញុំនឹង Buy លុះត្រាតែ…”\n1. EMA50 > EMA200\n2. Price Sweep Low\n3. BOS\n4. Return មក FVG\n5. Bullish Engulfing\n6. Risk 1%\n7. TP = RR 1:3\nនេះហើយហៅថាTrading Strategy\n#ប្រៀបធៀបជាមួយការធ្វើម្ហូប\nTechnical Trading ដូចជាអ្នកស្គាល់៖\n* អំបិល\n* ស្ករ\n* ម្ទេស\n* ខ្ទឹម\n* សាច់\n* បន្លែ\nអ្នកស្គាល់គ្រឿងផ្សំទាំងអស់។\n#Trading Strategy គឺ\nរូបមន្តធ្វើម្ហូប\nដាក់អ្វីមុន\nដាក់អ្វីក្រោយ\nប៉ុន្មានក្រាម\nចម្អិនប៉ុន្មាននាទី\nនេះហើយជារូបមន្តដែលអាចធ្វើឡើងវិញបាន។\nTechnical Trading មានអ្វីខ្លះ?\n1. Trend Analysis\n* Uptrend\n* Downtrend\n* Sideway\n2. Market Structure\n* HH\n* HL\n* LH\n* LL\n* BOS\n* CHOCH\n3. Support & Resistance\n* Daily Level\n* Weekly Level\n* Monthly Level\n4. Supply & Demand\n* Fresh Zone\n* Tested Zone\n5. Liquidity\n* Equal High\n* Equal Low\n* Stop Hunt\n* Liquidity Sweep\n6. Candlestick\n* Pin Bar\n* Engulfing\n* Doji\n* Morning Star\n7. Indicators\n* EMA\n* RSI\n* MACD\n* ATR\n* Bollinger Bands\n8. Smart Money Concept\n* Order Block\n* Fair Value Gap\n* Breaker Block\n* Mitigation Block\n* Liquidity\n* Premium / Discount\nទាំងអស់នេះគឺជា ឧបករណ៍វិភាគ។\n#Trading Strategy មានអ្វីខ្លះ?\nStrategy ត្រូវមានច្បាប់ច្បាស់លាស់។\nEntry Rules\n* Trend\n* Confirmation\n* Timeframe\n* Session\nExit Rules\n* TP\n* SL\n* Trailing Stop\nRisk Management\n* Risk 1%\n* RR 1:2\n* RR 1:3\nTrade Management\n* Break Even\n* Partial Close\n* Hold\nFilter\n* No News\n* London Session\n* New York Session\n* Avoid Sideway\nPsychology Rules\n* Max 2 Losses/Day\n* No Revenge Trade\n* Wait for Confirmation\nឧទាហរណ៍៖\nTechnical Analysis បង្ហាញថា\n* Daily Uptrend\n* H1 Bullish\n* H15 Liquidity Sweep\n* BOS\n* FVG\nប៉ុន្តែ…\nStrategy របស់អ្នកអាចនិយាយថា\n“ខ្ញុំចូល Buy តែបើតម្លៃត្រឡប់មក Fill 50% នៃ FVG ហើយមាន Bullish Engulfing Candle នៅ M5 ក្នុង London ឬ New York Session ប៉ុណ្ណោះ។ Risk 1%, RR 1:3, មិន Trade ពេលមាន High Impact News។”\nនេះជា Strategy ព្រោះវាអាចអនុវត្តបានដដែលៗដោយគ្មានការសម្រេចចិត្តតាមអារម្មណ៍។\n៚ហេតុអ្វី Trader ជាច្រើនចេះ Technical តែខាតលុយ?\nព្រោះពួកគេដឹងថា\n* BOS ជាអ្វី\n* FVG ជាអ្វី\n* EMA ជាអ្វី\n* RSI ជាអ្វី\nប៉ុន្តែមិនមានច្បាប់ថា\n* ពេលណាចូល\n* ពេលណាមិនចូល\n* Risk ប៉ុន្មាន\n* ចាញ់ ២ ដងត្រូវឈប់ឬអត់\nលទ្ធផលគឺ ចូល Trade តាមអារម្មណ៍ ហើយលទ្ធផលមិនស្ថិតស្ថេរ។\n៚តើគួររៀនមួយណាមុន?\n1. Technical Trading — រៀនពីរបៀបអានទីផ្សារ (Trend, Structure, Liquidity, Candlestick, Support & Resistance, Smart Money Concepts)\n2. Trading Strategy — យកចំណេះដឹងទាំងនោះមកបង្កើតជាច្បាប់ Entry, Exit និង Risk Management\n3. Risk Management — គ្រប់គ្រងហានិភ័យ និងទំហំ Position\n4. Trading Psychology — អនុវត្ត Strategy ដោយវិន័យ និងគ្រប់គ្រងអារម្មណ៍\n5. Backtesting និង Journaling — សាកល្បងលើយុទ្ធសាស្ត្រលើទិន្នន័យអតីតកាល និងកត់ត្រាលទ្ធផល ដើម្បីកែលម្អជាបន្តបន្ទាប់\n៚សរុបខ្លី\nTechnical Trading Trading Strategy\nវិភាគទីផ្សារ ផែនការជួញដូរ\nរៀនអាន Chart រៀនអនុវត្តលើ Chart\nផ្តល់ព័ត៌មាន ផ្តល់សកម្មភាព\nមានឧបករណ៍ជាច្រើន មានច្បាប់ច្បាស់លាស់\nមិនប្រាប់ Entry ដោយខ្លួនឯង ប្រាប់ Entry, Exit, SL, TP, Risk\nអាចមានការបកស្រាយខុសគ្នា ត្រូវអាចធ្វើឡើងវិញបានជាប្រព័ន្ធ\n“Technical Trading បង្រៀនអ្នក “អាន” ទីផ្សារ។ Trading Strategy បង្រៀនអ្នក “ធ្វើសកម្មភាព” នៅលើទីផ្សារ។\nអ្នកអាចចេះអាន Chart បានល្អ ប៉ុន្តែបើគ្មាន Strategy និង Risk Management ច្បាស់លាស់ អ្នកនៅតែពិបាករកប្រាក់បានស្ថិតស្ថេរ។”"
+      },
+      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784706091/blob_v23whb.png",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "published": true,
+      "publishedAt": "2026-07-22T07:40:22.496Z"
+    },
     {
       "id": "news-mrthof5h",
       "title": {
