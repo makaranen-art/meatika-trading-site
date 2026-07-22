@@ -73,6 +73,11 @@
     return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
   }
 
+  function formatInfo(article){
+    const format = ['article','video','audio','book'].includes(article.format) ? article.format : (article.video && (article.video.url || article.video.file) ? 'video' : 'article');
+    return { article:{label:'Article',icon:'▤'}, video:{label:'Video',icon:'▶'}, audio:{label:'Audio',icon:'♫'}, book:{label:'Book',icon:'▧'} }[format];
+  }
+
   function newsCardHtml(article){
     const title = (article.title && article.title.en) || 'Untitled';
     const titleKm = (article.title && article.title.km) || title;
@@ -87,11 +92,12 @@
     const draftTag = article.published === false
       ? '<span class="news-draft-tag">DRAFT</span>' : '';
     const catTag = categoryBadgeHtml(article.category);
+    const format = formatInfo(article);
     return `
       <a class="news-card" href="article.html?id=${encodeURIComponent(article.id)}">
         ${cover}
         <div class="news-card-body">
-          <div class="news-meta">${draftTag}${catTag}<span class="news-date">${esc(formatDate(article.publishedAt))}</span></div>
+          <div class="news-meta">${draftTag}${catTag}<span class="news-draft-tag">${format.icon} ${format.label}</span><span class="news-date">${esc(formatDate(article.publishedAt))}</span></div>
           <h3 data-en="${esc(title)}" data-km="${esc(titleKm)}">${esc(title)}</h3>
           <p data-en="${esc(excerpt)}" data-km="${esc(excerptKm)}">${esc(excerpt)}</p>
         </div>
@@ -133,6 +139,15 @@
     return `<p class="news-video-link"><a href="${esc(url)}" target="_blank" rel="noopener">▶ Watch video</a></p>`;
   }
 
+  function audioPlayerHtml(url){
+    if(!url) return '';
+    return `<div class="news-audio"><div class="media-title">♫ Listen to this lesson</div><audio controls preload="metadata" src="${esc(url)}">Your browser does not support audio playback.</audio><a href="${esc(url)}" target="_blank" rel="noopener">Open audio in a new tab</a></div>`;
+  }
+  function bookReaderHtml(url){
+    if(!url) return '';
+    return `<div class="news-book"><div class="media-title">▧ Read this PDF book</div><iframe src="${esc(url)}#view=FitH" title="PDF book" loading="lazy"></iframe><div class="book-actions"><a href="${esc(url)}" target="_blank" rel="noopener">Read full screen</a><a href="${esc(url)}" download>Download PDF</a></div></div>`;
+  }
+
   /* Plain-text body -> paragraphs. Blank lines separate paragraphs; single
      newlines become line breaks. Kept as plain text (not HTML) in storage so
      the admin textarea stays simple and safe (no injected markup). */
@@ -156,7 +171,7 @@
   window.MTHNews = {
     setTags, getTags, categoryInfo, categoryBadgeHtml, newsByCategory,
     publishedNews, allNews, findNews, formatDate,
-    newsCardHtml, newsListHtml, videoEmbedHtml, bodyHtml, shareLinks
+    newsCardHtml, newsListHtml, videoEmbedHtml, audioPlayerHtml, bookReaderHtml, formatInfo, bodyHtml, shareLinks
   };
 
 })(window);
