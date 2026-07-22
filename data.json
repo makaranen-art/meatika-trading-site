@@ -575,6 +575,34 @@
   ],
   "news": [
     {
+      "id": "news-mrw7em8c",
+      "title": {
+        "en": "New Audio",
+        "km": ""
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "audio",
+      "audioUrl": "https://drive.google.com/uc?export=download&id=1Gvcay2yUQ02cZH9crMmKTCVJemw0lnib",
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T14:54:50.124Z"
+    },
+    {
       "id": "news-mrvvdwlz",
       "title": {
         "en": "Don't Let Greed Control Your Decisions",
