@@ -646,12 +646,12 @@
     {
       "id": "psychology",
       "en": "Psychology",
-      "km": "ចិត្តវិទ្យា"
+      "km": "ចិត្តសាស្រ្ត"
     },
     {
       "id": "strategy",
-      "en": "Strategy",
-      "km": "យុទ្ធសាស្ត្រ"
+      "en": "Technical & Strategy",
+      "km": "បច្ចេកទេស និងយុទ្ធសាស្ត្រ"
     },
     {
       "id": "market-analysis",
@@ -660,8 +660,8 @@
     },
     {
       "id": "video",
-      "en": "Video",
-      "km": "វីដេអូ"
+      "en": "Market Information",
+      "km": "ព័ត៌មានទីផ្សារ"
     }
   ],
   "newsGateEndpoint": "https://script.google.com/macros/s/AKfycbwgIJ4FEkgIdLI68a-1Y3PxuvwFTAgo6TkHzt43Cay9M3rCjELD6C43VzW7sFVUP7jL/exec"
