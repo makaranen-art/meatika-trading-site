@@ -223,6 +223,21 @@
       </div>
 
       <div class="panel">
+        <h2>News & Articles access gate</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Visitors to the News & Articles page have to submit a short form (Full Name, Phone Number, Email,
+          Trading Experience) before they can see it. Each submission is sent to a Google Sheet. Paste the
+          Google Apps Script Web App URL below to connect it — see <code>news-signup-setup.md</code> in the
+          project for the one-time setup steps to get that URL. Leave this blank and the form will tell
+          visitors registration isn't open yet, instead of failing silently.
+        </p>
+        <div class="field">
+          <label>Google Sheet Web App URL</label>
+          <input type="text" id="newsGateEndpoint" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Sections & cards</h2>
         <div id="sectionsList"></div>
         <button id="addSection">+ Add section</button>
@@ -545,6 +560,7 @@ function renderEditor(){
   renderTickerList();
   document.getElementById('heroEn').value = state.hero.en || '';
   document.getElementById('heroKm').value = state.hero.km || '';
+  document.getElementById('newsGateEndpoint').value = state.newsGateEndpoint || '';
   state.pages = state.pages || [];
   state.news = state.news || [];
   renderHomeSections = makeSectionsRenderer(document.getElementById('sectionsList'), state.sections);
@@ -596,6 +612,9 @@ document.getElementById('addTicker').addEventListener('click', () => {
 /* ---- Hero ---- */
 document.getElementById('heroEn').addEventListener('input', e => { state.hero.en = e.target.value; });
 document.getElementById('heroKm').addEventListener('input', e => { state.hero.km = e.target.value; });
+
+/* ---- News & Articles access gate ---- */
+document.getElementById('newsGateEndpoint').addEventListener('input', e => { state.newsGateEndpoint = e.target.value.trim(); });
 
 /* ---- Sections & cards ---- */
 const ICON_KEYS = Object.keys(window.MTH_ICONS || {});

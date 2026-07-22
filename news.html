@@ -231,9 +231,12 @@
        Visitors must submit this form once (per browser) before the News &
        Articles content is shown. Submissions are sent to a Google Apps
        Script Web App URL that logs each row into a Google Sheet — see
-       news-signup-setup.md for the one-time setup steps. Paste the
-       deployed /exec URL below once you've set it up. */
-    const NEWS_GATE_ENDPOINT = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+       news-signup-setup.md for the one-time setup steps.
+       The endpoint is normally set from admin.html ("News & Articles access
+       gate" panel, saved into data.json as newsGateEndpoint) and is read
+       below once data.json loads. The hardcoded fallback here is only used
+       if that field is left blank in the admin panel. */
+    let NEWS_GATE_ENDPOINT = '';
     const NEWS_GATE_STORAGE_KEY = 'mth-news-access';
 
     const accessGate = document.getElementById('accessGate');
@@ -264,7 +267,7 @@
       gateStatus.hidden = true;
       gateStatus.classList.remove('bad');
 
-      if(!NEWS_GATE_ENDPOINT || NEWS_GATE_ENDPOINT === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
+      if(!NEWS_GATE_ENDPOINT){
         gateStatus.textContent = isKm ? 'ទម្រង់នេះមិនទាន់បើកនៅឡើយទេ។ សូមព្យាយាមម្តងទៀតពេលក្រោយ។' : 'Registration isn\'t open yet. Please check back soon.';
         gateStatus.classList.add('bad');
         gateStatus.hidden = false;
@@ -349,6 +352,7 @@
         document.getElementById('newsList').innerHTML = '<p class="not-found">Content failed to load.</p>';
         return;
       }
+      if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
       const list = MTHNews.publishedNews(data);
       document.getElementById('newsList').innerHTML = MTHNews.newsListHtml(list);

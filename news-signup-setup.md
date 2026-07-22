@@ -42,19 +42,12 @@ blank sheet. Name it something like "News Page Signups."
 5. Copy the **Web app URL** shown — it looks like
    `https://script.google.com/macros/s/AKfycb.../exec`.
 
-## 4. Connect it in news.html
+## 4. Connect it in admin.html
 
-1. Open `news.html` and find this line near the bottom (inside the last
-   `<script>` block):
-   ```js
-   const NEWS_GATE_ENDPOINT = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-   ```
-2. Replace the placeholder text between the quotes with the Web app URL you
-   copied. It should look like:
-   ```js
-   const NEWS_GATE_ENDPOINT = 'https://script.google.com/macros/s/AKfycb.../exec';
-   ```
-3. Save the file and re-upload/publish it.
+1. Open `admin.html`, sign in, and click **Load current content**.
+2. Find the **"News & Articles access gate"** panel.
+3. Paste the Web app URL you copied into **Google Sheet Web App URL**.
+4. Click **Save changes** at the bottom of the page.
 
 That's it — from now on, every visitor to News & Articles fills in the form
 once, their details land as a new row in your sheet (Timestamp, Full Name,
