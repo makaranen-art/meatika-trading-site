@@ -101,12 +101,8 @@
   .logo-img{ width:100%; height:auto; display:block; filter:drop-shadow(0 6px 18px rgba(255,45,95,0.30)); }
 
   /* ---- Topic filter: triple-line icon button (in the topbar) + side drawer ---- */
-  .tag-fab{ position:relative; }
-  .tag-fab-dot{
-    position:absolute; top:-2px; right:-2px; width:8px; height:8px; border-radius:50%;
-    background:var(--gold-500); border:1.5px solid var(--ink-800); display:none;
-  }
-  .tag-fab.has-filter .tag-fab-dot{ display:block; }
+  .tag-fab{ position:relative; width:auto; padding:0 11px 0 10px; gap:6px; font-size:11.5px; font-weight:600; letter-spacing:0.03em; font-family:'JetBrains Mono', monospace; }
+  body.km .tag-fab{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
 
   .tag-drawer-backdrop{
     position:fixed; inset:0; z-index:70; background:rgba(10,5,8,0.6);
@@ -282,7 +278,7 @@
         </button>
         <button class="icon-btn tag-fab" id="tagFabBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Topic Selection">
           <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <span class="tag-fab-dot" id="tagFabDot"></span>
+          <span id="tagFabLabel" data-en="Topics" data-km="ប្រធានបទ">Topics</span>
         </button>
       </div>
     </div>
@@ -451,6 +447,7 @@
 
     /* ---- Topic filter drawer ---- */
     const tagFabBtn = document.getElementById('tagFabBtn');
+    const tagFabLabel = document.getElementById('tagFabLabel');
     const tagDrawer = document.getElementById('tagDrawer');
     const tagDrawerBackdrop = document.getElementById('tagDrawerBackdrop');
     const tagDrawerClose = document.getElementById('tagDrawerClose');
@@ -502,7 +499,8 @@
       });
 
       const activeInfo = activeCat === 'all' ? null : MTHNews.categoryInfo(activeCat);
-      tagFabBtn.classList.toggle('has-filter', !!activeInfo);
+      tagFabLabel.setAttribute('data-en', activeInfo ? activeInfo.en : 'Topics');
+      tagFabLabel.setAttribute('data-km', activeInfo ? activeInfo.km : 'ប្រធានបទ');
 
       MTHSite.initReveal();
       applyLang(savedLang);
