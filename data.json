@@ -746,7 +746,8 @@
       "publishedAt": "2026-07-20T17:12:37.155Z",
       "category": "video",
       "author": "",
-      "format": "video"
+      "format": "article",
+      "audioTracks": []
     }
   ],
   "newsTags": [
