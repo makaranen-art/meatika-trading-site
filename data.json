@@ -575,10 +575,39 @@
   ],
   "news": [
     {
+      "id": "news-mrw8n5bl",
+      "title": {
+        "en": "EP2-របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade",
+        "km": "EP2-របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade"
+      },
+      "excerpt": {
+        "en": "",
+        "km": ""
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "audio",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T15:29:27.729Z"
+    },
+    {
       "id": "news-mrw8jehn",
       "title": {
-        "en": "New Audio",
-        "km": ""
+        "en": "EP2-របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade",
+        "km": "EP2-របៀបគ្រប់គ្រងការភ័យខ្លាចពេលចូល Trade"
       },
       "excerpt": {
         "en": "",
@@ -599,7 +628,7 @@
       "audioTracks": [
         {
           "id": "track-1784733998269",
-          "title": "EP1-ហេតុអ្វីអារម្មណ៍ជាសត្រូវធំបំផុតរបស់ Trader",
+          "title": "Psychology EP1",
           "url": "https://res.cloudinary.com/lisxurk1/video/upload/v1784734038/100_FOREX_IDEA_-EP1_njqyqx.wav"
         }
       ],
