@@ -575,6 +575,35 @@
   ],
   "news": [
     {
+      "id": "news-mrwbjw44",
+      "title": {
+        "en": " Candlestick Pattern តែមួយគត់ ដែល Trader គ្រប់រូបត្រូវតែដឹង!!!",
+        "km": " Candlestick Pattern តែមួយគត់ ដែល Trader គ្រប់រូបត្រូវតែដឹង!!!"
+      },
+      "excerpt": {
+        "en": "\nCandlestick Pattern តែមួយគត់ ដែល Trader គ្រប់រូបត្រូវតែដឹង!!!",
+        "km": "\nCandlestick Pattern តែមួយគត់ ដែល Trader គ្រប់រូបត្រូវតែដឹង!!!"
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "",
+      "video": {
+        "type": "url",
+        "url": "https://www.youtube.com/watch?v=7Gk1VH-3Vlg",
+        "file": ""
+      },
+      "format": "video",
+      "audioUrl": "",
+      "audioTracks": [],
+      "bookUrl": "",
+      "category": "psychology",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-22T16:50:54.676Z"
+    },
+    {
       "id": "news-mrwbiw0y",
       "title": {
         "en": " របៀបដែល Trader អាជីពស្វែងរក Entry ដែលមាន Probability ខ្ពស់ (SMC & Liquidity)",
