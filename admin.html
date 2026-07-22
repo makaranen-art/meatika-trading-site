@@ -60,6 +60,13 @@
   button.small{ padding:5px 10px; font-size:12px; }
   button:disabled{ opacity:.5; cursor:not-allowed; }
 
+  .news-admin-pager{
+    display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--ink-600);
+  }
+  .news-admin-pager button{ min-width:32px; }
+  .news-admin-pager button.pager-active{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+
   /* ---- Panels ---- */
   .panel{
     background:var(--ink-800); border:1px solid var(--ink-600); border-radius:var(--radius);
@@ -1227,6 +1234,11 @@ const NEWS_CATEGORIES = [
   { id: 'video',           label: 'Video' }
 ];
 
+/* Paginate the news editor list once posts reach 6 — keeps this panel
+   scrollable/manageable as the Learning Center grows. */
+const NEWS_PAGE_SIZE = 6;
+let newsPage = 1;
+
 /* datetime-local wants "YYYY-MM-DDTHH:mm" in local time; ISO strings are UTC. */
 function isoToLocalInput(iso){
   if(!iso) return '';
@@ -1244,7 +1256,16 @@ function localInputToIso(val){
 function renderNews(){
   const wrap = document.getElementById('newsList');
   wrap.innerHTML = '';
-  (state.news || []).forEach((article, aIdx) => {
+  state.news = state.news || [];
+  const total = state.news.length;
+  const totalPages = Math.max(1, Math.ceil(total / NEWS_PAGE_SIZE));
+  if(newsPage > totalPages) newsPage = totalPages;
+  if(newsPage < 1) newsPage = 1;
+  const pageStart = (newsPage - 1) * NEWS_PAGE_SIZE;
+  const pageItems = state.news.slice(pageStart, pageStart + NEWS_PAGE_SIZE);
+
+  pageItems.forEach((article, pageIdx) => {
+    const aIdx = pageStart + pageIdx; // real index within state.news
     article.title = article.title || { en:'', km:'' };
     article.excerpt = article.excerpt || { en:'', km:'' };
     article.body = article.body || { en:'', km:'' };
@@ -1440,11 +1461,30 @@ function renderNews(){
 
     wrap.appendChild(el);
   });
+
+  if(totalPages > 1){
+    const pager = document.createElement('div');
+    pager.className = 'news-admin-pager';
+    let btns = '';
+    for(let p = 1; p <= totalPages; p++){
+      btns += `<button type="button" class="small${p === newsPage ? ' pager-active' : ''}" data-page="${p}">${p}</button>`;
+    }
+    pager.innerHTML = btns;
+    wrap.appendChild(pager);
+    pager.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        newsPage = parseInt(btn.dataset.page, 10) || 1;
+        renderNews();
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
 }
 
 document.getElementById('addNews').addEventListener('click', () => {
   state.news = state.news || [];
   state.news.unshift(newArticle());
+  newsPage = 1;
   renderNews();
 });
 

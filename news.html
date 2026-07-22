@@ -91,25 +91,75 @@
   .page-title{ font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700; margin:0 0 8px; color:var(--paper); }
   .hero p{ color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 auto; max-width:340px; }
 
-  .cat-nav{
-    display:flex; gap:8px; overflow-x:auto; padding:2px 2px 4px; margin-bottom:22px;
-    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  .page-logo{ display:flex; justify-content:center; margin-bottom:16px; }
+  .page-logo img{ height:32px; width:auto; display:block; filter:drop-shadow(0 4px 14px rgba(255,45,95,0.28)); }
+
+  /* ---- Topic filter: floating triple-line button + side drawer ---- */
+  .tag-fab{
+    position:fixed; right:18px; bottom:22px; z-index:60;
+    display:flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg, var(--gold-500), var(--gold-300));
+    color:var(--ink-900); border:none; border-radius:999px;
+    padding:12px 16px 12px 14px; box-shadow:0 10px 26px rgba(0,0,0,0.35);
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:12.5px;
+    cursor:pointer; transition:.15s ease;
   }
-  .cat-nav::-webkit-scrollbar{ display:none; }
-  .cat-tab{
-    flex:0 0 auto; font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:600; letter-spacing:0.03em;
-    padding:8px 14px; border-radius:999px; border:1px solid var(--ink-600); background:var(--ink-800);
-    color:var(--muted); cursor:pointer; transition:.15s ease; white-space:nowrap;
+  body.km .tag-fab{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
+  .tag-fab:hover{ transform:translateY(-2px); filter:brightness(1.05); }
+  .tag-fab svg{ flex-shrink:0; }
+
+  .tag-drawer-backdrop{
+    position:fixed; inset:0; z-index:70; background:rgba(10,5,8,0.6);
+    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%);
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
   }
-  body.km .cat-tab{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
-  .cat-tab:hover{ border-color:var(--gold-500); color:var(--gold-300); }
-  .cat-tab.is-active{ background:linear-gradient(135deg, var(--gold-500), var(--gold-300)); border-color:transparent; color:var(--ink-900); }
+  .tag-drawer-backdrop.is-open{ opacity:1; pointer-events:auto; }
+
+  .tag-drawer{
+    position:fixed; top:0; right:0; height:100%; width:min(78vw, 300px); z-index:71;
+    background:var(--glass-2-bg); border-left:1px solid var(--glass-2-border);
+    backdrop-filter:blur(20px) saturate(150%); -webkit-backdrop-filter:blur(20px) saturate(150%);
+    box-shadow:-14px 0 40px rgba(0,0,0,0.4);
+    transform:translateX(100%); transition:transform .28s cubic-bezier(.16,1,.3,1);
+    display:flex; flex-direction:column; padding:22px 16px;
+  }
+  .tag-drawer.is-open{ transform:translateX(0); }
+  .tag-drawer-head{
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:14.5px; color:var(--paper);
+  }
+  .tag-drawer-close{
+    width:28px; height:28px; border-radius:8px; border:1px solid var(--ink-600); background:var(--ink-800);
+    color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; line-height:1;
+  }
+  .tag-drawer-close:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  .tag-drawer-list{ display:flex; flex-direction:column; gap:8px; }
+  .tag-item{
+    text-align:left; padding:12px 14px; border-radius:12px; border:1px solid var(--ink-600); background:var(--ink-800);
+    color:var(--muted); font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:600; letter-spacing:0.03em;
+    cursor:pointer; transition:.15s ease;
+  }
+  body.km .tag-item{ font-family:'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
+  .tag-item:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  .tag-item.is-active{ background:linear-gradient(135deg, var(--gold-500), var(--gold-300)); border-color:transparent; color:var(--ink-900); }
 
   .news-cat-tag{
     font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase;
     color:var(--gold-300); background:rgba(255,143,168,0.14); border:1px solid var(--glass-1-border);
     padding:1px 7px; border-radius:5px; font-weight:700;
   }
+
+  /* ---- Pager (footer page numbers), shown once a filtered list needs more than one page ---- */
+  .news-pager{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    margin-top:22px; padding-top:18px; border-top:1px solid var(--ink-600);
+  }
+  .page-btn{
+    min-width:34px; height:34px; padding:0 6px; border-radius:9px; border:1px solid var(--ink-600); background:var(--ink-800);
+    color:var(--muted); font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700; cursor:pointer; transition:.15s ease;
+  }
+  .page-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+  .page-btn.is-active{ background:linear-gradient(135deg, var(--gold-500), var(--gold-300)); border-color:transparent; color:var(--ink-900); }
 
   .news-grid{ display:flex; flex-direction:column; gap:14px; }
   .news-card{
@@ -216,6 +266,10 @@
 
   <div class="page">
 
+    <div class="page-logo">
+      <img src="assets/mth-logo-white.png" alt="Meatika Trading logo" id="pageLogoImg">
+    </div>
+
     <div class="topbar">
       <a class="icon-btn back-btn" href="index.html" title="Back to home">
         <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -237,15 +291,26 @@
       <p data-en="Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading." data-km="អត្ថបទ និងវីដេអូអំពីចិត្តវិទ្យាជួញដូរ យុទ្ធសាស្ត្រ និងការវិភាគទីផ្សារ ពី Meatika Trading។">Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading.</p>
     </div>
 
-    <nav class="cat-nav" id="catNav" role="tablist" aria-label="Filter by topic">
-      <button type="button" class="cat-tab is-active" data-cat="all" data-en="All" data-km="ទាំងអស់">All</button>
-      <button type="button" class="cat-tab" data-cat="psychology" data-en="Psychology" data-km="ចិត្តវិទ្យា">Psychology</button>
-      <button type="button" class="cat-tab" data-cat="strategy" data-en="Strategy" data-km="យុទ្ធសាស្ត្រ">Strategy</button>
-      <button type="button" class="cat-tab" data-cat="market-analysis" data-en="Market Analysis" data-km="វិភាគទីផ្សារ">Market Analysis</button>
-      <button type="button" class="cat-tab" data-cat="video" data-en="Video" data-km="វីដេអូ">Video</button>
-    </nav>
-
     <div id="newsList"><!-- filled from data.json --></div>
+
+    <button class="tag-fab" id="tagFabBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Filter by topic">
+      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span id="tagFabLabel" data-en="Topics" data-km="ប្រធានបទ">Topics</span>
+    </button>
+    <div class="tag-drawer-backdrop" id="tagDrawerBackdrop"></div>
+    <aside class="tag-drawer" id="tagDrawer" aria-hidden="true">
+      <div class="tag-drawer-head">
+        <span data-en="Filter by topic" data-km="ត្រងតាមប្រធានបទ">Filter by topic</span>
+        <button class="tag-drawer-close" id="tagDrawerClose" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="tag-drawer-list" id="tagDrawerList">
+        <button type="button" class="tag-item is-active" data-cat="all" data-en="All" data-km="ទាំងអស់">All</button>
+        <button type="button" class="tag-item" data-cat="psychology" data-en="Psychology" data-km="ចិត្តវិទ្យា">Psychology</button>
+        <button type="button" class="tag-item" data-cat="strategy" data-en="Strategy" data-km="យុទ្ធសាស្ត្រ">Strategy</button>
+        <button type="button" class="tag-item" data-cat="market-analysis" data-en="Market Analysis" data-km="វិភាគទីផ្សារ">Market Analysis</button>
+        <button type="button" class="tag-item" data-cat="video" data-en="Video" data-km="វីដេអូ">Video</button>
+      </div>
+    </aside>
 
     <footer data-en="Powered by Meatika Trading Network" data-km="ដំណើរការដោយបណ្តាញ Meatika Trading">Powered by Meatika Trading Network</footer>
   </div>
@@ -357,11 +422,13 @@
     const themeBtn = document.getElementById('themeBtn');
     const moonIcon = document.getElementById('themeIconMoon');
     const sunIcon = document.getElementById('themeIconSun');
+    const pageLogoImg = document.getElementById('pageLogoImg');
     function applyTheme(isLight){
       document.body.classList.toggle('light', isLight);
       moonIcon.style.display = isLight ? 'none' : 'block';
       sunIcon.style.display = isLight ? 'block' : 'none';
       themeBtn.title = isLight ? 'Switch to dark theme' : 'Switch to light theme';
+      if(pageLogoImg) pageLogoImg.src = isLight ? 'assets/mth-logo.png' : 'assets/mth-logo-white.png';
     }
     let savedLight = false;
     try{ savedLight = localStorage.getItem('mth-theme') === 'light'; }catch(e){ /* storage unavailable */ }
@@ -373,28 +440,85 @@
     });
 
     const CAT_TAB_IDS = ['all', 'psychology', 'strategy', 'market-analysis', 'video'];
+    const PAGE_SIZE = 6;
     let allPublished = [];
     let activeCat = 'all';
+    let currentPage = 1;
     try{
       const fromHash = (location.hash || '').replace('#', '');
       if(CAT_TAB_IDS.includes(fromHash)) activeCat = fromHash;
     }catch(e){ /* ignore */ }
 
+    /* ---- Topic filter drawer ---- */
+    const tagFabBtn = document.getElementById('tagFabBtn');
+    const tagFabLabel = document.getElementById('tagFabLabel');
+    const tagDrawer = document.getElementById('tagDrawer');
+    const tagDrawerBackdrop = document.getElementById('tagDrawerBackdrop');
+    const tagDrawerClose = document.getElementById('tagDrawerClose');
+
+    function openTagDrawer(){
+      tagDrawer.classList.add('is-open');
+      tagDrawerBackdrop.classList.add('is-open');
+      tagDrawer.setAttribute('aria-hidden', 'false');
+      tagFabBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closeTagDrawer(){
+      tagDrawer.classList.remove('is-open');
+      tagDrawerBackdrop.classList.remove('is-open');
+      tagDrawer.setAttribute('aria-hidden', 'true');
+      tagFabBtn.setAttribute('aria-expanded', 'false');
+    }
+    tagFabBtn.addEventListener('click', () => {
+      if(tagDrawer.classList.contains('is-open')) closeTagDrawer(); else openTagDrawer();
+    });
+    tagDrawerClose.addEventListener('click', closeTagDrawer);
+    tagDrawerBackdrop.addEventListener('click', closeTagDrawer);
+
+    function buildPagerHtml(page, totalPages){
+      let items = '';
+      for(let p = 1; p <= totalPages; p++){
+        items += `<button type="button" class="page-btn${p === page ? ' is-active' : ''}" data-page="${p}">${p}</button>`;
+      }
+      return `<div class="news-pager">${items}</div>`;
+    }
+
     function renderNewsList(){
       const filtered = MTHNews.newsByCategory(allPublished, activeCat);
-      document.getElementById('newsList').innerHTML = MTHNews.newsListHtml(filtered);
+      const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      if(currentPage > totalPages) currentPage = totalPages;
+      if(currentPage < 1) currentPage = 1;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+      const listHtml = MTHNews.newsListHtml(pageItems);
+      const pagerHtml = totalPages > 1 ? buildPagerHtml(currentPage, totalPages) : '';
+      document.getElementById('newsList').innerHTML = listHtml + pagerHtml;
+
+      document.querySelectorAll('.news-pager .page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentPage = parseInt(btn.dataset.page, 10) || 1;
+          renderNewsList();
+          document.querySelector('.hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      const activeInfo = activeCat === 'all' ? null : MTHNews.categoryInfo(activeCat);
+      tagFabLabel.setAttribute('data-en', activeInfo ? activeInfo.en : 'Topics');
+      tagFabLabel.setAttribute('data-km', activeInfo ? activeInfo.km : 'ប្រធានបទ');
+
       MTHSite.initReveal();
       applyLang(savedLang);
     }
 
-    document.querySelectorAll('.cat-tab').forEach(btn => {
-      if(btn.dataset.cat === activeCat) btn.classList.add('is-active');
-      else btn.classList.remove('is-active');
+    document.querySelectorAll('.tag-item').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.cat === activeCat);
       btn.addEventListener('click', () => {
         activeCat = btn.dataset.cat;
-        document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('is-active', b === btn));
+        currentPage = 1;
+        document.querySelectorAll('.tag-item').forEach(b => b.classList.toggle('is-active', b === btn));
         try{ history.replaceState(null, '', activeCat === 'all' ? (location.pathname + location.search) : '#' + activeCat); }catch(e){ /* ignore */ }
         renderNewsList();
+        closeTagDrawer();
       });
     });
 
