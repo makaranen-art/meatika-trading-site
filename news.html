@@ -105,13 +105,15 @@
   .learning-search svg{ width:17px; color:var(--muted); flex-shrink:0; }
   .learning-search input{ width:100%; min-width:0; padding:12px 0; border:0; outline:0; background:transparent; color:var(--paper); font:inherit; font-size:13px; }
   .learning-search input::placeholder{ color:var(--muted); }
-  .learning-tools .tag-fab{ padding:0; width:46px; justify-content:center; }
+  .learning-tools .tag-fab{ width:58px; height:auto; min-height:52px; padding:0; justify-content:center; border-radius:11px; flex-shrink:0; }
   .learning-tools .tag-fab span{ display:none; }
   .topic-menu{ position:absolute; right:0; top:calc(100% + 7px); width:min(280px, 78vw); display:none; padding:10px; border:1px solid var(--glass-2-border); border-radius:13px; background:var(--ink-800); box-shadow:0 14px 34px rgba(0,0,0,.38); }
   .topic-menu.is-open{ display:block; }
   .topic-menu-head{ font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--paper); padding:4px 5px 10px; }
   .topic-menu-list{ display:flex; flex-direction:column; gap:6px; }
   .topic-menu .tag-item{ padding:9px 11px; border-radius:9px; }
+  /* Legacy side drawer disabled: topics now only use the inline dropdown. */
+  #tagDrawer, #tagDrawerBackdrop{ display:none !important; }
 
   .logo-mark{
     width:100%; max-width:200px; margin:0 auto 14px;
