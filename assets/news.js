@@ -7,14 +7,29 @@
   const cloudinaryVideoPosterUrl = window.MTHSite.cloudinaryVideoPosterUrl;
 
   /* Learning Center content tags. Every article/video post carries exactly
-     one of these. Keep the `id` values in sync with admin.html's category
-     <select> and with data.json's "category" field on each news item. */
-  const CATEGORIES = [
+     one of these ids. Tags themselves are managed by the admin (created,
+     renamed, deleted) and stored in data.json's "newsTags" array — this is
+     just a fallback used if that array is ever missing, so the page still
+     renders something sensible. Call setTags(data.newsTags) once data has
+     loaded, before rendering any tag badges or tab lists. */
+  const FALLBACK_CATEGORIES = [
     { id: 'psychology',       en: 'Psychology',      km: 'ចិត្តវិទ្យា' },
     { id: 'strategy',         en: 'Strategy',         km: 'យុទ្ធសាស្ត្រ' },
     { id: 'market-analysis',  en: 'Market Analysis',  km: 'វិភាគទីផ្សារ' },
     { id: 'video',            en: 'Video',            km: 'វីដេអូ' }
   ];
+
+  let CATEGORIES = FALLBACK_CATEGORIES.slice();
+
+  /* Replaces the working tag list with whatever's in data.json (or the
+     fallback list, if it's empty/missing). Safe to call more than once. */
+  function setTags(tags){
+    CATEGORIES = (tags && tags.length) ? tags.slice() : FALLBACK_CATEGORIES.slice();
+  }
+
+  function getTags(){
+    return CATEGORIES.slice();
+  }
 
   function categoryInfo(id){
     return CATEGORIES.find(c => c.id === id) || null;
@@ -139,7 +154,7 @@
   }
 
   window.MTHNews = {
-    CATEGORIES, categoryInfo, categoryBadgeHtml, newsByCategory,
+    setTags, getTags, categoryInfo, categoryBadgeHtml, newsByCategory,
     publishedNews, allNews, findNews, formatDate,
     newsCardHtml, newsListHtml, videoEmbedHtml, bodyHtml, shareLinks
   };
