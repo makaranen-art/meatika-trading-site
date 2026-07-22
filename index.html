@@ -193,6 +193,15 @@
     flex-shrink:0;
   }
   .avatar svg{ width:19px; height:19px; }
+  .social-card{ position:relative; overflow:hidden; }
+  .social-card::after{ content:''; position:absolute; width:92px; height:92px; right:-35px; bottom:-48px; border-radius:50%; background:var(--social-glow, rgba(255,255,255,.08)); filter:blur(4px); pointer-events:none; }
+  .social-card .avatar{ box-shadow:0 7px 18px var(--social-shadow, rgba(0,0,0,.22)); }
+  .platform-name{ display:block; margin:0 0 3px; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600; letter-spacing:.09em; color:var(--social-accent, var(--gold-300)); text-transform:uppercase; }
+  .platform-telegram{ --social-accent:#69c9f5; --social-glow:rgba(36,158,217,.22); --social-shadow:rgba(36,158,217,.35); }
+  .platform-facebook{ --social-accent:#78a7ff; --social-glow:rgba(24,119,242,.20); --social-shadow:rgba(24,119,242,.35); }
+  .platform-youtube{ --social-accent:#ff7676; --social-glow:rgba(255,0,0,.17); --social-shadow:rgba(255,0,0,.32); }
+  .platform-tiktok{ --social-accent:#6ee8f0; --social-glow:rgba(238,29,82,.17); --social-shadow:rgba(0,242,234,.25); }
+  .platform-instagram{ --social-accent:#ffa0bb; --social-glow:rgba(225,48,108,.20); --social-shadow:rgba(225,48,108,.35); }
 
   .card-body{ flex:1; min-width:0; }
   .card-body h3{

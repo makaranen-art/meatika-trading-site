@@ -91,34 +91,37 @@
       "cards": [
         {
           "id": "telegram",
+          "platform": "telegram",
           "title": "Meatika Trading Telegram",
           "desc": {
             "en": "Daily market updates, trading signals, and educational content.",
             "km": "ព័ត៌មានទីផ្សារប្រចាំថ្ងៃ សញ្ញាជួញដូរ និងខ្លឹមសារអប់រំ។"
           },
           "link": "https://t.me/MeatikaTrading",
-          "icon": "paperplane",
-          "color": "#2a2418",
-          "iconColor": "#d4af37",
+          "icon": "telegram",
+          "color": "#229ED9",
+          "iconColor": "#ffffff",
           "wide": false,
           "linkType": "url"
         },
         {
           "id": "facebook",
+          "platform": "facebook",
           "title": "Meatika Trading Facebook",
           "desc": {
             "en": "Market insights, trading tips, and the latest MTH updates.",
             "km": "ការយល់ដឹងអំពីទីផ្សារ គន្លឹះជួញដូរ និងព័ត៌មានថ្មីៗពី MTH។"
           },
           "link": "https://www.facebook.com/MeatikaTrading",
-          "icon": "bubble",
-          "color": "#24262b",
-          "iconColor": "#c7ccd6",
+          "icon": "facebook",
+          "color": "#1877F2",
+          "iconColor": "#ffffff",
           "wide": false,
           "linkType": "url"
         },
         {
           "id": "card-1784397353864",
+          "platform": "telegram",
           "title": "Meatika Affiliate Telegram ",
           "desc": {
             "en": "Open account, video guide ",
@@ -127,13 +130,14 @@
           "linkType": "url",
           "link": "https://t.me/MeatikaAffiliate",
           "pageId": "",
-          "icon": "star",
-          "color": "#24262b",
-          "iconColor": "#d4af37",
+          "icon": "telegram",
+          "color": "#229ED9",
+          "iconColor": "#ffffff",
           "wide": true
         },
         {
           "id": "card-1784566975092",
+          "platform": "youtube",
           "title": "Meatika Trading Youtube",
           "desc": {
             "en": "Youtube Channel of Meatika Trading",
@@ -142,13 +146,14 @@
           "linkType": "url",
           "link": "https://www.youtube.com/@MeatikaTrading",
           "pageId": "",
-          "icon": "star",
-          "color": "#24262b",
-          "iconColor": "#d4af37",
+          "icon": "youtube",
+          "color": "#FF0000",
+          "iconColor": "#ffffff",
           "wide": false
         },
         {
           "id": "card-1784567203194",
+          "platform": "tiktok",
           "title": "Meatika Trading Tiktok",
           "desc": {
             "en": "Official  Tiktok of Meatika Trading",
@@ -157,9 +162,9 @@
           "linkType": "url",
           "link": "https://www.tiktok.com/@meatikatrading",
           "pageId": "",
-          "icon": "star",
-          "color": "#24262b",
-          "iconColor": "#d4af37",
+          "icon": "tiktok",
+          "color": "#101010",
+          "iconColor": "#ffffff",
           "wide": false
         }
       ]
@@ -173,15 +178,16 @@
       "cards": [
         {
           "id": "support",
+          "platform": "telegram",
           "title": "Meatika Trading Support",
           "desc": {
             "en": "Help with account inquiries, trading guidance, and technical support.",
             "km": "ជំនួយអំពីគណនី ការណែនាំជួញដូរ និងជំនួយបច្ចេកទេស។"
           },
           "link": "https://t.me/MeatikaSupport",
-          "icon": "paperplane",
-          "color": "#2a2418",
-          "iconColor": "#d4af37",
+          "icon": "telegram",
+          "color": "#229ED9",
+          "iconColor": "#ffffff",
           "wide": true,
           "linkType": "url"
         }
