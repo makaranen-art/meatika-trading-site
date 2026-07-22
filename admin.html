@@ -1444,7 +1444,7 @@ function renderNews(){
     el.className = 'section-card';
     const statusLabel = article.published === false ? 'Draft' : 'Published';
     const catLabel = (tags.find(c => c.id === article.category) || tags[0]).en;
-    const audioTracksEditor = article.audioTracks.map((track, index) => `<div class="row audio-track-row" data-track-index="${index}" style="margin-bottom:8px;"><div class="field" style="margin:0;"><label>Track ${index+1} title</label><input type="text" data-track-title value="${escAttr(track.title)}"></div><div class="field" style="margin:0;"><label>Google Drive or direct audio link</label><div style="display:flex;gap:6px;"><input type="url" data-track-url value="${escAttr(track.url)}" style="flex:1;"><button class="small danger" data-act="removeAudioTrack" type="button">✕</button></div></div></div>`).join('');
+    const audioTracksEditor = article.audioTracks.map((track, index) => `<div class="audio-track-row" data-track-index="${index}" style="margin-bottom:12px;padding:10px;border:1px solid var(--ink-600);border-radius:8px;"><div class="row" style="margin-bottom:8px;"><div class="field" style="margin:0;"><label>Track ${index+1} title</label><input type="text" data-track-title value="${escAttr(track.title)}"></div><div class="field" style="margin:0;"><label>Audio link (Google Drive or direct URL)</label><input type="url" data-track-url value="${escAttr(track.url)}" placeholder="https://..."></div></div><div class="field" style="margin:0;"><label>Or upload an MP3/audio file — uploads straight to Cloudinary</label><div style="display:flex;gap:6px;align-items:center;"><input type="file" data-track-file accept="audio/mpeg,audio/mp3,audio/wav,audio/x-m4a,audio/aac,audio/ogg,audio/*" style="flex:1;"><button class="small danger" data-act="removeAudioTrack" type="button">✕</button></div><div class="status" data-track-status style="min-height:14px;">${track.url ? 'Currently: ' + track.url : ''}</div></div></div>`).join('');
     el.innerHTML = `
       <summary style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <strong>${escAttr(article.title.en || 'Untitled article')}</strong>
@@ -1511,7 +1511,7 @@ function renderNews(){
         </div>
         <div class="field" data-audio-field style="display:none;">
           <label>Album tracks</label>
-          <p class="helptext">Add one Google Drive share link for each song. These tracks become the MP3 player's previous/next playlist. Google Drive links are converted automatically.</p>
+          <p class="helptext">Add one track per song, either by uploading an MP3/audio file (it uploads straight to Cloudinary — no extra save step needed) or by pasting a Google Drive share link / direct audio URL. These tracks become the MP3 player's previous/next playlist. Uploaded files play back reliably; Google Drive links are converted automatically but can sometimes fail to stream.</p>
           <div data-audio-tracks-list>${audioTracksEditor}</div>
           <button class="small" data-act="addAudioTrack" type="button">+ Add album track</button>
         </div>
@@ -1580,12 +1580,35 @@ function renderNews(){
     el.querySelectorAll('.audio-track-row').forEach(row => {
       const index = parseInt(row.dataset.trackIndex, 10);
       const track = article.audioTracks[index];
+      const urlInput = row.querySelector('[data-track-url]');
+      const statusEl = row.querySelector('[data-track-status]');
       row.querySelector('[data-track-title]').addEventListener('input', e => track.title = e.target.value);
-      row.querySelector('[data-track-url]').addEventListener('input', e => track.url = e.target.value);
-      row.querySelector('[data-track-url]').addEventListener('change', e => {
+      urlInput.addEventListener('input', e => track.url = e.target.value);
+      urlInput.addEventListener('change', e => {
         track.url = normalizeGoogleDriveMediaLink(e.target.value);
         e.target.value = track.url;
         if(index === 0) article.audioUrl = track.url;
+        statusEl.textContent = track.url ? 'Currently: ' + track.url : '';
+        statusEl.className = 'status';
+      });
+      row.querySelector('[data-track-file]').addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        try{
+          statusEl.textContent = 'Uploading to Cloudinary…';
+          statusEl.className = 'status pending';
+          /* Cloudinary hosts audio-only files under its "video" resource type
+             (there's no separate "audio" type), same as full video uploads. */
+          const url = await uploadToCloudinary(file, 'video');
+          track.url = url;
+          urlInput.value = url;
+          if(index === 0) article.audioUrl = url;
+          statusEl.textContent = 'Uploaded to Cloudinary ✓ — click "Save changes" below to publish.';
+          statusEl.className = 'status ok';
+        }catch(err){
+          statusEl.textContent = err.message || 'Could not upload that audio file.';
+          statusEl.className = 'status bad';
+        }
       });
       row.querySelector('[data-act="removeAudioTrack"]').addEventListener('click', () => {
         article.audioTracks.splice(index, 1);
