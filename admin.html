@@ -1238,6 +1238,9 @@ function newArticle(){
     body: { en: '', km: '' },
     cover: '',
     video: { type: 'url', url: '', file: '' },
+    format: 'article',
+    audioUrl: '',
+    bookUrl: '',
     category: (getNewsTags()[0] || {}).id || 'psychology',
     author: '',
     published: true,
@@ -1401,6 +1404,7 @@ function renderNews(){
     article.excerpt = article.excerpt || { en:'', km:'' };
     article.body = article.body || { en:'', km:'' };
     article.video = article.video || { type:'url', url:'', file:'' };
+    article.format = ['article','video','audio','book'].includes(article.format) ? article.format : (article.video.url || article.video.file ? 'video' : 'article');
     const tags = getNewsTags();
     article.category = article.category || tags[0].id;
     article.author = article.author || '';
@@ -1424,6 +1428,15 @@ function renderNews(){
             <label>Content tag</label>
             <select data-f="category">
               ${tags.map(c => `<option value="${escAttr(c.id)}">${escAttr(c.en)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Learning format</label>
+            <select data-f="format">
+              <option value="article">Article</option>
+              <option value="video">Video</option>
+              <option value="audio">Audio / Podcast</option>
+              <option value="book">Book / PDF</option>
             </select>
           </div>
           <div class="field">
@@ -1464,6 +1477,16 @@ function renderNews(){
           <input type="file" data-f="videoFile" accept="video/mp4,video/webm,video/quicktime">
           <div class="status" data-video-status style="min-height:14px;">${article.video.file ? 'Currently: ' + article.video.file : ''}</div>
         </div>
+        <div class="field" data-audio-field style="display:none;">
+          <label>Audio link (MP3, M4A, podcast episode, or hosted audio URL)</label>
+          <input type="url" data-f="audioUrl" placeholder="https://.../lesson.mp3" value="${escAttr(article.audioUrl || '')}">
+          <p class="helptext">A direct audio file will play inside the Learning Center.</p>
+        </div>
+        <div class="field" data-book-field style="display:none;">
+          <label>PDF book link</label>
+          <input type="url" data-f="bookUrl" placeholder="https://.../book.pdf" value="${escAttr(article.bookUrl || '')}">
+          <p class="helptext">Visitors can read the PDF online or download it.</p>
+        </div>
 
         <div class="row">
           <div class="field">
@@ -1501,6 +1524,20 @@ function renderNews(){
       const statusText = article.published === false ? 'Draft' : 'Published';
       el.querySelector('summary span').textContent = `${label} · ${statusText}`;
     });
+    const formatSelect = el.querySelector('[data-f="format"]');
+    const syncFormatFields = () => {
+      const video = article.format === 'video';
+      el.querySelector('[data-f="videoType"]').closest('.field').style.display = video ? '' : 'none';
+      el.querySelector('[data-video-url]').style.display = video && article.video.type !== 'file' ? '' : 'none';
+      el.querySelector('[data-video-file]').style.display = video && article.video.type === 'file' ? '' : 'none';
+      el.querySelector('[data-audio-field]').style.display = article.format === 'audio' ? '' : 'none';
+      el.querySelector('[data-book-field]').style.display = article.format === 'book' ? '' : 'none';
+    };
+    formatSelect.value = article.format;
+    formatSelect.addEventListener('change', e => { article.format = e.target.value; syncFormatFields(); });
+    el.querySelector('[data-f="audioUrl"]').addEventListener('input', e => article.audioUrl = e.target.value);
+    el.querySelector('[data-f="bookUrl"]').addEventListener('input', e => article.bookUrl = e.target.value);
+    syncFormatFields();
     el.querySelector('[data-f="author"]').addEventListener('input', e => article.author = e.target.value);
     el.querySelector('[data-f="excerpt-en"]').addEventListener('input', e => article.excerpt.en = e.target.value);
     el.querySelector('[data-f="excerpt-km"]').addEventListener('input', e => article.excerpt.km = e.target.value);
@@ -1547,8 +1584,8 @@ function renderNews(){
     const videoTypeSel = el.querySelector('[data-f="videoType"]');
     videoTypeSel.value = article.video.type === 'file' ? 'file' : 'url';
     function updateVideoFields(){
-      el.querySelector('[data-video-url]').style.display = article.video.type === 'file' ? 'none' : '';
-      el.querySelector('[data-video-file]').style.display = article.video.type === 'file' ? '' : 'none';
+      el.querySelector('[data-video-url]').style.display = article.format === 'video' && article.video.type !== 'file' ? '' : 'none';
+      el.querySelector('[data-video-file]').style.display = article.format === 'video' && article.video.type === 'file' ? '' : 'none';
     }
     updateVideoFields();
     videoTypeSel.addEventListener('change', e => {

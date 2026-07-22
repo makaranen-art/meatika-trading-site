@@ -437,6 +437,7 @@
     let allPublished = [];
     let activeCat = 'all';
     let currentPage = 1;
+    let activeFormat = '';
 
     /* ---- Topic filter drawer ---- */
     const tagFabBtn = document.getElementById('tagFabBtn');
@@ -472,7 +473,8 @@
     }
 
     function renderNewsList(){
-      const filtered = MTHNews.newsByCategory(allPublished, activeCat);
+      const byTag = MTHNews.newsByCategory(allPublished, activeCat);
+      const filtered = activeFormat ? byTag.filter(item => MTHNews.formatInfo(item).label.toLowerCase() === activeFormat) : byTag;
       const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
       if(currentPage > totalPages) currentPage = totalPages;
       if(currentPage < 1) currentPage = 1;
@@ -537,6 +539,10 @@
       if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
       MTHNews.setTags(data.newsTags);
+      try{
+        const requested = new URLSearchParams(location.search).get('format') || '';
+        activeFormat = ['article','video','audio','book'].includes(requested) ? requested : '';
+      }catch(e){ /* ignore */ }
       renderTagDrawer(MTHNews.getTags());
       allPublished = MTHNews.publishedNews(data);
       renderNewsList();

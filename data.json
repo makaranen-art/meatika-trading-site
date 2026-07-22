@@ -32,6 +32,28 @@
   },
   "sections": [
     {
+      "id": "learning-center",
+      "label": { "en": "Learning Center", "km": "Learning Center" },
+      "cards": [
+        {
+          "id": "learn-articles", "title": "Articles", "desc": { "en": "Clear trading lessons, guides, and market insights.", "km": "Trading lessons and market insights" },
+          "link": "news.html?format=article", "icon": "star", "color": "#7a1640", "iconColor": "#ffffff", "wide": false, "linkType": "url", "platform": "none"
+        },
+        {
+          "id": "learn-videos", "title": "Videos", "desc": { "en": "Watch step-by-step market and strategy lessons.", "km": "Watch market and strategy lessons" },
+          "link": "news.html?format=video", "icon": "youtube", "color": "#b3133f", "iconColor": "#ffffff", "wide": false, "linkType": "url", "platform": "none"
+        },
+        {
+          "id": "learn-audio", "title": "Audio", "desc": { "en": "Listen to podcast-style lessons anywhere.", "km": "Listen to lessons anywhere" },
+          "link": "news.html?format=audio", "icon": "headset", "color": "#4a2a70", "iconColor": "#ffffff", "wide": false, "linkType": "url", "platform": "none"
+        },
+        {
+          "id": "learn-books", "title": "Books & PDFs", "desc": { "en": "Read online or download learning books and guides.", "km": "Read or download books and guides" },
+          "link": "news.html?format=book", "icon": "star", "color": "#87521f", "iconColor": "#ffffff", "wide": false, "linkType": "url", "platform": "none"
+        }
+      ]
+    },
+    {
       "id": "forex",
       "label": {
         "en": "Forex Partners",
