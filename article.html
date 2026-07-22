@@ -122,6 +122,7 @@
   .audio-controls button{ width:34px; height:34px; border:1px solid var(--ink-600); border-radius:50%; background:var(--ink-800); color:var(--paper); font-weight:700; cursor:pointer; }
   .audio-controls button[data-audio-play]{ width:42px; height:42px; background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
   .audio-open{ display:inline-block; color:var(--gold-300); font-size:11.5px; text-decoration:none; margin-top:8px; }
+  .drive-audio-fallback{ width:100%; height:58px; border:0; border-radius:8px; background:var(--ink-800); }
   .video-app{ margin-bottom:18px; border:1px solid var(--ink-600); border-radius:var(--radius); overflow:hidden; background:#080608; }
   .video-app .news-video{ margin:0; border:0; border-radius:0; }
   .video-app-meta{ padding:11px 13px; display:flex; align-items:center; justify-content:space-between; color:var(--paper); font-size:12px; }
@@ -500,6 +501,19 @@
         playBtn.addEventListener('click', () => audioEl.paused ? audioEl.play() : audioEl.pause());
         audioEl.addEventListener('play', () => playBtn.textContent = '❚❚');
         audioEl.addEventListener('pause', () => playBtn.textContent = '▶');
+        audioEl.addEventListener('error', () => {
+          const current = audioTracks[trackIndex];
+          const fallback = document.createElement('iframe');
+          fallback.className = 'drive-audio-fallback';
+          fallback.src = MTHNews.pdfPreviewUrl(current.audioUrl);
+          fallback.title = 'Google Drive audio player';
+          fallback.allow = 'autoplay';
+          audioEl.replaceWith(fallback);
+          document.querySelectorAll('[data-audio-prev],[data-audio-play],[data-audio-next]').forEach(button => {
+            button.disabled = true;
+            button.title = 'Use the Google Drive player above';
+          });
+        }, { once:true });
         audioEl.addEventListener('ended', () => updateTrack(trackIndex + 1, true));
         document.querySelector('[data-audio-prev]').addEventListener('click', () => updateTrack(trackIndex - 1, true));
         document.querySelector('[data-audio-next]').addEventListener('click', () => updateTrack(trackIndex + 1, true));

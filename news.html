@@ -99,6 +99,20 @@
   .format-card h2{ font-family:'Space Grotesk',sans-serif; font-size:14px; margin:0; }
   .format-card p{ font-size:11.5px; line-height:1.45; color:var(--muted); margin:0; }
 
+  .learning-tools{ display:flex; gap:8px; align-items:stretch; margin:-8px 0 18px; position:relative; z-index:10; }
+  .topbar #tagFabBtn{ display:none; }
+  .learning-search{ flex:1; min-width:0; display:flex; align-items:center; gap:8px; padding:0 12px; border:1px solid var(--ink-600); border-radius:11px; background:var(--ink-800); }
+  .learning-search svg{ width:17px; color:var(--muted); flex-shrink:0; }
+  .learning-search input{ width:100%; min-width:0; padding:12px 0; border:0; outline:0; background:transparent; color:var(--paper); font:inherit; font-size:13px; }
+  .learning-search input::placeholder{ color:var(--muted); }
+  .learning-tools .tag-fab{ padding:0; width:46px; justify-content:center; }
+  .learning-tools .tag-fab span{ display:none; }
+  .topic-menu{ position:absolute; right:0; top:calc(100% + 7px); width:min(280px, 78vw); display:none; padding:10px; border:1px solid var(--glass-2-border); border-radius:13px; background:var(--ink-800); box-shadow:0 14px 34px rgba(0,0,0,.38); }
+  .topic-menu.is-open{ display:block; }
+  .topic-menu-head{ font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--paper); padding:4px 5px 10px; }
+  .topic-menu-list{ display:flex; flex-direction:column; gap:6px; }
+  .topic-menu .tag-item{ padding:9px 11px; border-radius:9px; }
+
   .logo-mark{
     width:100%; max-width:200px; margin:0 auto 14px;
     display:flex; align-items:center; justify-content:center;
@@ -299,6 +313,12 @@
       <p data-en="Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading." data-km="អត្ថបទ និងវីដេអូអំពីចិត្តវិទ្យាជួញដូរ យុទ្ធសាស្ត្រ និងការវិភាគទីផ្សារ ពី Meatika Trading។">Articles and videos on trading psychology, strategy, and market analysis from Meatika Trading.</p>
     </div>
 
+    <div class="learning-tools">
+      <label class="learning-search" for="searchInput"><svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.3" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.3 4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="searchInput" type="search" autocomplete="off" placeholder="Search learning content"></label>
+      <button class="icon-btn tag-fab" id="tagMenuBtn" type="button" aria-haspopup="true" aria-expanded="false" title="Topics"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <div class="topic-menu" id="topicMenu"><div class="topic-menu-head">Topics</div><div class="topic-menu-list" id="topicMenuList"></div></div>
+    </div>
+
     <div id="learningFormats" class="format-grid" aria-label="Learning formats"><!-- filled from data.json --></div>
 
     <div id="newsList"><!-- filled from data.json --></div>
@@ -448,31 +468,30 @@
     let activeCat = 'all';
     let currentPage = 1;
     let activeFormat = '';
+    let searchTerm = '';
 
     /* ---- Topic filter drawer ---- */
-    const tagFabBtn = document.getElementById('tagFabBtn');
+    const tagFabBtn = document.getElementById('tagMenuBtn');
+    const topicMenu = document.getElementById('topicMenu');
     const tagFabLabel = document.getElementById('tagFabLabel');
-    const tagDrawer = document.getElementById('tagDrawer');
-    const tagDrawerBackdrop = document.getElementById('tagDrawerBackdrop');
-    const tagDrawerClose = document.getElementById('tagDrawerClose');
+    document.getElementById('searchInput').addEventListener('input', e => {
+      searchTerm = e.target.value;
+      currentPage = 1;
+      renderNewsList();
+    });
 
     function openTagDrawer(){
-      tagDrawer.classList.add('is-open');
-      tagDrawerBackdrop.classList.add('is-open');
-      tagDrawer.setAttribute('aria-hidden', 'false');
+      topicMenu.classList.add('is-open');
       tagFabBtn.setAttribute('aria-expanded', 'true');
     }
     function closeTagDrawer(){
-      tagDrawer.classList.remove('is-open');
-      tagDrawerBackdrop.classList.remove('is-open');
-      tagDrawer.setAttribute('aria-hidden', 'true');
+      topicMenu.classList.remove('is-open');
       tagFabBtn.setAttribute('aria-expanded', 'false');
     }
     tagFabBtn.addEventListener('click', () => {
-      if(tagDrawer.classList.contains('is-open')) closeTagDrawer(); else openTagDrawer();
+      if(topicMenu.classList.contains('is-open')) closeTagDrawer(); else openTagDrawer();
     });
-    tagDrawerClose.addEventListener('click', closeTagDrawer);
-    tagDrawerBackdrop.addEventListener('click', closeTagDrawer);
+    document.addEventListener('click', e => { if(!e.target.closest('.learning-tools')) closeTagDrawer(); });
 
     function buildPagerHtml(page, totalPages){
       let items = '';
@@ -484,7 +503,9 @@
 
     function renderNewsList(){
       const byTag = MTHNews.newsByCategory(allPublished, activeCat);
-      const filtered = activeFormat ? byTag.filter(item => MTHNews.formatInfo(item).label.toLowerCase() === activeFormat) : byTag;
+      const byFormat = activeFormat ? byTag.filter(item => MTHNews.formatInfo(item).label.toLowerCase() === activeFormat) : byTag;
+      const q = searchTerm.trim().toLowerCase();
+      const filtered = q ? byFormat.filter(item => [item.title && item.title.en, item.title && item.title.km, item.excerpt && item.excerpt.en, item.excerpt && item.excerpt.km, item.author].filter(Boolean).join(' ').toLowerCase().includes(q)) : byFormat;
       const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
       if(currentPage > totalPages) currentPage = totalPages;
       if(currentPage < 1) currentPage = 1;
@@ -527,7 +548,7 @@
        so newly created/renamed/deleted tags (managed in the admin panel)
        show up here without any code change. */
     function renderTagDrawer(tags){
-      const list = document.getElementById('tagDrawerList');
+      const list = document.getElementById('topicMenuList');
       list.innerHTML = '<button type="button" class="tag-item" data-cat="all" data-en="All" data-km="ទាំងអស់">All</button>' +
         (tags || []).map(t => `<button type="button" class="tag-item" data-cat="${MTHSite.escapeHtml(t.id)}" data-en="${MTHSite.escapeHtml(t.en)}" data-km="${MTHSite.escapeHtml(t.km || t.en)}">${MTHSite.escapeHtml(t.en)}</button>`).join('');
       CAT_TAB_IDS = ['all'].concat((tags || []).map(t => t.id));
