@@ -112,6 +112,19 @@
   .news-audio a,.book-actions a{ color:var(--gold-300); font-weight:600; text-decoration:none; font-size:13px; }
   .news-book iframe{ width:100%; height:440px; border:0; border-radius:10px; background:#fff; }
   .book-actions{ display:flex; gap:14px; margin-top:12px; }
+  .book-actions a{ flex:1; text-align:center; padding:10px; border:1px solid var(--ink-600); border-radius:9px; }
+  .book-actions a:first-child{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+  .audio-player{ display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center; padding:14px; margin-bottom:18px; background:var(--glass-2-bg); border:1px solid var(--glass-2-border); border-radius:var(--radius); }
+  .audio-album{ width:88px; height:88px; border-radius:11px; overflow:hidden; background:var(--ink-700); }
+  .audio-album img{ width:100%; height:100%; object-fit:cover; }
+  .audio-now{ font-family:'Space Grotesk',sans-serif; font-size:14px; margin:2px 0 10px; }
+  .audio-controls{ display:flex; align-items:center; gap:8px; }
+  .audio-controls button{ width:34px; height:34px; border:1px solid var(--ink-600); border-radius:50%; background:var(--ink-800); color:var(--paper); font-weight:700; cursor:pointer; }
+  .audio-controls button[data-audio-play]{ width:42px; height:42px; background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+  .audio-open{ display:inline-block; color:var(--gold-300); font-size:11.5px; text-decoration:none; margin-top:8px; }
+  .video-app{ margin-bottom:18px; border:1px solid var(--ink-600); border-radius:var(--radius); overflow:hidden; background:#080608; }
+  .video-app .news-video{ margin:0; border:0; border-radius:0; }
+  .video-app-meta{ padding:11px 13px; display:flex; align-items:center; justify-content:space-between; color:var(--paper); font-size:12px; }
 
   .art-body{ color:var(--paper); font-size:14.5px; line-height:1.75; }
   .art-body p{ margin:0 0 16px; }
@@ -428,10 +441,13 @@
       const authorLine = article.author
         ? `<p class="art-author" data-en="By ${MTHSite.escapeHtml(article.author)}" data-km="ដោយ ${MTHSite.escapeHtml(article.author)}">By ${MTHSite.escapeHtml(article.author)}</p>`
         : '';
-      const cover = article.cover ? `<img class="art-cover" src="${MTHSite.escapeHtml(article.cover)}" alt="">` : '';
       const format = MTHNews.formatInfo(article);
-      const media = format.label === 'Video' ? MTHNews.videoEmbedHtml(article.video)
-        : format.label === 'Audio' ? MTHNews.audioPlayerHtml(article.audioUrl)
+      const cover = article.cover && format.label !== 'Audio' ? `<img class="art-cover" src="${MTHSite.escapeHtml(article.cover)}" alt="">` : '';
+      const audioTracks = MTHNews.publishedNews(data).filter(item => MTHNews.formatInfo(item).label === 'Audio' && item.audioUrl);
+      const audioIndex = Math.max(0, audioTracks.findIndex(item => item.id === article.id));
+      const audioPlayer = format.label === 'Audio' && article.audioUrl ? `<div class="audio-player" data-audio-index="${audioIndex}"><div class="audio-album"><img data-audio-cover src="${MTHSite.escapeHtml(article.cover || 'assets/mth-logo.png')}" alt="Album cover"></div><div><div class="media-title">MP3 Player</div><div class="audio-now" data-audio-title>${MTHSite.escapeHtml(title)}</div><audio data-audio-element preload="metadata" src="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(article.audioUrl))}"></audio><div class="audio-controls"><button type="button" data-audio-prev title="Previous">‹‹</button><button type="button" data-audio-play title="Play">▶</button><button type="button" data-audio-next title="Next">››</button></div><a class="audio-open" data-audio-open href="${MTHSite.escapeHtml(MTHNews.liveMediaUrl(article.audioUrl))}" target="_blank" rel="noopener">Open audio file</a></div></div>` : '';
+      const media = format.label === 'Video' ? `<div class="video-app">${MTHNews.videoEmbedHtml(article.video)}<div class="video-app-meta"><span>▶ Video lesson</span><span>Meatika Learning</span></div></div>`
+        : format.label === 'Audio' ? audioPlayer
         : format.label === 'Book' ? MTHNews.bookReaderHtml(article.bookUrl) : '';
       const body = MTHNews.bodyHtml((article.body && article.body.en) || '');
       const bodyKm = MTHNews.bodyHtml((article.body && article.body.km) || (article.body && article.body.en) || '');
@@ -465,6 +481,28 @@
             showToast('Link copied');
           }catch(e){ /* clipboard unavailable */ }
         });
+      }
+
+      const audioEl = document.querySelector('[data-audio-element]');
+      if(audioEl){
+        let trackIndex = audioIndex;
+        const playBtn = document.querySelector('[data-audio-play]');
+        const updateTrack = (nextIndex, autoplay) => {
+          if(!audioTracks.length) return;
+          trackIndex = (nextIndex + audioTracks.length) % audioTracks.length;
+          const track = audioTracks[trackIndex];
+          audioEl.src = MTHNews.liveMediaUrl(track.audioUrl);
+          document.querySelector('[data-audio-title]').textContent = (track.title && track.title.en) || 'Audio lesson';
+          document.querySelector('[data-audio-cover]').src = track.cover || 'assets/mth-logo.png';
+          document.querySelector('[data-audio-open]').href = MTHNews.liveMediaUrl(track.audioUrl);
+          if(autoplay) audioEl.play();
+        };
+        playBtn.addEventListener('click', () => audioEl.paused ? audioEl.play() : audioEl.pause());
+        audioEl.addEventListener('play', () => playBtn.textContent = '❚❚');
+        audioEl.addEventListener('pause', () => playBtn.textContent = '▶');
+        audioEl.addEventListener('ended', () => updateTrack(trackIndex + 1, true));
+        document.querySelector('[data-audio-prev]').addEventListener('click', () => updateTrack(trackIndex - 1, true));
+        document.querySelector('[data-audio-next]').addEventListener('click', () => updateTrack(trackIndex + 1, true));
       }
 
       applyLangWithBody(savedLang);

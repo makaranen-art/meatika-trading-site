@@ -108,6 +108,12 @@
 
   .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
   .toolbar .spacer{ flex:1; }
+  .learning-admin-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:0 0 16px; }
+  .learning-admin-card{ text-align:left; min-height:92px; padding:13px; border-radius:10px; }
+  .learning-admin-card b{ display:block; font-family:'Space Grotesk',sans-serif; margin-bottom:4px; }
+  .learning-admin-card span{ color:var(--muted); font-size:11.5px; line-height:1.35; }
+  .learning-admin-card.active{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
+  .learning-admin-card.active span{ color:var(--ink-900); }
   .save-bar{
     position:sticky; bottom:0; background:var(--ink-900); border-top:1px solid var(--ink-600);
     padding:14px 0; margin-top:20px; display:flex; gap:12px; align-items:center;
@@ -290,7 +296,7 @@
       </div>
 
       <div class="panel">
-        <h2>Learning Center posts</h2>
+        <h2>Learning Center content</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Write education posts — articles or videos — with a cover photo, an optional video (paste a
           YouTube/Facebook/Vimeo link, or upload a short video file), and text in English and Khmer. Pick a
@@ -307,8 +313,14 @@
           with the password can post any content type. To credit who wrote a post, fill in
           <strong>Posted by</strong> on that post; it's just a label, not a login.
         </p>
+        <div class="learning-admin-grid" id="learningAdminFormats">
+          <button class="learning-admin-card active" data-format="article" type="button"><b>Articles</b><span>Write and publish text lessons.</span></button>
+          <button class="learning-admin-card" data-format="video" type="button"><b>Videos</b><span>Upload or embed video lessons.</span></button>
+          <button class="learning-admin-card" data-format="audio" type="button"><b>Audio</b><span>Create MP3/podcast lessons.</span></button>
+          <button class="learning-admin-card" data-format="book" type="button"><b>Books & PDFs</b><span>Publish readable, downloadable PDFs.</span></button>
+        </div>
         <div id="newsList"></div>
-        <button id="addNews">+ Add news / article</button>
+        <button id="addNews">+ Add article</button>
         <p class="helptext" style="margin-top:8px;">
           Cover photos and videos upload straight to Cloudinary the moment you choose the file — no extra save
           step needed for the media itself. Click <strong>Save changes</strong> below afterwards to save the
@@ -1372,6 +1384,11 @@ document.getElementById('addNewsTag').addEventListener('click', () => {
    scrollable/manageable as the Learning Center grows. */
 const NEWS_PAGE_SIZE = 6;
 let newsPage = 1;
+let activeLearningFormat = 'article';
+function articleFormat(article){
+  return ['article','video','audio','book'].includes(article.format) ? article.format : (article.video && (article.video.url || article.video.file) ? 'video' : 'article');
+}
+function formatLabel(format){ return ({article:'Article',video:'Video',audio:'Audio',book:'Book / PDF'})[format] || 'Article'; }
 
 /* datetime-local wants "YYYY-MM-DDTHH:mm" in local time; ISO strings are UTC. */
 function isoToLocalInput(iso){
@@ -1387,24 +1404,34 @@ function localInputToIso(val){
   return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
 }
 
+/* Accept a normal Google Drive sharing link and store its live file URL.
+   This means editors never need to find or build a special download link. */
+function normalizeGoogleDriveMediaLink(url){
+  const value = String(url || '').trim();
+  let match = value.match(/drive\.google\.com\/file\/d\/([\w-]+)/i);
+  if(!match) match = value.match(/[?&]id=([\w-]+)/i);
+  return match ? `https://drive.google.com/uc?export=download&id=${match[1]}` : value;
+}
+
 function renderNews(){
   const wrap = document.getElementById('newsList');
   wrap.innerHTML = '';
   state.news = state.news || [];
-  const total = state.news.length;
+  state.news.forEach(article => article.format = articleFormat(article));
+  const matching = state.news.map((article, index) => ({article, index})).filter(item => item.article.format === activeLearningFormat);
+  const total = matching.length;
   const totalPages = Math.max(1, Math.ceil(total / NEWS_PAGE_SIZE));
   if(newsPage > totalPages) newsPage = totalPages;
   if(newsPage < 1) newsPage = 1;
   const pageStart = (newsPage - 1) * NEWS_PAGE_SIZE;
-  const pageItems = state.news.slice(pageStart, pageStart + NEWS_PAGE_SIZE);
+  const pageItems = matching.slice(pageStart, pageStart + NEWS_PAGE_SIZE);
 
-  pageItems.forEach((article, pageIdx) => {
-    const aIdx = pageStart + pageIdx; // real index within state.news
+  pageItems.forEach(({article, index: aIdx}) => {
     article.title = article.title || { en:'', km:'' };
     article.excerpt = article.excerpt || { en:'', km:'' };
     article.body = article.body || { en:'', km:'' };
     article.video = article.video || { type:'url', url:'', file:'' };
-    article.format = ['article','video','audio','book'].includes(article.format) ? article.format : (article.video.url || article.video.file ? 'video' : 'article');
+    article.format = articleFormat(article);
     const tags = getNewsTags();
     article.category = article.category || tags[0].id;
     article.author = article.author || '';
@@ -1480,12 +1507,12 @@ function renderNews(){
         <div class="field" data-audio-field style="display:none;">
           <label>Audio link (MP3, M4A, podcast episode, or hosted audio URL)</label>
           <input type="url" data-f="audioUrl" placeholder="https://.../lesson.mp3" value="${escAttr(article.audioUrl || '')}">
-          <p class="helptext">A direct audio file will play inside the Learning Center.</p>
+          <p class="helptext">Paste a normal Google Drive share link or a direct audio link. Google Drive links are converted to a live player link automatically when you finish editing the field.</p>
         </div>
         <div class="field" data-book-field style="display:none;">
           <label>PDF book link</label>
           <input type="url" data-f="bookUrl" placeholder="https://.../book.pdf" value="${escAttr(article.bookUrl || '')}">
-          <p class="helptext">Visitors can read the PDF online or download it.</p>
+          <p class="helptext">Paste a normal Google Drive share link or a PDF link. Google Drive PDFs automatically open in the reader and download correctly.</p>
         </div>
 
         <div class="row">
@@ -1535,8 +1562,16 @@ function renderNews(){
     };
     formatSelect.value = article.format;
     formatSelect.addEventListener('change', e => { article.format = e.target.value; syncFormatFields(); });
-    el.querySelector('[data-f="audioUrl"]').addEventListener('input', e => article.audioUrl = e.target.value);
-    el.querySelector('[data-f="bookUrl"]').addEventListener('input', e => article.bookUrl = e.target.value);
+    const saveMediaLink = (field, key) => {
+      field.addEventListener('input', e => article[key] = e.target.value);
+      field.addEventListener('change', e => {
+        const liveUrl = normalizeGoogleDriveMediaLink(e.target.value);
+        article[key] = liveUrl;
+        e.target.value = liveUrl;
+      });
+    };
+    saveMediaLink(el.querySelector('[data-f="audioUrl"]'), 'audioUrl');
+    saveMediaLink(el.querySelector('[data-f="bookUrl"]'), 'bookUrl');
     syncFormatFields();
     el.querySelector('[data-f="author"]').addEventListener('input', e => article.author = e.target.value);
     el.querySelector('[data-f="excerpt-en"]').addEventListener('input', e => article.excerpt.en = e.target.value);
@@ -1652,9 +1687,22 @@ function renderNews(){
 
 document.getElementById('addNews').addEventListener('click', () => {
   state.news = state.news || [];
-  state.news.unshift(newArticle());
+  const item = newArticle();
+  item.format = activeLearningFormat;
+  item.title.en = 'New ' + formatLabel(activeLearningFormat);
+  state.news.unshift(item);
   newsPage = 1;
   renderNews();
+});
+
+document.querySelectorAll('#learningAdminFormats [data-format]').forEach(button => {
+  button.addEventListener('click', () => {
+    activeLearningFormat = button.dataset.format;
+    newsPage = 1;
+    document.querySelectorAll('#learningAdminFormats [data-format]').forEach(card => card.classList.toggle('active', card === button));
+    document.getElementById('addNews').textContent = '+ Add ' + formatLabel(activeLearningFormat).toLowerCase();
+    renderNews();
+  });
 });
 
 /* ---- helpers ---- */
