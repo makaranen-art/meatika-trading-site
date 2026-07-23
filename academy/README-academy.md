@@ -34,6 +34,11 @@ reads/writes than a course site like this will use).
            (request.auth.token.email.lower() == email || isAdmin());
          allow write: if isAdmin();
        }
+       match /accessRequests/{email} {
+         allow create, update: if request.auth != null &&
+           request.auth.token.email.lower() == email;
+         allow read, delete: if isAdmin();
+       }
      }
    }
    ```
