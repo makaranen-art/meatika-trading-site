@@ -65,9 +65,9 @@ Khmer), then click **Save courses**. This writes straight to
 for that part either. Each course has a title, description, and a list of lessons; each
 lesson has a title, duration label, description, and a `videoUrl`.
 
-For `videoUrl`, use a YouTube (or Vimeo) **embed** URL, e.g.:
+For `videoUrl`, paste a normal YouTube, Vevo, or Vimeo share/watch URL. The Academy converts supported links to a safe player automatically, e.g.:
 ```
-https://www.youtube.com/embed/VIDEO_ID
+https://www.youtube.com/watch?v=VIDEO_ID
 ```
 Leave it as an empty string `""` for lessons that don't have a video yet — the page will
 show "No video attached to this lesson yet" instead of a broken player.
@@ -93,7 +93,11 @@ a static file host with no server to enforce that. For YouTube-hosted lessons se
 "Unlisted" (not "Public"), this is a reasonable, low-effort level of protection for a
 course site like this — the same approach many small course sites use.
 
-## Approving students (only approved emails get in)
+## Registration flow
+
+New visitors sign in with Google, then complete their full name and phone number once. Their profile is saved in Firestore and they immediately receive Academy access. The old approved-students panel can remain available for existing administrators, but it is no longer part of the student access flow.
+
+## Approving students (legacy optional tool)
 
 Anyone can *sign in* with Google, but signing in isn't enough — the page then checks the
 account's email against an `approvedStudents` collection in Firestore. If the email isn't
