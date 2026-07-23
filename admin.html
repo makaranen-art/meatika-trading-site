@@ -2256,7 +2256,7 @@ function renderAcademyCourses(){
             </div>
             <div class="row">
               <div class="field"><label>Duration label (e.g. "12 min")</label><input type="text" class="ac-lesson-duration" value="${escAttr(lesson.duration || '')}"></div>
-              <div class="field"><label>Video URL (YouTube/Vimeo embed link)</label><input type="url" class="ac-lesson-video" value="${escAttr(lesson.videoUrl || '')}" placeholder="https://www.youtube.com/embed/VIDEO_ID"></div>
+              <div class="field"><label>Video URL (paste a normal YouTube, Vevo, or Vimeo link)</label><input type="url" class="ac-lesson-video" value="${escAttr(lesson.videoUrl || '')}" placeholder="https://youtube.com/watch?v=VIDEO_ID"></div>
             </div>
             <div class="row">
               <div class="field"><label>Lesson description — English</label><textarea class="ac-lesson-desc-en">${escText(lesson.description.en || '')}</textarea></div>
