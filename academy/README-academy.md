@@ -93,11 +93,11 @@ a static file host with no server to enforce that. For YouTube-hosted lessons se
 "Unlisted" (not "Public"), this is a reasonable, low-effort level of protection for a
 course site like this — the same approach many small course sites use.
 
-## Registration flow
+## Registration and approval flow
 
-New visitors sign in with Google, then complete their full name and phone number once. Their profile is saved in Firestore and they immediately receive Academy access. The old approved-students panel can remain available for existing administrators, but it is no longer part of the student access flow.
+New visitors sign in with Google, then complete their full name and phone number. Their registration is saved as an access request and the Academy remains locked until an administrator approves their email in the **Academy — Approved Students** panel in `admin.html`.
 
-## Approving students (legacy optional tool)
+## Approving students
 
 Anyone can *sign in* with Google, but signing in isn't enough — the page then checks the
 account's email against an `approvedStudents` collection in Firestore. If the email isn't
