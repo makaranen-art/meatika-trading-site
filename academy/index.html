@@ -56,31 +56,25 @@
   }
   .signout-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
 
-  /* ---- Learning Center / Meatika Course tabs ---- */
-  .academy-tabs{
-    display:flex; gap:10px; padding:16px 24px 0; max-width:640px; margin:0 auto;
+  /* ---- Learning Center (free-content card grid, lives in the sidebar) ---- */
+  .sidebar-section{ display:flex; flex-direction:column; gap:10px; }
+  .sidebar-section + .sidebar-section{ margin-top:6px; padding-top:18px; border-top:1px solid var(--ink-600); }
+  .sidebar-section h2{ display:flex; align-items:baseline; gap:7px; }
+  .sidebar-section h2 .h2-tag{
+    text-transform:none; letter-spacing:0; font-size:10.5px; font-weight:500; color:var(--muted);
   }
-  .academy-tab{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  .learning-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .learning-card{
+    display:flex; flex-direction:column; align-items:flex-start; gap:7px;
     background:var(--glass-1-bg); border:1px solid var(--glass-1-border); border-radius:12px;
-    padding:12px 14px; cursor:pointer; color:var(--paper); font-family:'Inter', sans-serif;
-    transition:.15s ease;
+    padding:11px; cursor:pointer; color:var(--paper); font-family:'Inter', sans-serif;
+    text-align:left; transition:.15s ease;
   }
-  .academy-tab:hover{ border-color:var(--gold-500); }
-  .academy-tab.active{
-    border-color:var(--gold-500);
-    background:linear-gradient(135deg, rgba(76,127,255,0.22), rgba(15,21,38,0.5));
-  }
-  .academy-tab .tab-title{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:14.5px; }
-  .academy-tab .tab-sub{ font-size:11px; color:var(--muted); }
-  .academy-tab.active .tab-sub{ color:var(--gold-300); }
-
-  #learningPanel{ display:none; }
-  #learningFrame{
-    display:block; width:100%; height:calc(100vh - 128px); border:0;
-  }
-
-  #coursePanel{ display:none; }
+  .learning-card:hover{ border-color:var(--gold-500); transform:translateY(-1px); }
+  .learning-card.active{ border-color:var(--gold-500); background:linear-gradient(135deg, rgba(76,127,255,0.22), rgba(15,21,38,0.5)); }
+  .learning-icon{ width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .learning-icon svg{ width:15px; height:15px; }
+  .learning-card-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:12.5px; }
 
   /* ---- Login screen ---- */
   #loginScreen{
@@ -172,6 +166,28 @@
   .lesson-row-duration{ font-size:11px; color:var(--muted); }
 
   .lesson-main{ flex:1; min-width:0; }
+
+  /* ---- Learning Center content pane (rendered in the same main area) ---- */
+  #learningPane{ display:none; }
+  .learning-header{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .learning-header .learning-icon{ width:38px; height:38px; border-radius:10px; }
+  .learning-header .learning-icon svg{ width:19px; height:19px; }
+  .learning-header h2{ font-family:'Space Grotesk', sans-serif; font-size:19px; margin:0 0 4px; }
+  .learning-header p{ color:var(--muted); font-size:13px; margin:0; }
+  .learning-items{ display:flex; flex-direction:column; gap:10px; max-width:640px; }
+  .learning-item{
+    display:flex; gap:12px; align-items:center; padding:12px; border-radius:var(--radius);
+    background:var(--glass-1-bg); border:1px solid var(--glass-1-border); text-decoration:none; color:var(--paper);
+    transition:.15s ease;
+  }
+  .learning-item:hover{ border-color:var(--gold-500); transform:translateY(-1px); }
+  .learning-item-thumb{
+    width:56px; height:56px; border-radius:9px; flex-shrink:0; background-size:cover; background-position:center;
+    background-color:var(--ink-700); display:flex; align-items:center; justify-content:center; color:var(--muted);
+  }
+  .learning-item-body h3{ font-family:'Space Grotesk', sans-serif; font-size:13.5px; margin:0 0 4px; }
+  .learning-item-body p{ font-size:12px; color:var(--muted); margin:0; line-height:1.5; }
+  .learning-empty{ color:var(--muted); font-size:13px; }
   .video-wrap{
     width:100%; aspect-ratio:16/9; border-radius:var(--radius); background:#000;
     border:1px solid var(--ink-600); overflow:hidden; margin-bottom:18px;
@@ -210,21 +226,6 @@
     </div>
   </div>
 
-  <div class="academy-tabs" id="academyTabs">
-    <button class="academy-tab" data-tab="learning" type="button">
-      <span class="tab-title">Learning Center</span>
-      <span class="tab-sub">Free Content</span>
-    </button>
-    <button class="academy-tab" data-tab="course" type="button">
-      <span class="tab-title">Meatika Course</span>
-      <span class="tab-sub">Membership Required</span>
-    </button>
-  </div>
-
-  <div id="learningPanel">
-    <iframe id="learningFrame" src="../news.html" title="Meatika Trading Learning Center"></iframe>
-  </div>
-
   <div id="coursePanel">
     <div id="loginScreen">
       <span class="login-logo-plate"><img class="logo" src="assets/mth-academy-logo.png" alt="Meatika Trading Academy"></span>
@@ -253,14 +254,26 @@
     <div id="appScreen">
       <div class="layout">
         <div class="sidebar">
-          <h2>Courses</h2>
-          <div id="courseList"></div>
+          <div class="sidebar-section">
+            <h2>Courses</h2>
+            <div id="courseList"></div>
+          </div>
+          <div class="sidebar-section">
+            <h2>Learning Center <span class="h2-tag">Free Content</span></h2>
+            <div id="learningGrid" class="learning-grid"></div>
+          </div>
         </div>
-        <div class="main" id="lessonPane"></div>
+        <div class="main">
+          <div id="lessonPane"></div>
+          <div id="learningPane"></div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="../assets/icons.js"></script>
+  <script src="../assets/site.js"></script>
+  <script src="../assets/news.js"></script>
   <script type="module" src="academy.js"></script>
   <script>
     // Small non-module wiring: show/hide the topbar's logged-in state.
@@ -273,39 +286,6 @@
       loggedOutNav.style.display = signedIn ? 'none' : 'block';
       loggedInNav.style.display = signedIn ? 'flex' : 'none';
     });
-
-    // ---- Learning Center / Meatika Course tabs ----
-    // Learning Center is free, public content (no sign-in) — it's the
-    // Learning Center page (news.html) embedded right here so it lives
-    // under the Academy. Meatika Course is the existing Google sign-in +
-    // approved-student dashboard, unchanged.
-    const academyTabs = document.querySelectorAll('.academy-tab');
-    const learningPanel = document.getElementById('learningPanel');
-    const coursePanel = document.getElementById('coursePanel');
-    const ACADEMY_TAB_KEY = 'mth-academy-tab';
-
-    function setAcademyTab(tab){
-      if(tab !== 'learning' && tab !== 'course') tab = 'learning';
-      academyTabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      learningPanel.style.display = tab === 'learning' ? 'block' : 'none';
-      coursePanel.style.display = tab === 'course' ? 'block' : 'none';
-      try{ localStorage.setItem(ACADEMY_TAB_KEY, tab); }catch(e){ /* storage unavailable */ }
-      if(history.replaceState) history.replaceState(null, '', '#' + tab);
-    }
-
-    academyTabs.forEach(btn => {
-      btn.addEventListener('click', () => setAcademyTab(btn.dataset.tab));
-    });
-
-    let initialTab = 'learning';
-    try{
-      if(location.hash === '#course' || location.hash === '#learning'){
-        initialTab = location.hash.slice(1);
-      } else {
-        initialTab = localStorage.getItem(ACADEMY_TAB_KEY) || 'learning';
-      }
-    }catch(e){ /* storage unavailable */ }
-    setAcademyTab(initialTab);
   </script>
 
 </body>

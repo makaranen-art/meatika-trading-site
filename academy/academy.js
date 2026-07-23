@@ -32,6 +32,8 @@ const els = {
   userName: document.getElementById('userName'),
   courseList: document.getElementById('courseList'),
   lessonPane: document.getElementById('lessonPane'),
+  learningGrid: document.getElementById('learningGrid'),
+  learningPane: document.getElementById('learningPane'),
   authError: document.getElementById('authError'),
   configWarning: document.getElementById('configWarning'),
 };
@@ -41,6 +43,9 @@ let currentUser = null;
 let userProgress = {}; // { lessonId: true }
 let activeCourseId = null;
 let activeLessonId = null;
+
+let siteData = null; // ../data.json — learningFormats + news, shared with the main site
+let activeFormat = null; // 'article' | 'video' | 'audio' | 'book' | null (null = showing a course)
 
 // ---- Config sanity check (helps whoever sets this up spot a copy/paste miss) ----
 if (firebaseConfig.apiKey.startsWith('PASTE_')) {
@@ -102,6 +107,7 @@ onAuthStateChanged(auth, async (user) => {
   if (user.photoURL) els.userAvatar.src = user.photoURL;
   await loadProgress();
   await loadCourses();
+  loadLearningCenter();
   showScreen('app');
 });
 
@@ -180,6 +186,12 @@ function renderCourseList() {
 }
 
 function renderLessonPane() {
+  // Selecting a course always switches the shared main area back to the
+  // course view, and clears any active Learning Center selection.
+  activeFormat = null;
+  renderLearningGrid();
+  showPane('course');
+
   const course = findCourse(activeCourseId);
   if (!course) { els.lessonPane.innerHTML = ''; return; }
   if (!activeLessonId) activeLessonId = course.lessons[0]?.id || null;
@@ -239,6 +251,95 @@ function renderLessonPane() {
       toggleLesson(cb.dataset.check, cb.checked);
     });
   });
+}
+
+// ---- Learning Center: free content (article/video/audio/book), no sign-in
+// gate of its own — it shares the sidebar "board" with Courses, and renders
+// its content into the same main area, instead of living on a separate page.
+async function loadLearningCenter() {
+  try {
+    if (!siteData) {
+      const res = await fetch('../data.json', { cache: 'no-store' });
+      siteData = await res.json();
+    }
+    renderLearningGrid();
+  } catch (err) {
+    console.error('Learning Center failed to load:', err);
+  }
+}
+
+function showPane(which) {
+  els.lessonPane.style.display = which === 'course' ? 'block' : 'none';
+  els.learningPane.style.display = which === 'learning' ? 'block' : 'none';
+}
+
+function renderLearningGrid() {
+  if (!siteData || !els.learningGrid) return;
+  const formats = siteData.learningFormats || [];
+  els.learningGrid.innerHTML = formats.map(item => {
+    const title = (item.title && item.title.en) || item.id;
+    const icon = window.mthIconSvg ? window.mthIconSvg(item.icon, item.iconColor || '#fff') : '';
+    const isActive = item.id === activeFormat;
+    return `
+      <button class="learning-card ${isActive ? 'active' : ''}" data-format="${item.id}" type="button">
+        <span class="learning-icon" style="background:${escapeAttr(item.color || '#4c7fff')}"><svg viewBox="0 0 24 24" fill="none">${icon}</svg></span>
+        <span class="learning-card-title">${escapeHtml(title)}</span>
+      </button>`;
+  }).join('');
+
+  els.learningGrid.querySelectorAll('.learning-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFormat = btn.dataset.format;
+      renderLearningGrid();
+      renderLearningPane();
+    });
+  });
+}
+
+function learningItemHtml(item) {
+  const title = (item.title && item.title.en) || 'Untitled';
+  const excerpt = (item.excerpt && item.excerpt.en) || '';
+  const posterFn = window.MTHSite && window.MTHSite.cloudinaryVideoPosterUrl;
+  const videoPoster = item.video && item.video.type === 'file' && posterFn ? posterFn(item.video.file) : '';
+  const thumb = item.cover || videoPoster;
+  const thumbHtml = thumb
+    ? `<div class="learning-item-thumb" style="background-image:url('${escapeAttr(thumb)}')"></div>`
+    : `<div class="learning-item-thumb"><svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M4 5h16v14H4z" stroke="currentColor" stroke-width="1.6"/><path d="m4 15 4.5-4.5L12 14l3-3 5 5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/></svg></div>`;
+  return `
+    <a class="learning-item" href="../article.html?id=${encodeURIComponent(item.id)}">
+      ${thumbHtml}
+      <div class="learning-item-body">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(excerpt)}</p>
+      </div>
+    </a>`;
+}
+
+function renderLearningPane() {
+  if (!siteData || !activeFormat) return;
+  showPane('learning');
+
+  const formatMeta = (siteData.learningFormats || []).find(f => f.id === activeFormat) || {};
+  const title = (formatMeta.title && formatMeta.title.en) || activeFormat;
+  const desc = (formatMeta.desc && formatMeta.desc.en) || '';
+  const icon = window.mthIconSvg ? window.mthIconSvg(formatMeta.icon, formatMeta.iconColor || '#fff') : '';
+
+  const allItems = window.MTHNews ? MTHNews.publishedNews(siteData) : (siteData.news || []).filter(n => n.published !== false);
+  const items = allItems.filter(n => (window.MTHNews ? MTHNews.formatInfo(n).label.toLowerCase() : '') === activeFormat);
+
+  const listHtml = items.length
+    ? `<div class="learning-items">${items.map(learningItemHtml).join('')}</div>`
+    : `<p class="learning-empty">Nothing here yet — check back soon.</p>`;
+
+  els.learningPane.innerHTML = `
+    <div class="learning-header">
+      <span class="learning-icon" style="background:${escapeAttr(formatMeta.color || '#4c7fff')}"><svg viewBox="0 0 24 24" fill="none">${icon}</svg></span>
+      <div>
+        <h2>${escapeHtml(title)}</h2>
+        <p>${escapeHtml(desc)}</p>
+      </div>
+    </div>
+    ${listHtml}`;
 }
 
 function escapeHtml(str) {
