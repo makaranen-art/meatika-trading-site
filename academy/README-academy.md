@@ -49,9 +49,16 @@ reads/writes than a course site like this will use).
 
 ## Editing course content
 
-Course and lesson content lives in `academy/academy-data.json` — no code editing needed
-for that part. Each course has a title, description, and a list of lessons; each lesson
-has a title, duration label, description, and a `videoUrl`.
+**The easy way:** open `admin.html`, set up (or reuse) the **GitHub connection** panel near the
+top, then scroll to **Academy — Courses**. Click **Load courses**, add/edit courses and
+lessons with plain form fields (title, description, duration, video link — English and
+Khmer), then click **Save courses**. This writes straight to
+`academy/academy-data.json` in your repo, the same way the rest of the site's content saves.
+
+**The manual way:** course and lesson content also lives directly in
+`academy/academy-data.json` if you'd rather edit the file by hand — no code changes needed
+for that part either. Each course has a title, description, and a list of lessons; each
+lesson has a title, duration label, description, and a `videoUrl`.
 
 For `videoUrl`, use a YouTube (or Vimeo) **embed** URL, e.g.:
 ```
@@ -59,6 +66,18 @@ https://www.youtube.com/embed/VIDEO_ID
 ```
 Leave it as an empty string `""` for lessons that don't have a video yet — the page will
 show "No video attached to this lesson yet" instead of a broken player.
+
+## Learning Center + Meatika Course tabs
+
+`/academy/index.html` now shows two tabs at the top:
+- **Learning Center (Free Content)** — the Learning Center (`news.html`) embedded right in
+  the Academy page. No sign-in required; anyone can read it.
+- **Meatika Course (Membership Required)** — the existing Google sign-in + approved-student
+  dashboard described in this file, unchanged.
+
+The Learning Center's old registration form (Full Name/Phone/Email/Trading Experience,
+which logged to a Google Sheet) has been removed — that content is free and open to
+everyone now.
 
 ## What this does and doesn't protect
 
