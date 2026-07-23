@@ -3,10 +3,10 @@
 // (the student-facing page) and admin.html (the approved-students panel)
 // import this same file, so you only ever edit it in one place.
 export const firebaseConfig = {
-  apiKey: "PASTE_API_KEY_HERE",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyDm6cU8VzuMYVe1yd1s9KA6BDJTLDbiFcE",
+  authDomain: "meatika-academy.firebaseapp.com",
+  projectId: "meatika-academy",
+  storageBucket: "meatika-academy.firebasestorage.app",
+  messagingSenderId: "518901868525",
+  appId: "1:518901868525:web:1645267f75d626fe5129e4"
 };
