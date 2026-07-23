@@ -94,7 +94,7 @@
     const catTag = categoryBadgeHtml(article.category);
     const format = formatInfo(article);
     return `
-      <a class="news-card" href="article.html?id=${encodeURIComponent(article.id)}">
+      <a class="news-card" href="academy/index.html#content=${encodeURIComponent(article.id)}">
         ${cover}
         <div class="news-card-body">
           <div class="news-meta">${draftTag}${catTag}<span class="news-draft-tag">${format.icon} ${format.label}</span><span class="news-date">${esc(formatDate(article.publishedAt))}</span></div>
