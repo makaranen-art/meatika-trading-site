@@ -67,6 +67,13 @@
   .news-admin-pager button{ min-width:32px; }
   .news-admin-pager button.pager-active{ background:var(--gold-500); border-color:var(--gold-500); color:var(--ink-900); }
 
+  .academy-student-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:9px 12px; border:1px solid var(--ink-600); border-radius:8px; margin-bottom:6px;
+    font-size:13px; background:var(--ink-700);
+  }
+  .academy-student-row span{ word-break:break-all; }
+
   /* ---- Panels ---- */
   .panel{
     background:var(--ink-800); border:1px solid var(--ink-600); border-radius:var(--radius);
@@ -247,6 +254,44 @@
         <div class="field">
           <label>Google Sheet Web App URL</label>
           <input type="text" id="newsGateEndpoint" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Academy — Approved Students</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Controls who can get past the Google sign-in screen on <code>/academy/</code>. Anyone can sign in with
+          Google, but only emails you've approved here actually reach the course dashboard — everyone else sees
+          a "pending approval" screen. This uses its own connection (Firebase, not GitHub) and saves immediately
+          — there's no separate Save button and it doesn't touch <code>data.json</code>.
+        </p>
+        <div id="academySignedOut">
+          <p class="helptext" style="margin-bottom:10px;">
+            Sign in with the Google account you used to create the Academy's Firebase project, to manage the
+            approved list. (One-time Firebase setup is in <code>academy/README-academy.md</code> — do that first
+            if you haven't yet.)
+          </p>
+          <div class="toolbar">
+            <button class="primary" id="academySignInBtn" type="button">Sign in with Google</button>
+            <span class="status" id="academyConnectStatus"></span>
+          </div>
+        </div>
+        <div id="academySignedIn" style="display:none;">
+          <div class="toolbar" style="margin-bottom:12px;">
+            <span class="status" id="academyWhoami"></span>
+            <button class="small" id="academySignOutBtn" type="button">Sign out</button>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1;">
+              <label>Student's Google email</label>
+              <input type="text" id="academyNewEmail" placeholder="student@gmail.com" autocomplete="off">
+            </div>
+          </div>
+          <div class="toolbar" style="margin-bottom:14px;">
+            <button class="primary" id="academyAddBtn" type="button">+ Approve student</button>
+            <span class="status" id="academyAddStatus"></span>
+          </div>
+          <div id="academyStudentsList"></div>
         </div>
       </div>
 
@@ -2049,6 +2094,134 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     statusEl.className = 'status bad';
   }
 });
+</script>
+
+<script type="module">
+  // ---- Academy: Approved Students panel ----
+  // Independent of the GitHub-backed content editor above — this talks to
+  // Firebase directly (Google sign-in + Firestore) and saves immediately.
+  import { firebaseConfig } from './academy/firebase-config.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, setDoc, deleteDoc
+  } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const acApp = initializeApp(firebaseConfig, 'academyAdmin');
+  const acAuth = getAuth(acApp);
+  const acDb = getFirestore(acApp);
+  const acProvider = new GoogleAuthProvider();
+
+  const acEls = {
+    signedOut: document.getElementById('academySignedOut'),
+    signedIn: document.getElementById('academySignedIn'),
+    signInBtn: document.getElementById('academySignInBtn'),
+    signOutBtn: document.getElementById('academySignOutBtn'),
+    connectStatus: document.getElementById('academyConnectStatus'),
+    whoami: document.getElementById('academyWhoami'),
+    newEmail: document.getElementById('academyNewEmail'),
+    addBtn: document.getElementById('academyAddBtn'),
+    addStatus: document.getElementById('academyAddStatus'),
+    list: document.getElementById('academyStudentsList'),
+  };
+
+  if(firebaseConfig.apiKey.startsWith('PASTE_')){
+    acEls.connectStatus.textContent = 'Academy Firebase project not configured yet — see academy/README-academy.md.';
+    acEls.connectStatus.className = 'status bad';
+    acEls.signInBtn.disabled = true;
+  }
+
+  acEls.signInBtn.addEventListener('click', async () => {
+    acEls.connectStatus.textContent = '';
+    try{
+      await signInWithPopup(acAuth, acProvider);
+    }catch(err){
+      acEls.connectStatus.textContent = err.message || 'Sign-in failed.';
+      acEls.connectStatus.className = 'status bad';
+    }
+  });
+
+  acEls.signOutBtn.addEventListener('click', () => signOut(acAuth));
+
+  onAuthStateChanged(acAuth, async (user) => {
+    if(user){
+      acEls.signedOut.style.display = 'none';
+      acEls.signedIn.style.display = 'block';
+      acEls.whoami.textContent = 'Signed in as ' + (user.email || 'unknown');
+      acEls.whoami.className = 'status ok';
+      await refreshStudentsList();
+    } else {
+      acEls.signedOut.style.display = 'block';
+      acEls.signedIn.style.display = 'none';
+    }
+  });
+
+  async function refreshStudentsList(){
+    acEls.list.innerHTML = '<p class="helptext">Loading…</p>';
+    try{
+      const snap = await getDocs(collection(acDb, 'approvedStudents'));
+      const emails = [];
+      snap.forEach(d => emails.push(d.id));
+      emails.sort();
+      if(!emails.length){
+        acEls.list.innerHTML = '<p class="helptext">No approved students yet — add one above.</p>';
+        return;
+      }
+      acEls.list.innerHTML = '';
+      emails.forEach(email => {
+        const row = document.createElement('div');
+        row.className = 'academy-student-row';
+        row.innerHTML = `<span>${escapeHtmlAc(email)}</span><button class="small danger" type="button">Remove</button>`;
+        row.querySelector('button').addEventListener('click', async () => {
+          row.querySelector('button').disabled = true;
+          try{
+            await deleteDoc(doc(acDb, 'approvedStudents', email));
+            row.remove();
+          }catch(err){
+            alert(err.message || 'Failed to remove.');
+            row.querySelector('button').disabled = false;
+          }
+        });
+        acEls.list.appendChild(row);
+      });
+    }catch(err){
+      acEls.list.innerHTML = `<p class="status bad">${escapeHtmlAc(err.message || 'Failed to load the approved-students list.')}</p>`;
+    }
+  }
+
+  acEls.addBtn.addEventListener('click', async () => {
+    const raw = (acEls.newEmail.value || '').trim().toLowerCase();
+    acEls.addStatus.textContent = '';
+    if(!raw || !raw.includes('@')){
+      acEls.addStatus.textContent = 'Enter a valid email.';
+      acEls.addStatus.className = 'status bad';
+      return;
+    }
+    acEls.addBtn.disabled = true;
+    try{
+      await setDoc(doc(acDb, 'approvedStudents', raw), {
+        approved: true,
+        addedAt: new Date().toISOString()
+      });
+      acEls.newEmail.value = '';
+      acEls.addStatus.textContent = 'Approved.';
+      acEls.addStatus.className = 'status ok';
+      await refreshStudentsList();
+    }catch(err){
+      acEls.addStatus.textContent = err.message || 'Failed to add.';
+      acEls.addStatus.className = 'status bad';
+    }finally{
+      acEls.addBtn.disabled = false;
+    }
+  });
+
+  function escapeHtmlAc(str){
+    return String(str || '').replace(/[&<>"']/g, s => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[s]));
+  }
 </script>
 </body>
 </html>
