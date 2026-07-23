@@ -575,6 +575,41 @@
   ],
   "news": [
     {
+      "id": "news-mrx7x210",
+      "title": {
+        "en": "Trading Discipline",
+        "km": "វិន័យក្នុងការជួយដូរ"
+      },
+      "excerpt": {
+        "en": "Trading Discipline",
+        "km": "វិន័យក្នុងការជួយដូរ"
+      },
+      "body": {
+        "en": "",
+        "km": ""
+      },
+      "cover": "https://res.cloudinary.com/lisxurk1/image/upload/v1784793572/blob_sb6fen.png",
+      "video": {
+        "type": "url",
+        "url": "",
+        "file": ""
+      },
+      "format": "audio",
+      "audioUrl": "https://res.cloudinary.com/lisxurk1/video/upload/v1784793639/speech-327614_ybennh.wav",
+      "audioTracks": [
+        {
+          "id": "track-1784793596481",
+          "title": "EP1-ហេតុអ្វីបានជាវិន័យសំខាន់ជាងយុទ្ធសាស្រ្ត",
+          "url": "https://res.cloudinary.com/lisxurk1/video/upload/v1784793639/speech-327614_ybennh.wav"
+        }
+      ],
+      "bookUrl": "",
+      "category": "trading-discipline",
+      "author": "",
+      "published": true,
+      "publishedAt": "2026-07-23T07:56:56.580Z"
+    },
+    {
       "id": "news-mrwbjw44",
       "title": {
         "en": " Candlestick Pattern តែមួយគត់ ដែល Trader គ្រប់រូបត្រូវតែដឹង!!!",
@@ -954,6 +989,11 @@
       "id": "video",
       "en": "Market Information",
       "km": "ព័ត៌មានទីផ្សារ"
+    },
+    {
+      "id": "trading-discipline",
+      "en": "Trading Discipline",
+      "km": "វិន័យក្នុងការជួញដូរ"
     }
   ],
   "newsGateEndpoint": "https://script.google.com/macros/s/AKfycbwgIJ4FEkgIdLI68a-1Y3PxuvwFTAgo6TkHzt43Cay9M3rCjELD6C43VzW7sFVUP7jL/exec"
