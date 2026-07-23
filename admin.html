@@ -2238,6 +2238,7 @@ function renderAcademyCourses(){
         <div class="field"><label>Description — English</label><textarea class="ac-course-desc-en">${escText(course.description.en || '')}</textarea></div>
         <div class="field"><label>Description — Khmer</label><textarea class="ac-course-desc-km">${escText(course.description.km || '')}</textarea></div>
       </div>
+      <div class="field"><label>Course tag (existing Resources tag ID)</label><input type="text" class="ac-course-tag" value="${escAttr(course.tag || '')}" placeholder="psychology"></div>
       <div class="ac-lessons-list">
         ${(course.lessons || []).map((lesson, lIdx) => `
           <div class="card-item" data-lesson-idx="${lIdx}">
@@ -2276,6 +2277,7 @@ function renderAcademyCourses(){
     courseEl.querySelector('.ac-course-title-km').addEventListener('input', e => { course.title.km = e.target.value; });
     courseEl.querySelector('.ac-course-desc-en').addEventListener('input', e => { course.description.en = e.target.value; });
     courseEl.querySelector('.ac-course-desc-km').addEventListener('input', e => { course.description.km = e.target.value; });
+    courseEl.querySelector('.ac-course-tag').addEventListener('input', e => { course.tag = e.target.value.trim(); });
 
     courseEl.querySelector('.ac-remove-course').addEventListener('click', () => {
       if(!confirm('Remove this course and all its lessons?')) return;
@@ -2314,7 +2316,7 @@ function renderAcademyCourses(){
       lessonEl.querySelector('.ac-lesson-title-en').addEventListener('input', e => { lesson.title.en = e.target.value; });
       lessonEl.querySelector('.ac-lesson-title-km').addEventListener('input', e => { lesson.title.km = e.target.value; });
       lessonEl.querySelector('.ac-lesson-duration').addEventListener('input', e => { lesson.duration = e.target.value; });
-      lessonEl.querySelector('.ac-lesson-video').addEventListener('input', e => { lesson.videoUrl = e.target.value.trim(); });
+      lessonEl.querySelector('.ac-lesson-video').addEventListener('input', e => { const raw = e.target.value.trim(); const yt = raw.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/i); const vm = raw.match(/vimeo\.com\/(?:video\/)?(\d+)/i); lesson.videoUrl = yt ? `https://www.youtube.com/embed/${yt[1]}` : (vm ? `https://player.vimeo.com/video/${vm[1]}` : raw); });
       lessonEl.querySelector('.ac-lesson-desc-en').addEventListener('input', e => { lesson.description.en = e.target.value; });
       lessonEl.querySelector('.ac-lesson-desc-km').addEventListener('input', e => { lesson.description.km = e.target.value; });
 
@@ -2414,8 +2416,7 @@ function renderAcademyCourses(){
       requests.forEach(request => {
         const row = document.createElement('div');
         row.className = 'academy-student-row';
-        const label = `${request.displayName || 'No name'} — ${request.email || request.id}${request.phone ? ' — ' + request.phone : ''}`;
-        row.innerHTML = `<span>${escapeHtmlAc(label)}</span><button class="small primary" type="button">Approve</button>`;
+        row.innerHTML = `<span><strong>${escapeHtmlAc(request.displayName || 'No name')}</strong><br><small>${escapeHtmlAc(request.email || request.id)}${request.phone ? ' · ' + escapeHtmlAc(request.phone) : ' · No phone submitted'}</small></span><button class="small primary" type="button">Approve</button>`;
         row.querySelector('button').addEventListener('click', async () => {
           const btn = row.querySelector('button'); btn.disabled = true;
           try{
