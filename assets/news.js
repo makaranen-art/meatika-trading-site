@@ -120,14 +120,14 @@
     if(video.type === 'file' && video.file){
       const poster = cloudinaryVideoPosterUrl(video.file);
       const posterAttr = poster ? ` poster="${esc(poster)}"` : '';
-      return `<div class="news-video"><video controls preload="metadata"${posterAttr} src="${esc(video.file)}"></video></div>`;
+      return `<div class="news-video"><video controls controlsList="nodownload noremoteplayback" disablePictureInPicture preload="metadata"${posterAttr} src="${esc(video.file)}" oncontextmenu="return false"></video></div>`;
     }
     const url = (video.url || '').trim();
     if(!url) return '';
 
     let m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/i);
     if(m){
-      return `<div class="news-video"><iframe src="https://www.youtube.com/embed/${m[1]}" title="Video" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+      return `<div class="news-video"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}?rel=0&modestbranding=1&iv_load_policy=3" title="Video" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"></iframe></div>`;
     }
     m = url.match(/vimeo\.com\/(\d+)/i);
     if(m){
