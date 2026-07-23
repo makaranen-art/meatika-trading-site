@@ -2,7 +2,10 @@
   "courses": [
     {
       "id": "forex-fundamentals",
-      "title": { "en": "Forex Fundamentals", "km": "មូលដ្ឋានគ្រឹះ Forex" },
+      "title": {
+        "en": "Forex Fundamentals",
+        "km": "មូលដ្ឋានគ្រឹះ Forex"
+      },
       "description": {
         "en": "Start here: how currency pairs, pips, leverage and spreads actually work.",
         "km": "ចាប់ផ្តើមទីនេះ៖ របៀបដែលគូរូបិយប័ណ្ណ pip leverage និង spread ដំណើរការ។"
@@ -10,9 +13,12 @@
       "lessons": [
         {
           "id": "welcome",
-          "title": { "en": "Welcome To The Academy", "km": "សូមស្វាគមន៍មកកាន់ Academy" },
+          "title": {
+            "en": "Welcome To The Academy",
+            "km": "សូមស្វាគមន៍មកកាន់ Academy"
+          },
           "duration": "5 min",
-          "videoUrl": "",
+          "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "A quick overview of what you'll learn and how to use this platform.",
             "km": "ទិដ្ឋភាពទូទៅរហ័សអំពីអ្វីដែលអ្នកនឹងរៀន និងរបៀបប្រើវេទិកានេះ។"
@@ -20,9 +26,12 @@
         },
         {
           "id": "currency-pairs",
-          "title": { "en": "Understanding Currency Pairs", "km": "ស្វែងយល់អំពីគូរូបិយប័ណ្ណ" },
+          "title": {
+            "en": "Understanding Currency Pairs",
+            "km": "ស្វែងយល់អំពីគូរូបិយប័ណ្ណ"
+          },
           "duration": "12 min",
-          "videoUrl": "",
+          "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "Base vs quote currency, majors, minors, and exotics.",
             "km": "រូបិយប័ណ្ណមូលដ្ឋាន ធៀបនឹងរូបិយប័ណ្ណសម្រង់ គូសំខាន់ៗ និងគូអូសអាកា។"
@@ -30,9 +39,12 @@
         },
         {
           "id": "pips-leverage",
-          "title": { "en": "Pips, Lots & Leverage", "km": "Pip ឡូត និង Leverage" },
+          "title": {
+            "en": "Pips, Lots & Leverage",
+            "km": "Pip ឡូត និង Leverage"
+          },
           "duration": "15 min",
-          "videoUrl": "",
+          "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "How position size and leverage affect your risk on every trade.",
             "km": "របៀបដែលទំហំមុខតំណែង និង leverage ប៉ះពាល់ដល់ហានិភ័យរបស់អ្នក។"
@@ -42,7 +54,10 @@
     },
     {
       "id": "risk-management",
-      "title": { "en": "Risk Management", "km": "ការគ្រប់គ្រងហានិភ័យ" },
+      "title": {
+        "en": "Risk Management",
+        "km": "ការគ្រប់គ្រងហានិភ័យ"
+      },
       "description": {
         "en": "Protect your account: position sizing, stop-loss placement, and risk-per-trade rules.",
         "km": "ការពារគណនីរបស់អ្នក៖ ការកំណត់ទំហំមុខតំណែង stop-loss និងវិធាននៃហានិភ័យក្នុងមួយពាណិជ្ជកម្ម។"
@@ -50,9 +65,12 @@
       "lessons": [
         {
           "id": "position-sizing",
-          "title": { "en": "Position Sizing Basics", "km": "មូលដ្ឋាននៃការកំណត់ទំហំមុខតំណែង" },
+          "title": {
+            "en": "Position Sizing Basics",
+            "km": "មូលដ្ឋាននៃការកំណត់ទំហំមុខតំណែង"
+          },
           "duration": "10 min",
-          "videoUrl": "",
+          "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "A simple formula to size every trade to your account.",
             "km": "រូបមន្តសាមញ្ញមួយសម្រាប់កំណត់ទំហំពាណិជ្ជកម្មតាមគណនីរបស់អ្នក។"
@@ -60,9 +78,12 @@
         },
         {
           "id": "stop-loss",
-          "title": { "en": "Stop-Loss Placement", "km": "ការដាក់ Stop-Loss" },
+          "title": {
+            "en": "Stop-Loss Placement",
+            "km": "ការដាក់ Stop-Loss"
+          },
           "duration": "14 min",
-          "videoUrl": "",
+          "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "Where to place stops so you're not cut out by normal price noise.",
             "km": "កន្លែងដែលគួរដាក់ stop ដើម្បីកុំឲ្យត្រូវបានកាត់ដោយសំលេងតម្លៃធម្មតា។"
