@@ -177,78 +177,9 @@
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ---- Access gate: registration form shown before article content ---- */
-  body.gate-open{ overflow:hidden; }
-  .access-gate{
-    position:fixed; inset:0; z-index:999; display:flex; align-items:center; justify-content:center;
-    padding:22px 18px; background:rgba(10,5,8,0.72);
-    backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%);
-  }
-  .access-gate[hidden]{ display:none; }
-  .gate-card{
-    width:100%; max-width:380px; background:var(--glass-2-bg); border:1px solid var(--glass-2-border);
-    border-radius:var(--radius); padding:24px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.4);
-  }
-  .gate-card h2{ font-family:'Space Grotesk', sans-serif; font-size:18px; font-weight:700; margin:0 0 6px; color:var(--paper); }
-  .gate-card > p{ font-size:12.5px; line-height:1.6; color:var(--muted); margin:0 0 18px; }
-  .gate-form{ display:flex; flex-direction:column; gap:12px; }
-  .gate-form .field{ display:flex; flex-direction:column; gap:6px; }
-  .gate-form label{ font-size:12px; font-weight:600; color:var(--gold-300); letter-spacing:0.01em; }
-  .gate-form input, .gate-form select{
-    width:100%; background:var(--ink-800); border:1px solid var(--ink-600);
-    border-radius:10px; padding:11px 13px; color:var(--paper);
-    font-family:'Inter', system-ui, sans-serif; font-size:13.5px; transition:.15s ease;
-  }
-  body.km .gate-form input, body.km .gate-form select{ font-family:'Noto Sans Khmer','Inter',system-ui,sans-serif; }
-  .gate-form input:focus, .gate-form select:focus{ outline:none; border-color:var(--gold-500); }
-  .gate-form select{ cursor:pointer; }
-  .gate-submit{
-    margin-top:4px; padding:12px 18px; border-radius:10px; border:none;
-    background:linear-gradient(135deg, var(--gold-500), var(--gold-300));
-    color:var(--ink-900); font-family:'Space Grotesk', sans-serif; font-weight:700;
-    font-size:14px; cursor:pointer; transition:.15s ease;
-  }
-  .gate-submit:hover{ filter:brightness(1.06); transform:translateY(-1px); }
-  .gate-submit:disabled{ opacity:0.65; cursor:default; transform:none; }
-  .gate-status{ font-size:12.5px; margin:2px 0 0; }
-  .gate-status.bad{ color:#ffb3c2; font-weight:600; }
 </style>
 </head>
 <body>
-
-  <div class="access-gate" id="accessGate">
-    <div class="gate-card">
-      <h2 data-en="Register to Continue" data-km="ចុះឈ្មោះដើម្បីបន្ត">Register to Continue</h2>
-      <p data-en="Fill in your details below to unlock News & Articles." data-km="សូមបំពេញព័ត៌មានខាងក្រោម ដើម្បីទទួលបានសិទ្ធិចូលមើលព័ត៌មាន និងអត្ថបទ។">Fill in your details below to unlock News & Articles.</p>
-      <form class="gate-form" id="gateForm">
-        <div class="field">
-          <label data-en="Full Name" data-km="ឈ្មោះពេញ">Full Name</label>
-          <input type="text" name="name" required>
-        </div>
-        <div class="field">
-          <label data-en="Phone Number" data-km="លេខទូរស័ព្ទ">Phone Number</label>
-          <input type="tel" name="phone" required>
-        </div>
-        <div class="field">
-          <label data-en="Email" data-km="អ៊ីមែល">Email</label>
-          <input type="email" name="email" required>
-        </div>
-        <div class="field">
-          <label data-en="Trading Experience" data-km="បទពិសោធន៍ជួញដូរ">Trading Experience</label>
-          <select name="experience" required>
-            <option value="" disabled selected data-en="Select..." data-km="ជ្រើសរើស...">Select...</option>
-            <option value="No experience" data-en="No experience" data-km="មិនទាន់មានបទពិសោធន៍">No experience</option>
-            <option value="0-1 Year" data-en="0-1 Year" data-km="០-១ ឆ្នាំ">0-1 Year</option>
-            <option value="1-3 Years" data-en="1-3 Years" data-km="១-៣ ឆ្នាំ">1-3 Years</option>
-            <option value="3-5 Years" data-en="3-5 Years" data-km="៣-៥ ឆ្នាំ">3-5 Years</option>
-            <option value="5+ Years" data-en="5+ Years" data-km="៥+ ឆ្នាំ">5+ Years</option>
-          </select>
-        </div>
-        <button type="submit" class="gate-submit" data-en="Get Access" data-km="ទទួលសិទ្ធិចូលមើល">Get Access</button>
-        <p class="gate-status" hidden></p>
-      </form>
-    </div>
-  </div>
 
   <div class="ticker-wrap">
     <div class="ticker" id="ticker"><!-- filled from data.json --></div>
@@ -284,76 +215,6 @@
   <script src="assets/site.js"></script>
   <script src="assets/news.js"></script>
   <script>
-    /* ---- News & Articles access gate ----
-       Shares the same localStorage key and endpoint config as news.html, so
-       a visitor who already registered on either page won't be asked again
-       on the other. See news-signup-setup.md for setup steps. */
-    let NEWS_GATE_ENDPOINT = '';
-    const NEWS_GATE_STORAGE_KEY = 'mth-news-access';
-
-    const accessGate = document.getElementById('accessGate');
-    const gateForm = document.getElementById('gateForm');
-    const gateStatus = gateForm.querySelector('.gate-status');
-    const gateSubmitBtn = gateForm.querySelector('.gate-submit');
-
-    function isGateAppsScriptUrl(url){
-      return /^https:\/\/script\.google(usercontent)?\.com\//i.test(url);
-    }
-
-    function openGate(){
-      accessGate.hidden = false;
-      document.body.classList.add('gate-open');
-    }
-    function closeGate(){
-      accessGate.hidden = true;
-      document.body.classList.remove('gate-open');
-    }
-
-    let hasAccess = false;
-    try{ hasAccess = localStorage.getItem(NEWS_GATE_STORAGE_KEY) === 'granted'; }catch(e){ /* storage unavailable */ }
-    if(hasAccess){ closeGate(); } else { openGate(); }
-
-    gateForm.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const isKm = document.body.classList.contains('km');
-      gateStatus.hidden = true;
-      gateStatus.classList.remove('bad');
-
-      if(!NEWS_GATE_ENDPOINT){
-        gateStatus.textContent = isKm ? 'ទម្រង់នេះមិនទាន់បើកនៅឡើយទេ។ សូមព្យាយាមម្តងទៀតពេលក្រោយ។' : 'Registration isn\'t open yet. Please check back soon.';
-        gateStatus.classList.add('bad');
-        gateStatus.hidden = false;
-        return;
-      }
-
-      gateSubmitBtn.disabled = true;
-      const originalLabel = gateSubmitBtn.textContent;
-      gateSubmitBtn.textContent = isKm ? 'កំពុងដាក់ស្នើ...' : 'Submitting...';
-
-      const formData = new FormData(gateForm);
-      formData.append('subject', 'New News & Articles access request — Meatika Trading');
-
-      try{
-        if(isGateAppsScriptUrl(NEWS_GATE_ENDPOINT)){
-          // Apps Script Web App responses aren't readable via fetch (no-cors),
-          // so treat "the request didn't throw" as success.
-          await fetch(NEWS_GATE_ENDPOINT, { method: 'POST', mode: 'no-cors', body: formData });
-        } else {
-          const res = await fetch(NEWS_GATE_ENDPOINT, { method: 'POST', body: formData });
-          if(!res.ok) throw new Error('Request failed');
-        }
-        try{ localStorage.setItem(NEWS_GATE_STORAGE_KEY, 'granted'); }catch(e){ /* storage unavailable */ }
-        closeGate();
-      }catch(err){
-        gateStatus.textContent = isKm ? 'មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។' : 'Something went wrong. Please try again.';
-        gateStatus.classList.add('bad');
-        gateStatus.hidden = false;
-      }finally{
-        gateSubmitBtn.disabled = false;
-        gateSubmitBtn.textContent = originalLabel;
-      }
-    });
-
     const langBtn = document.getElementById('langBtn');
     const langLabel = document.getElementById('langLabel');
     function applyLang(isKhmer){
@@ -437,7 +298,6 @@
         document.getElementById('article').innerHTML = '<p class="not-found">Content failed to load.</p>';
         return;
       }
-      if(data.newsGateEndpoint) NEWS_GATE_ENDPOINT = data.newsGateEndpoint;
       MTHSite.renderTicker(document.getElementById('ticker'), data.ticker || []);
       MTHNews.setTags(data.newsTags);
 

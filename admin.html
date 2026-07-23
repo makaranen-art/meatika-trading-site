@@ -243,18 +243,22 @@
       </div>
 
       <div class="panel">
-        <h2>News & Articles access gate</h2>
+        <h2>Academy — Courses</h2>
         <p class="helptext" style="margin-bottom:14px;">
-          Visitors to the News & Articles page have to submit a short form (Full Name, Phone Number, Email,
-          Trading Experience) before they can see it. Each submission is sent to a Google Sheet. Paste the
-          Google Apps Script Web App URL below to connect it — see <code>news-signup-setup.md</code> in the
-          project for the one-time setup steps to get that URL. Leave this blank and the form will tell
-          visitors registration isn't open yet, instead of failing silently.
+          Add and edit the courses and lessons students see under the <strong>Meatika Course</strong> tab on
+          <code>/academy/</code>. This uses the same GitHub connection as the rest of this page (set it up in
+          <strong>GitHub connection</strong> above and click <strong>Load current content</strong> first) — it
+          reads and writes a separate file, <code>academy/academy-data.json</code>, so it has its own
+          Load/Save buttons below rather than using the main <strong>Save changes</strong> button at the
+          bottom of the page.
         </p>
-        <div class="field">
-          <label>Google Sheet Web App URL</label>
-          <input type="text" id="newsGateEndpoint" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="toolbar" style="margin-bottom:14px;">
+          <button class="primary" id="academyCoursesLoadBtn" type="button">Load courses</button>
+          <button class="primary" id="academyCoursesSaveBtn" type="button">Save courses</button>
+          <span class="status" id="academyCoursesStatus"></span>
         </div>
+        <div id="academyCoursesList"></div>
+        <button class="small" id="academyCoursesAddBtn" type="button" disabled>+ Add course</button>
       </div>
 
       <div class="panel">
@@ -649,7 +653,6 @@ function renderEditor(){
   renderTickerList();
   document.getElementById('heroEn').value = state.hero.en || '';
   document.getElementById('heroKm').value = state.hero.km || '';
-  document.getElementById('newsGateEndpoint').value = state.newsGateEndpoint || '';
   state.pages = state.pages || [];
   state.news = state.news || [];
   renderHomeSections = makeSectionsRenderer(document.getElementById('sectionsList'), state.sections);
@@ -704,7 +707,6 @@ document.getElementById('heroEn').addEventListener('input', e => { state.hero.en
 document.getElementById('heroKm').addEventListener('input', e => { state.hero.km = e.target.value; });
 
 /* ---- News & Articles access gate ---- */
-document.getElementById('newsGateEndpoint').addEventListener('input', e => { state.newsGateEndpoint = e.target.value.trim(); });
 
 /* ---- Sections & cards ---- */
 const ICON_KEYS = Object.keys(window.MTH_ICONS || {});
@@ -2094,6 +2096,245 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     statusEl.className = 'status bad';
   }
 });
+
+/* =========================================================
+   5) ACADEMY COURSES (academy/academy-data.json)
+   Independent of the main data.json editor above, but reuses the same
+   GitHub connection fields (owner/repo/branch/token) — only the file
+   path differs. Has its own Load/Save buttons and its own sha, so it
+   never touches data.json.
+========================================================= */
+const ACADEMY_DATA_PATH = 'academy/academy-data.json';
+let academyCourseData = null; // { courses: [...] }
+let academyCourseSha = null;
+
+function academyConn(){
+  const base = currentConn();
+  return { owner: base.owner, repo: base.repo, branch: base.branch, token: base.token, path: ACADEMY_DATA_PATH };
+}
+
+function newCourseId(){ return 'course-' + Date.now(); }
+function newLessonId(){ return 'lesson-' + Date.now() + '-' + Math.floor(Math.random()*1000); }
+
+document.getElementById('academyCoursesLoadBtn').addEventListener('click', async () => {
+  const conn = academyConn();
+  const statusEl = document.getElementById('academyCoursesStatus');
+  if(!conn.owner || !conn.repo){
+    statusEl.textContent = 'Fill in the repo owner and name in GitHub connection above first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  statusEl.textContent = 'Loading…';
+  statusEl.className = 'status pending';
+  try{
+    const url = `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(conn.path)}?ref=${encodeURIComponent(conn.branch)}`;
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    if(conn.token) headers['Authorization'] = `Bearer ${conn.token}`;
+    const res = await fetch(url, { headers });
+    if(!res.ok){
+      throw new Error(res.status === 404 ? 'academy/academy-data.json not found — check owner/repo/branch.' : `GitHub error (${res.status})`);
+    }
+    const json = await res.json();
+    academyCourseSha = json.sha;
+    const content = decodeURIComponent(escape(atob(json.content.replace(/\n/g,''))));
+    academyCourseData = JSON.parse(content);
+    academyCourseData.courses = academyCourseData.courses || [];
+    document.getElementById('academyCoursesAddBtn').disabled = false;
+    renderAcademyCourses();
+    statusEl.textContent = 'Loaded.';
+    statusEl.className = 'status ok';
+    maybePersistConn();
+  }catch(e){
+    statusEl.textContent = e.message || 'Failed to load.';
+    statusEl.className = 'status bad';
+  }
+});
+
+document.getElementById('academyCoursesSaveBtn').addEventListener('click', async () => {
+  const conn = academyConn();
+  const statusEl = document.getElementById('academyCoursesStatus');
+  if(!academyCourseData){
+    statusEl.textContent = 'Load the current courses before saving.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  if(!conn.token){
+    statusEl.textContent = 'Add your GitHub token in the connection panel above first.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  if(!academyCourseSha){
+    statusEl.textContent = 'Load the current courses before saving.';
+    statusEl.className = 'status bad';
+    return;
+  }
+  statusEl.textContent = 'Saving…';
+  statusEl.className = 'status pending';
+  try{
+    const jsonStr = JSON.stringify(academyCourseData, null, 2);
+    const b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+    const url = `https://api.github.com/repos/${conn.owner}/${conn.repo}/contents/${encodeURIComponent(conn.path)}`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${conn.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update Academy courses via admin panel',
+        content: b64,
+        sha: academyCourseSha,
+        branch: conn.branch
+      })
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.message || `GitHub error (${res.status})`);
+    }
+    const json = await res.json();
+    academyCourseSha = json.content.sha;
+    statusEl.textContent = 'Saved. Courses will update on /academy/ within a minute or two.';
+    statusEl.className = 'status ok';
+    maybePersistConn();
+  }catch(e){
+    statusEl.textContent = e.message || 'Failed to save.';
+    statusEl.className = 'status bad';
+  }
+});
+
+document.getElementById('academyCoursesAddBtn').addEventListener('click', () => {
+  academyCourseData.courses = academyCourseData.courses || [];
+  academyCourseData.courses.push({
+    id: newCourseId(),
+    title: { en: 'New course', km: '' },
+    description: { en: '', km: '' },
+    lessons: []
+  });
+  renderAcademyCourses();
+});
+
+function renderAcademyCourses(){
+  const wrap = document.getElementById('academyCoursesList');
+  const courses = (academyCourseData && academyCourseData.courses) || [];
+  wrap.innerHTML = courses.map((course, cIdx) => `
+    <div class="section-card" data-course-idx="${cIdx}">
+      <div class="row2">
+        <h3>${escText(course.title.en || 'Untitled course')}</h3>
+        <div class="toolbar">
+          <button class="small ac-move-course-up" type="button" ${cIdx === 0 ? 'disabled' : ''}>↑</button>
+          <button class="small ac-move-course-down" type="button" ${cIdx === courses.length - 1 ? 'disabled' : ''}>↓</button>
+          <button class="small danger ac-remove-course" type="button">Remove course</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Course title — English</label><input type="text" class="ac-course-title-en" value="${escAttr(course.title.en || '')}"></div>
+        <div class="field"><label>Course title — Khmer</label><input type="text" class="ac-course-title-km" value="${escAttr(course.title.km || '')}"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Description — English</label><textarea class="ac-course-desc-en">${escText(course.description.en || '')}</textarea></div>
+        <div class="field"><label>Description — Khmer</label><textarea class="ac-course-desc-km">${escText(course.description.km || '')}</textarea></div>
+      </div>
+      <div class="ac-lessons-list">
+        ${(course.lessons || []).map((lesson, lIdx) => `
+          <div class="card-item" data-lesson-idx="${lIdx}">
+            <div class="row2">
+              <h3 style="font-size:13px;">Lesson ${lIdx + 1}: ${escText(lesson.title.en || 'Untitled lesson')}</h3>
+              <div class="toolbar">
+                <button class="small ac-move-lesson-up" type="button" ${lIdx === 0 ? 'disabled' : ''}>↑</button>
+                <button class="small ac-move-lesson-down" type="button" ${lIdx === (course.lessons.length - 1) ? 'disabled' : ''}>↓</button>
+                <button class="small danger ac-remove-lesson" type="button">Remove lesson</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Lesson title — English</label><input type="text" class="ac-lesson-title-en" value="${escAttr(lesson.title.en || '')}"></div>
+              <div class="field"><label>Lesson title — Khmer</label><input type="text" class="ac-lesson-title-km" value="${escAttr(lesson.title.km || '')}"></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Duration label (e.g. "12 min")</label><input type="text" class="ac-lesson-duration" value="${escAttr(lesson.duration || '')}"></div>
+              <div class="field"><label>Video URL (YouTube/Vimeo embed link)</label><input type="url" class="ac-lesson-video" value="${escAttr(lesson.videoUrl || '')}" placeholder="https://www.youtube.com/embed/VIDEO_ID"></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Lesson description — English</label><textarea class="ac-lesson-desc-en">${escText(lesson.description.en || '')}</textarea></div>
+              <div class="field"><label>Lesson description — Khmer</label><textarea class="ac-lesson-desc-km">${escText(lesson.description.km || '')}</textarea></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="small ac-add-lesson" type="button">+ Add lesson</button>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('[data-course-idx]').forEach(courseEl => {
+    const cIdx = Number(courseEl.dataset.courseIdx);
+    const course = courses[cIdx];
+
+    courseEl.querySelector('.ac-course-title-en').addEventListener('input', e => { course.title.en = e.target.value; });
+    courseEl.querySelector('.ac-course-title-km').addEventListener('input', e => { course.title.km = e.target.value; });
+    courseEl.querySelector('.ac-course-desc-en').addEventListener('input', e => { course.description.en = e.target.value; });
+    courseEl.querySelector('.ac-course-desc-km').addEventListener('input', e => { course.description.km = e.target.value; });
+
+    courseEl.querySelector('.ac-remove-course').addEventListener('click', () => {
+      if(!confirm('Remove this course and all its lessons?')) return;
+      courses.splice(cIdx, 1);
+      renderAcademyCourses();
+    });
+    const upBtn = courseEl.querySelector('.ac-move-course-up');
+    if(upBtn) upBtn.addEventListener('click', () => {
+      if(cIdx === 0) return;
+      [courses[cIdx-1], courses[cIdx]] = [courses[cIdx], courses[cIdx-1]];
+      renderAcademyCourses();
+    });
+    const downBtn = courseEl.querySelector('.ac-move-course-down');
+    if(downBtn) downBtn.addEventListener('click', () => {
+      if(cIdx === courses.length - 1) return;
+      [courses[cIdx+1], courses[cIdx]] = [courses[cIdx], courses[cIdx+1]];
+      renderAcademyCourses();
+    });
+
+    courseEl.querySelector('.ac-add-lesson').addEventListener('click', () => {
+      course.lessons = course.lessons || [];
+      course.lessons.push({
+        id: newLessonId(),
+        title: { en: 'New lesson', km: '' },
+        duration: '',
+        videoUrl: '',
+        description: { en: '', km: '' }
+      });
+      renderAcademyCourses();
+    });
+
+    courseEl.querySelectorAll('[data-lesson-idx]').forEach(lessonEl => {
+      const lIdx = Number(lessonEl.dataset.lessonIdx);
+      const lesson = course.lessons[lIdx];
+
+      lessonEl.querySelector('.ac-lesson-title-en').addEventListener('input', e => { lesson.title.en = e.target.value; });
+      lessonEl.querySelector('.ac-lesson-title-km').addEventListener('input', e => { lesson.title.km = e.target.value; });
+      lessonEl.querySelector('.ac-lesson-duration').addEventListener('input', e => { lesson.duration = e.target.value; });
+      lessonEl.querySelector('.ac-lesson-video').addEventListener('input', e => { lesson.videoUrl = e.target.value.trim(); });
+      lessonEl.querySelector('.ac-lesson-desc-en').addEventListener('input', e => { lesson.description.en = e.target.value; });
+      lessonEl.querySelector('.ac-lesson-desc-km').addEventListener('input', e => { lesson.description.km = e.target.value; });
+
+      lessonEl.querySelector('.ac-remove-lesson').addEventListener('click', () => {
+        if(!confirm('Remove this lesson?')) return;
+        course.lessons.splice(lIdx, 1);
+        renderAcademyCourses();
+      });
+      const lUpBtn = lessonEl.querySelector('.ac-move-lesson-up');
+      if(lUpBtn) lUpBtn.addEventListener('click', () => {
+        if(lIdx === 0) return;
+        [course.lessons[lIdx-1], course.lessons[lIdx]] = [course.lessons[lIdx], course.lessons[lIdx-1]];
+        renderAcademyCourses();
+      });
+      const lDownBtn = lessonEl.querySelector('.ac-move-lesson-down');
+      if(lDownBtn) lDownBtn.addEventListener('click', () => {
+        if(lIdx === course.lessons.length - 1) return;
+        [course.lessons[lIdx+1], course.lessons[lIdx]] = [course.lessons[lIdx], course.lessons[lIdx+1]];
+        renderAcademyCourses();
+      });
+    });
+  });
+}
 </script>
 
 <script type="module">
