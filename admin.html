@@ -295,6 +295,9 @@
             <button class="primary" id="academyAddBtn" type="button">+ Approve student</button>
             <span class="status" id="academyAddStatus"></span>
           </div>
+          <h3 style="margin:0 0 8px;">Pending registration requests</h3>
+          <div id="academyRequestsList" style="margin-bottom:18px;"></div>
+          <h3 style="margin:0 0 8px;">Approved students</h3>
           <div id="academyStudentsList"></div>
         </div>
       </div>
@@ -2366,6 +2369,7 @@ function renderAcademyCourses(){
     addBtn: document.getElementById('academyAddBtn'),
     addStatus: document.getElementById('academyAddStatus'),
     list: document.getElementById('academyStudentsList'),
+    requests: document.getElementById('academyRequestsList'),
   };
 
   if(firebaseConfig.apiKey.startsWith('PASTE_')){
@@ -2402,7 +2406,26 @@ function renderAcademyCourses(){
   async function refreshStudentsList(){
     acEls.list.innerHTML = '<p class="helptext">Loading…</p>';
     try{
-      const snap = await getDocs(collection(acDb, 'approvedStudents'));
+      const [snap, requestsSnap] = await Promise.all([getDocs(collection(acDb, 'approvedStudents')), getDocs(collection(acDb, 'accessRequests'))]);
+      const requests = [];
+      requestsSnap.forEach(d => requests.push({ id:d.id, ...d.data() }));
+      requests.sort((a,b) => String(b.requestedAt || '').localeCompare(String(a.requestedAt || '')));
+      acEls.requests.innerHTML = requests.length ? '' : '<p class="helptext">No pending registration requests.</p>';
+      requests.forEach(request => {
+        const row = document.createElement('div');
+        row.className = 'academy-student-row';
+        const label = `${request.displayName || 'No name'} — ${request.email || request.id}${request.phone ? ' — ' + request.phone : ''}`;
+        row.innerHTML = `<span>${escapeHtmlAc(label)}</span><button class="small primary" type="button">Approve</button>`;
+        row.querySelector('button').addEventListener('click', async () => {
+          const btn = row.querySelector('button'); btn.disabled = true;
+          try{
+            await setDoc(doc(acDb, 'approvedStudents', request.id), { approved:true, addedAt:new Date().toISOString(), requestedAt:request.requestedAt || null });
+            await deleteDoc(doc(acDb, 'accessRequests', request.id));
+            await refreshStudentsList();
+          }catch(err){ alert(err.message || 'Failed to approve request.'); btn.disabled = false; }
+        });
+        acEls.requests.appendChild(row);
+      });
       const emails = [];
       snap.forEach(d => emails.push(d.id));
       emails.sort();
