@@ -176,6 +176,15 @@ in at least once, with their plan credits, bonus credits, used credits, and rema
 balance side by side — sign in the same way as the other Academy panels (shared
 sign-in) and click **Refresh** any time to pull the latest numbers.
 
+## Payment QR code (optional)
+
+`admin.html` → **Academy — Pricing** has a **Payment QR code** upload field. Choose an
+image (e.g. your ABA/Bakong QR) and it uploads straight to Cloudinary the moment you
+pick the file — click **Save pricing** afterwards to publish it. Once saved, students
+see the QR code in the top-up modal, right below the transfer details, so they can scan
+and pay directly instead of typing in account numbers by hand. Click **Remove QR code**
+and save again to take it down.
+
 **Approving top-ups (`admin.html` → Academy — Credit Top-ups):**
 1. Sign in the same way as the Approved Students panel above (shared sign-in).
 2. Each pending request shows the student, amount paid, credits requested, and the
