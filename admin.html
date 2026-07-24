@@ -22,9 +22,47 @@
     min-height:100vh;
   }
   .wrap{ max-width:760px; margin:0 auto; padding:28px 18px 60px; }
+  .wrap.wrap-wide{ max-width:1180px; }
   h1{ font-family:'Space Grotesk',sans-serif; font-size:22px; margin:0 0 4px; }
   .sub{ color:var(--muted); font-size:13px; margin:0 0 28px; }
   a{ color:var(--gold-300); }
+
+  /* ---- Admin layout: sidebar nav + content ---- */
+  .admin-layout{ display:flex; align-items:flex-start; gap:22px; }
+  .admin-nav{
+    flex:0 0 232px; position:sticky; top:20px;
+    max-height:calc(100vh - 40px); overflow-y:auto;
+    background:var(--ink-800); border:1px solid var(--ink-600); border-radius:var(--radius);
+    padding:10px; display:flex; flex-direction:column; gap:2px;
+  }
+  .admin-nav .nav-group-label{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted);
+    font-weight:700; padding:12px 10px 6px; font-family:'Space Grotesk',sans-serif;
+  }
+  .admin-nav .nav-group-label:first-child{ padding-top:6px; }
+  .nav-btn{
+    display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+    background:transparent; border:1px solid transparent; color:var(--muted);
+    padding:8px 10px; border-radius:8px; font-size:13px; font-weight:500;
+    cursor:pointer; transition:.15s ease;
+  }
+  .nav-btn:hover{ background:var(--ink-700); color:var(--paper); border-color:transparent; }
+  .nav-btn .nav-dot{ width:6px; height:6px; border-radius:50%; background:var(--ink-600); flex-shrink:0; transition:.15s ease; }
+  .nav-btn.active{ background:var(--gold-500); color:var(--ink-900); font-weight:600; }
+  .nav-btn.active .nav-dot{ background:var(--ink-900); }
+  .admin-content{ flex:1; min-width:0; }
+  .admin-section{ animation:secFade .15s ease; }
+  @keyframes secFade{ from{ opacity:0; transform:translateY(3px); } to{ opacity:1; transform:translateY(0); } }
+
+  @media (max-width:860px){
+    .admin-layout{ flex-direction:column; }
+    .admin-nav{
+      position:static; flex-direction:row; flex-wrap:nowrap; overflow-x:auto; max-height:none;
+      width:100%; gap:6px; padding:8px;
+    }
+    .admin-nav .nav-group-label{ display:none; }
+    .nav-btn{ flex:0 0 auto; white-space:nowrap; }
+  }
 
   /* ---- Login screen ---- */
   .login-box{
@@ -128,7 +166,7 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap wrap-wide">
 
   <!-- ============ LOGIN ============ -->
   <div id="loginScreen">
@@ -149,7 +187,34 @@
     <h1>Meatika Trading — Content Admin</h1>
     <p class="sub">Edit the site's links, text, and cards below, then save. Changes go live within a minute or two after saving.</p>
 
-    <details class="panel" id="connPanel">
+    <div class="admin-layout">
+      <nav class="admin-nav" id="adminNav">
+        <div class="nav-group-label">Setup</div>
+        <button class="nav-btn" type="button" data-target="connPanel"><span class="nav-dot"></span>GitHub connection</button>
+        <button class="nav-btn" type="button" data-target="panel-migrate"><span class="nav-dot"></span>Migrate media</button>
+        <button class="nav-btn" type="button" data-target="panel-branding"><span class="nav-dot"></span>Branding</button>
+
+        <div class="nav-group-label">Homepage</div>
+        <button class="nav-btn" type="button" data-target="panel-ticker"><span class="nav-dot"></span>Ticker</button>
+        <button class="nav-btn" type="button" data-target="panel-hero"><span class="nav-dot"></span>Hero text</button>
+        <button class="nav-btn" type="button" data-target="panel-sections"><span class="nav-dot"></span>Sections & cards</button>
+        <button class="nav-btn" type="button" data-target="panel-pages"><span class="nav-dot"></span>Pages</button>
+
+        <div class="nav-group-label">Academy</div>
+        <button class="nav-btn" type="button" data-target="panel-academy-courses"><span class="nav-dot"></span>Courses</button>
+        <button class="nav-btn" type="button" data-target="panel-academy-students"><span class="nav-dot"></span>Approved students</button>
+        <button class="nav-btn" type="button" data-target="panel-academy-credits"><span class="nav-dot"></span>Credit top-ups</button>
+        <button class="nav-btn" type="button" data-target="panel-academy-pricing"><span class="nav-dot"></span>Pricing</button>
+        <button class="nav-btn" type="button" data-target="panel-academy-studentcredits"><span class="nav-dot"></span>Student credits</button>
+
+        <div class="nav-group-label">Learning Center</div>
+        <button class="nav-btn" type="button" data-target="panel-news-tags"><span class="nav-dot"></span>Tags</button>
+        <button class="nav-btn" type="button" data-target="panel-news-content"><span class="nav-dot"></span>Content</button>
+      </nav>
+
+      <div class="admin-content" id="adminContent">
+
+    <details class="panel admin-section" id="connPanel">
       <summary>GitHub connection</summary>
       <div class="row">
         <div class="field"><label>Repo owner (GitHub username)</label><input type="text" id="ghOwner" placeholder="e.g. your-username"></div>
@@ -184,7 +249,7 @@
 
     <div id="editor" style="display:none;">
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-migrate">
         <h2>Migrate existing media to Cloudinary</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Any photo/video you uploaded before switching to Cloudinary is still sitting in your GitHub
@@ -199,7 +264,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-branding">
         <h2>Branding — logo & favicon</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Upload a new logo or favicon image — any size or shape is fine, it's automatically resized and
@@ -230,19 +295,19 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-ticker">
         <h2>Ticker (top scrolling bar)</h2>
         <div id="tickerList"></div>
         <button class="small" id="addTicker">+ Add ticker item</button>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-hero">
         <h2>Hero text</h2>
         <div class="field"><label>English</label><textarea id="heroEn"></textarea></div>
         <div class="field"><label>Khmer</label><textarea id="heroKm"></textarea></div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-academy-courses">
         <h2>Academy — Courses</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Add and edit the courses and lessons students see under the <strong>Meatika Course</strong> tab on
@@ -261,7 +326,7 @@
         <button class="small" id="academyCoursesAddBtn" type="button" disabled>+ Add course</button>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-academy-students">
         <h2>Academy — Approved Students</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Controls who can get past the Google sign-in screen on <code>/academy/</code>. Anyone can sign in with
@@ -302,7 +367,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-academy-credits">
         <h2>Academy — Credit Top-ups</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Students buy credits by paying via ABA/Bakong transfer (details are set in
@@ -341,7 +406,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-academy-pricing">
         <h2>Academy — Pricing</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Controls how much lessons cost and what students get when they top up. This uses the
@@ -416,6 +481,23 @@
               <textarea id="pricingPaymentKm" rows="4" placeholder="ផ្ទេរប្រាក់មកកាន់៖ ABA Bank — Meatika Trading..."></textarea>
             </div>
           </div>
+          <h3 style="margin:14px 0 8px;">Payment QR code (optional)</h3>
+          <p class="helptext" style="margin-bottom:10px;">
+            Upload your ABA/Bakong (or other) payment QR code. Students will see it in the top-up modal
+            so they can scan and pay directly, alongside the transfer details above. Uploads straight to
+            Cloudinary the moment you choose a file — click <strong>Save pricing</strong> afterwards to
+            publish it.
+          </p>
+          <div class="row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <input type="file" id="pricingQrFile" accept="image/*">
+              <span class="status" id="pricingQrStatus"></span>
+            </div>
+          </div>
+          <img id="pricingQrPreview" alt="Payment QR code" style="display:none;max-width:160px;max-height:160px;border-radius:12px;border:1px solid var(--ink-600);margin:4px 0 10px;">
+          <div class="toolbar" style="margin-bottom:6px;">
+            <button class="small danger" id="pricingQrRemoveBtn" type="button" style="display:none;">Remove QR code</button>
+          </div>
           <div class="toolbar" style="margin-top:10px;margin-bottom:6px;">
             <button class="primary" id="pricingSaveBtn" type="button">Save pricing</button>
             <span class="status" id="pricingStatus"></span>
@@ -423,7 +505,7 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-academy-studentcredits">
         <h2>Academy — Student Credits & Plans</h2>
         <p class="helptext" style="margin-bottom:14px;">
           See every student's credit breakdown at a glance: plan credits and bonus credits granted so far,
@@ -442,13 +524,13 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-sections">
         <h2>Sections & cards</h2>
         <div id="sectionsList"></div>
         <button id="addSection">+ Add section</button>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-pages">
         <h2>Pages</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Create standalone pages with their own title, intro text, content, and sections/cards — useful when
@@ -470,7 +552,7 @@
         </p>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-news-tags">
         <h2>Learning Center tags</h2>
         <p class="helptext" style="margin-bottom:14px;">
           These are the content tags Learning Center posts can be filed under — they show up as the filter
@@ -487,7 +569,7 @@
         <div class="status" id="newsTagsStatus" style="min-height:14px;"></div>
       </div>
 
-      <div class="panel">
+      <div class="panel admin-section" id="panel-news-content">
         <h2>Learning Center content</h2>
         <p class="helptext" style="margin-bottom:14px;">
           Write education posts — articles or videos — with a cover photo, an optional video (paste a
@@ -527,6 +609,9 @@
       </div>
 
       <textarea id="jsonPreview" style="display:none;width:100%;min-height:240px;font-family:'JetBrains Mono',monospace;font-size:11.5px;"></textarea>
+    </div>
+
+      </div>
     </div>
   </div>
 
@@ -573,6 +658,51 @@ if(sessionStorage.getItem('mth-admin-ok') === '1'){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 }
+
+/* =========================================================
+   ADMIN NAV — one button per page/section, shows only the
+   active section instead of one long scrolling page.
+========================================================= */
+(function(){
+  const navButtons = Array.from(document.querySelectorAll('#adminNav .nav-btn'));
+  const sections = Array.from(document.querySelectorAll('.admin-section'));
+
+  function showSection(targetId, focusNav){
+    if(!targetId) return;
+    sections.forEach(sec => { sec.style.display = (sec.id === targetId) ? '' : 'none'; });
+    navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === targetId));
+    try{ sessionStorage.setItem('mth-admin-section', targetId); }catch(e){ /* ignore */ }
+    if(focusNav){
+      const content = document.getElementById('adminContent');
+      if(content) content.scrollIntoView({ block: 'start' });
+    }
+  }
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.target, true));
+  });
+
+  // Restore last-viewed section on reload, defaulting to GitHub connection.
+  let initial = 'connPanel';
+  try{
+    const saved = sessionStorage.getItem('mth-admin-section');
+    if(saved && document.getElementById(saved)) initial = saved;
+  }catch(e){ /* ignore */ }
+  showSection(initial, false);
+
+  // Once content loads, jump to the first Homepage section so the newly
+  // revealed panels are immediately visible instead of staying hidden
+  // behind whichever tab is currently active.
+  const loadBtnEl = document.getElementById('loadBtn');
+  if(loadBtnEl){
+    loadBtnEl.addEventListener('click', () => {
+      setTimeout(() => {
+        const stillOnConn = document.querySelector('.nav-btn.active')?.dataset.target === 'connPanel';
+        if(stillOnConn) showSection('panel-ticker', false);
+      }, 300);
+    });
+  }
+})();
 
 /* =========================================================
    CLOUDINARY CONFIG — used for every photo & video upload
@@ -2538,9 +2668,14 @@ function renderAcademyCourses(){
     creditsPerMinute: document.getElementById('pricingCreditsPerMinute'),
     paymentEn: document.getElementById('pricingPaymentEn'),
     paymentKm: document.getElementById('pricingPaymentKm'),
+    qrFile: document.getElementById('pricingQrFile'),
+    qrStatus: document.getElementById('pricingQrStatus'),
+    qrPreview: document.getElementById('pricingQrPreview'),
+    qrRemoveBtn: document.getElementById('pricingQrRemoveBtn'),
     saveBtn: document.getElementById('pricingSaveBtn'),
     status: document.getElementById('pricingStatus'),
   };
+  let pricingQrUrl = '';
   // Three fixed tiers (id, i18n name, and the admin's input elements for that tier).
   const PACKAGE_TIERS = [
     { id: 'beginner', name: { en: 'Beginner Package', km: 'កញ្ចប់ចាប់ផ្តើម' }, usdEl: 'pricingBeginnerUsd', creditsEl: 'pricingBeginnerCredits', bonusEl: 'pricingBeginnerBonus' },
@@ -2825,6 +2960,8 @@ function renderAcademyCourses(){
       });
       prEls.paymentEn.value = cfg.paymentInfo?.en ?? DEFAULT_PRICING.paymentInfo.en;
       prEls.paymentKm.value = cfg.paymentInfo?.km ?? DEFAULT_PRICING.paymentInfo.km;
+      pricingQrUrl = cfg.paymentQrUrl || '';
+      updateQrPreview();
       if(!snap.exists()){
         prEls.status.textContent = 'Showing built-in defaults — nothing saved yet.';
         prEls.status.className = 'status';
@@ -2864,6 +3001,7 @@ function renderAcademyCourses(){
           en: prEls.paymentEn.value.trim(),
           km: prEls.paymentKm.value.trim()
         },
+        paymentQrUrl: pricingQrUrl || '',
         updatedAt: new Date().toISOString()
       });
       prEls.status.textContent = 'Saved — students will see this next time they load the Academy.';
@@ -2874,6 +3012,44 @@ function renderAcademyCourses(){
     }finally{
       prEls.saveBtn.disabled = false;
     }
+  });
+
+  function updateQrPreview(){
+    if(pricingQrUrl){
+      prEls.qrPreview.src = pricingQrUrl;
+      prEls.qrPreview.style.display = 'block';
+      prEls.qrRemoveBtn.style.display = 'inline-block';
+    } else {
+      prEls.qrPreview.src = '';
+      prEls.qrPreview.style.display = 'none';
+      prEls.qrRemoveBtn.style.display = 'none';
+    }
+  }
+
+  prEls.qrFile.addEventListener('change', async () => {
+    const file = prEls.qrFile.files && prEls.qrFile.files[0];
+    if(!file) return;
+    prEls.qrStatus.textContent = 'Uploading…';
+    prEls.qrStatus.className = 'status';
+    try{
+      const url = await uploadToCloudinary(file, 'image');
+      pricingQrUrl = url;
+      updateQrPreview();
+      prEls.qrStatus.textContent = 'Uploaded ✓ — click "Save pricing" below to publish.';
+      prEls.qrStatus.className = 'status ok';
+    }catch(err){
+      prEls.qrStatus.textContent = err.message || 'Upload failed.';
+      prEls.qrStatus.className = 'status bad';
+    }finally{
+      prEls.qrFile.value = '';
+    }
+  });
+
+  prEls.qrRemoveBtn.addEventListener('click', () => {
+    pricingQrUrl = '';
+    updateQrPreview();
+    prEls.qrStatus.textContent = 'QR code removed — click "Save pricing" below to publish.';
+    prEls.qrStatus.className = 'status';
   });
 
   function escapeHtmlAc(str){

@@ -41,7 +41,7 @@
         "en": "Clear trading lessons, guides, and market insights.",
         "km": "Trading lessons and market insights"
       },
-      "icon": "star",
+      "icon": "document",
       "color": "#7a1640",
       "iconColor": "#ffffff"
     },
@@ -55,7 +55,7 @@
         "en": "Watch step-by-step market and strategy lessons.",
         "km": "Watch market and strategy lessons"
       },
-      "icon": "youtube",
+      "icon": "play",
       "color": "#b3133f",
       "iconColor": "#ffffff"
     },
@@ -83,7 +83,7 @@
         "en": "Read online or download learning books and guides.",
         "km": "Read or download books and guides"
       },
-      "icon": "star",
+      "icon": "book",
       "color": "#87521f",
       "iconColor": "#ffffff"
     }
