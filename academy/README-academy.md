@@ -199,6 +199,21 @@ This depends on the Firestore rules in the setup section above (specifically the
 `creditRequests` rule and the updated `users` rule) — a student's balance can only ever be
 raised by the admin-approval path, never directly from their own browser.
 
+**Email notification on new top-up requests** — optional, so you don't have to keep
+`admin.html` open to notice new requests. See `credit-topup-notify-setup.md` for the
+10-minute setup (a small Google Apps Script, same style as the site's other form
+handlers) — once connected, every submitted top-up request emails makaranen@gmail.com
+with the student, package, amount, and transaction reference. This is purely additive;
+the Firestore request/approval flow is unaffected either way.
+
+## Dark mode / Light mode
+
+`/academy/` has a sun/moon toggle button in the top bar (next to the Khmer/English
+switch) that switches the whole Academy page between a light and a dark theme. The
+choice is remembered per-browser (and defaults to the visitor's system preference the
+first time), so it stays applied across visits and page reloads. This only affects the
+Academy page — the rest of the Meatika Trading site is unchanged.
+
 ## What this does and doesn't protect
 
 Google sign-in genuinely gates the `/academy/` page — only people who sign in can reach
