@@ -498,6 +498,19 @@
           <div class="toolbar" style="margin-bottom:6px;">
             <button class="small danger" id="pricingQrRemoveBtn" type="button" style="display:none;">Remove QR code</button>
           </div>
+          <h3 style="margin:14px 0 8px;">Email notification on new top-up requests</h3>
+          <p class="helptext" style="margin-bottom:10px;">
+            Optional. Paste the Google Apps Script Web App URL from
+            <code>academy/credit-topup-notify-setup.md</code> here and every submitted
+            top-up request will also send you an email — no code edits needed. Leave
+            blank to turn notifications off.
+          </p>
+          <div class="row" style="grid-template-columns:1fr;">
+            <div class="field">
+              <label>Notify top-up webhook URL</label>
+              <input type="text" id="pricingNotifyEndpoint" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+          </div>
           <div class="toolbar" style="margin-top:10px;margin-bottom:6px;">
             <button class="primary" id="pricingSaveBtn" type="button">Save pricing</button>
             <span class="status" id="pricingStatus"></span>
@@ -2675,6 +2688,7 @@ function renderAcademyCourses(){
     qrStatus: document.getElementById('pricingQrStatus'),
     qrPreview: document.getElementById('pricingQrPreview'),
     qrRemoveBtn: document.getElementById('pricingQrRemoveBtn'),
+    notifyEndpoint: document.getElementById('pricingNotifyEndpoint'),
     saveBtn: document.getElementById('pricingSaveBtn'),
     status: document.getElementById('pricingStatus'),
   };
@@ -2962,7 +2976,8 @@ function renderAcademyCourses(){
     paymentInfo: {
       en: "Transfer to:\nABA Bank — Meatika Trading\nAccount: 000 000 000\nAfter paying, enter the transaction reference below.",
       km: "ផ្ទេរប្រាក់មកកាន់៖\nABA Bank — Meatika Trading\nលេខគណនី៖ 000 000 000\nបន្ទាប់ពីបង់រួច សូមបញ្ចូលលេខយោងប្រតិបត្តិការខាងក្រោម។"
-    }
+    },
+    creditNotifyEndpoint: ''
   };
 
   async function loadPricing(){
@@ -2981,6 +2996,7 @@ function renderAcademyCourses(){
       prEls.paymentEn.value = cfg.paymentInfo?.en ?? DEFAULT_PRICING.paymentInfo.en;
       prEls.paymentKm.value = cfg.paymentInfo?.km ?? DEFAULT_PRICING.paymentInfo.km;
       pricingQrUrl = cfg.paymentQrUrl || '';
+      prEls.notifyEndpoint.value = cfg.creditNotifyEndpoint || '';
       updateQrPreview();
       if(!snap.exists()){
         prEls.status.textContent = 'Showing built-in defaults — nothing saved yet.';
@@ -3022,6 +3038,7 @@ function renderAcademyCourses(){
           km: prEls.paymentKm.value.trim()
         },
         paymentQrUrl: pricingQrUrl || '',
+        creditNotifyEndpoint: prEls.notifyEndpoint.value.trim(),
         updatedAt: new Date().toISOString()
       });
       prEls.status.textContent = 'Saved — students will see this next time they load the Academy.';
