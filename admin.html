@@ -2619,7 +2619,7 @@ function renderAcademyCourses(){
   import { firebaseConfig } from './academy/firebase-config.js';
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import {
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence
   } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
   import {
     getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, query, where, runTransaction
@@ -2629,6 +2629,9 @@ function renderAcademyCourses(){
   const acAuth = getAuth(acApp);
   const acDb = getFirestore(acApp);
   const acProvider = new GoogleAuthProvider();
+  // Keep the admin's sign-in in local storage explicitly, so refreshing this page
+  // restores the same signed-in account instead of asking to sign in again.
+  try{ await setPersistence(acAuth, browserLocalPersistence); }catch(e){ console.warn('Could not set admin auth persistence', e); }
 
   const acEls = {
     signedOut: document.getElementById('academySignedOut'),
@@ -2737,20 +2740,37 @@ function renderAcademyCourses(){
       const snap = await getDocs(collection(acDb, 'users'));
       const rows = [];
       snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
-      rows.sort((a,b) => String(a.email || a.id).localeCompare(String(b.email || b.id)));
-      stcEls.list.innerHTML = rows.length ? '' : '<p class="helptext">No students have signed in to the Academy yet.</p>';
-      rows.forEach(u => {
+      // Students the admin removed from this list stay hidden here, but their
+      // credit/progress record is never deleted — if they sign back in to the
+      // Academy, academy.js clears this flag and they reappear automatically.
+      const visibleRows = rows.filter(u => !u.removedFromList);
+      visibleRows.sort((a,b) => String(a.email || a.id).localeCompare(String(b.email || b.id)));
+      stcEls.list.innerHTML = visibleRows.length ? '' : '<p class="helptext">No students have signed in to the Academy yet.</p>';
+      visibleRows.forEach(u => {
         const plan = u.planCredits || 0, bonus = u.bonusCredits || 0, used = u.usedCredits || 0, remaining = u.credits || 0;
+        const restoredNote = u.restoredAt ? `<br><small style="color:#2f9e63;">Back since ${escapeHtmlAc(new Date(u.restoredAt).toLocaleDateString())}</small>` : '';
         const row = document.createElement('div');
         row.className = 'academy-student-row';
         row.innerHTML = `<span><strong>${escapeHtmlAc(u.displayName || 'No name')}</strong><br>
-          <small>${escapeHtmlAc(u.email || u.id)}</small></span>
+          <small>${escapeHtmlAc(u.email || u.id)}</small>${restoredNote}</span>
           <span style="text-align:right;font-size:12px;line-height:1.6;">
             Plan: <strong>${plan.toLocaleString()}</strong> ·
             Bonus: <strong>${bonus.toLocaleString()}</strong> ·
             Used: <strong>${used.toLocaleString()}</strong> ·
-            Remaining: <strong>${remaining.toLocaleString()}</strong>
+            Remaining: <strong>${remaining.toLocaleString()}</strong><br>
+            <button class="small danger" type="button" data-remove-student="${escapeHtmlAc(u.id)}" style="margin-top:6px;">Remove</button>
           </span>`;
+        row.querySelector('[data-remove-student]').addEventListener('click', async () => {
+          const btn = row.querySelector('[data-remove-student]');
+          btn.disabled = true;
+          try{
+            await setDoc(doc(acDb, 'users', u.id), { removedFromList: true, removedAt: new Date().toISOString() }, { merge: true });
+            row.remove();
+          }catch(err){
+            alert(err.message || 'Failed to remove.');
+            btn.disabled = false;
+          }
+        });
         stcEls.list.appendChild(row);
       });
     }catch(err){
