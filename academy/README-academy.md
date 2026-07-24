@@ -131,12 +131,19 @@ gateway, so no card numbers or bank credentials ever touch this codebase.
    is free.
 
 **Pricing knobs** — `CREDITS_PER_MINUTE` (lesson price = video length in minutes × this
-number), the top-up package (`$` price → credits granted), and `PAYMENT_INFO` (the
-ABA/Bakong details shown in the top-up modal, in English and Khmer) all live in Firestore
-now, under a single `config/pricing` document, and can be edited from **`admin.html` →
-Academy — Pricing** — sign in the same way as the Approved Students/Credit Top-ups panels
-(shared sign-in), edit the fields, and click **Save pricing**. Changes take effect for
-students the next time they load `/academy/`.
+number), the three top-up packages (**Beginner**, **Intermediate**, **Advance** — each
+with its own `$` price, plan credits granted, and optional bonus credits), and
+`PAYMENT_INFO` (the ABA/Bakong details shown in the top-up modal, in English and Khmer)
+all live in Firestore now, under a single `config/pricing` document, and can be edited
+from **`admin.html` → Academy — Pricing** — sign in the same way as the Approved
+Students/Credit Top-ups panels (shared sign-in), edit the fields, and click **Save
+pricing**. Changes take effect for students the next time they load `/academy/`.
+
+Defaults (used until you save something different): Beginner $2.99 → 5,000 credits;
+Intermediate $6.99 → 12,000 credits + 1,500 bonus; Advance $11.99 → 21,000 credits +
+4,000 bonus. Students pick one of the three when they open the top-up modal from the
+credit-balance pill; whichever they pick is what's submitted with their transaction
+reference for admin approval.
 
 `academy/academy.js` still has the same values as hardcoded fallback constants near the
 top of the file (`CREDITS_PER_MINUTE`, `PACKAGES`, `PAYMENT_INFO`) — these are only used
@@ -144,6 +151,30 @@ if the `config/pricing` document doesn't exist yet (e.g. right after setup, befo
 saved anything from the admin panel), so the site keeps working even before you touch the
 Pricing panel. Once you save from `admin.html` at least once, the Firestore values take
 over.
+
+## Student plan dashboard
+
+Once signed in, a student's credit-balance pill opens a modal that now leads with a
+**plan dashboard**: Plan credits (lifetime credits granted from package purchases),
+Bonus credits (lifetime bonus credits granted, from a package's bonus or a manual
+admin top-up), Total credits (the two added together), Used (lifetime credits spent
+unlocking lessons), and Remaining (current spendable balance). These numbers refresh
+every time the modal is opened, so students always see their latest admin-approved
+balance without needing to refresh the whole page.
+
+Behind the scenes this adds three fields to each student's `users/{uid}` document —
+`planCredits`, `bonusCredits`, and `usedCredits` — alongside the existing `credits`
+(remaining balance) and `unlockedLessons`. Approving a top-up request now adds to both
+`credits` and the matching `planCredits`/`bonusCredits` totals; unlocking a lesson adds
+its cost to `usedCredits`. A manual credit adjustment in `admin.html` (positive amounts
+only) is tracked as bonus credits, since it isn't tied to a package purchase.
+
+## Viewing every student's plan and credits (admin)
+
+`admin.html` → **Academy — Student Credits & Plans** lists every student who has signed
+in at least once, with their plan credits, bonus credits, used credits, and remaining
+balance side by side — sign in the same way as the other Academy panels (shared
+sign-in) and click **Refresh** any time to pull the latest numbers.
 
 **Approving top-ups (`admin.html` → Academy — Credit Top-ups):**
 1. Sign in the same way as the Approved Students panel above (shared sign-in).
