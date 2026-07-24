@@ -361,16 +361,48 @@
             </div>
           </div>
           <p class="helptext" style="margin:2px 0 14px;">A lesson's price = its video length (in minutes) × this number, rounded, minimum 1 credit.</p>
-          <h3 style="margin:0 0 8px;">Top-up package</h3>
-          <p class="helptext" style="margin-bottom:10px;">What a student gets when they buy credits — shown in the Academy's top-up modal.</p>
+          <h3 style="margin:0 0 8px;">Top-up packages</h3>
+          <p class="helptext" style="margin-bottom:10px;">The three packages students choose from in the Academy's top-up modal. Users see these exactly as set here — edit price, plan credits, and any bonus credits included with each tier.</p>
           <div class="row">
-            <div class="field" style="width:160px;">
-              <label>Price (USD)</label>
-              <input type="number" id="pricingPackageUsd" placeholder="2.99" step="0.01">
+            <div class="field" style="flex:1;">
+              <label>Beginner Package — Price (USD)</label>
+              <input type="number" id="pricingBeginnerUsd" placeholder="2.99" step="0.01">
             </div>
-            <div class="field" style="width:160px;">
-              <label>Credits granted</label>
-              <input type="number" id="pricingPackageCredits" placeholder="5000">
+            <div class="field" style="flex:1;">
+              <label>Plan credits</label>
+              <input type="number" id="pricingBeginnerCredits" placeholder="5000">
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Bonus credits</label>
+              <input type="number" id="pricingBeginnerBonus" placeholder="0">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1;">
+              <label>Intermediate Package — Price (USD)</label>
+              <input type="number" id="pricingIntermediateUsd" placeholder="6.99" step="0.01">
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Plan credits</label>
+              <input type="number" id="pricingIntermediateCredits" placeholder="12000">
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Bonus credits</label>
+              <input type="number" id="pricingIntermediateBonus" placeholder="1500">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1;">
+              <label>Advance Package — Price (USD)</label>
+              <input type="number" id="pricingAdvanceUsd" placeholder="11.99" step="0.01">
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Plan credits</label>
+              <input type="number" id="pricingAdvanceCredits" placeholder="21000">
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Bonus credits</label>
+              <input type="number" id="pricingAdvanceBonus" placeholder="4000">
             </div>
           </div>
           <h3 style="margin:14px 0 8px;">Payment instructions shown in the top-up modal</h3>
@@ -388,6 +420,25 @@
             <button class="primary" id="pricingSaveBtn" type="button">Save pricing</button>
             <span class="status" id="pricingStatus"></span>
           </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Academy — Student Credits & Plans</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          See every student's credit breakdown at a glance: plan credits and bonus credits granted so far,
+          credits used unlocking lessons, and their current remaining balance. This uses the same Firebase
+          connection as the panels above — sign in there first.
+        </p>
+        <div id="studentCreditsSignedOut">
+          <p class="helptext">Sign in above (Academy — Approved Students) to view student plans too — all Academy panels share the same sign-in.</p>
+        </div>
+        <div id="studentCreditsSignedIn" style="display:none;">
+          <div class="toolbar" style="margin-bottom:12px;">
+            <button class="small" id="studentCreditsRefreshBtn" type="button">Refresh</button>
+            <span class="status" id="studentCreditsStatus"></span>
+          </div>
+          <div id="studentCreditsList"></div>
         </div>
       </div>
 
@@ -2473,17 +2524,29 @@ function renderAcademyCourses(){
     manualStatus: document.getElementById('creditsManualStatus'),
   };
 
+  const stcEls = {
+    signedOut: document.getElementById('studentCreditsSignedOut'),
+    signedIn: document.getElementById('studentCreditsSignedIn'),
+    refreshBtn: document.getElementById('studentCreditsRefreshBtn'),
+    status: document.getElementById('studentCreditsStatus'),
+    list: document.getElementById('studentCreditsList'),
+  };
+
   const prEls = {
     signedOut: document.getElementById('pricingSignedOut'),
     signedIn: document.getElementById('pricingSignedIn'),
     creditsPerMinute: document.getElementById('pricingCreditsPerMinute'),
-    packageUsd: document.getElementById('pricingPackageUsd'),
-    packageCredits: document.getElementById('pricingPackageCredits'),
     paymentEn: document.getElementById('pricingPaymentEn'),
     paymentKm: document.getElementById('pricingPaymentKm'),
     saveBtn: document.getElementById('pricingSaveBtn'),
     status: document.getElementById('pricingStatus'),
   };
+  // Three fixed tiers (id, i18n name, and the admin's input elements for that tier).
+  const PACKAGE_TIERS = [
+    { id: 'beginner', name: { en: 'Beginner Package', km: 'កញ្ចប់ចាប់ផ្តើម' }, usdEl: 'pricingBeginnerUsd', creditsEl: 'pricingBeginnerCredits', bonusEl: 'pricingBeginnerBonus' },
+    { id: 'intermediate', name: { en: 'Intermediate Package', km: 'កញ្ចប់មធ្យម' }, usdEl: 'pricingIntermediateUsd', creditsEl: 'pricingIntermediateCredits', bonusEl: 'pricingIntermediateBonus' },
+    { id: 'advance', name: { en: 'Advance Package', km: 'កញ្ចប់កម្រិតខ្ពស់' }, usdEl: 'pricingAdvanceUsd', creditsEl: 'pricingAdvanceCredits', bonusEl: 'pricingAdvanceBonus' }
+  ].map(tier => ({ ...tier, usd: document.getElementById(tier.usdEl), credits: document.getElementById(tier.creditsEl), bonus: document.getElementById(tier.bonusEl) }));
 
   if(firebaseConfig.apiKey.startsWith('PASTE_')){
     acEls.connectStatus.textContent = 'Academy Firebase project not configured yet — see academy/README-academy.md.';
@@ -2512,11 +2575,14 @@ function renderAcademyCourses(){
       creditsSignedInEl.style.display = 'block';
       prEls.signedOut.style.display = 'none';
       prEls.signedIn.style.display = 'block';
+      stcEls.signedOut.style.display = 'none';
+      stcEls.signedIn.style.display = 'block';
       acEls.whoami.textContent = 'Signed in as ' + (user.email || 'unknown');
       acEls.whoami.className = 'status ok';
       await refreshStudentsList();
       await refreshCreditsList();
       await loadPricing();
+      await refreshStudentCredits();
     } else {
       acEls.signedOut.style.display = 'block';
       acEls.signedIn.style.display = 'none';
@@ -2524,8 +2590,40 @@ function renderAcademyCourses(){
       creditsSignedInEl.style.display = 'none';
       prEls.signedOut.style.display = 'block';
       prEls.signedIn.style.display = 'none';
+      stcEls.signedOut.style.display = 'block';
+      stcEls.signedIn.style.display = 'none';
     }
   });
+
+  async function refreshStudentCredits(){
+    if(!acAuth.currentUser) return;
+    stcEls.list.innerHTML = '<p class="helptext">Loading…</p>';
+    try{
+      const snap = await getDocs(collection(acDb, 'users'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      rows.sort((a,b) => String(a.email || a.id).localeCompare(String(b.email || b.id)));
+      stcEls.list.innerHTML = rows.length ? '' : '<p class="helptext">No students have signed in to the Academy yet.</p>';
+      rows.forEach(u => {
+        const plan = u.planCredits || 0, bonus = u.bonusCredits || 0, used = u.usedCredits || 0, remaining = u.credits || 0;
+        const row = document.createElement('div');
+        row.className = 'academy-student-row';
+        row.innerHTML = `<span><strong>${escapeHtmlAc(u.displayName || 'No name')}</strong><br>
+          <small>${escapeHtmlAc(u.email || u.id)}</small></span>
+          <span style="text-align:right;font-size:12px;line-height:1.6;">
+            Plan: <strong>${plan.toLocaleString()}</strong> ·
+            Bonus: <strong>${bonus.toLocaleString()}</strong> ·
+            Used: <strong>${used.toLocaleString()}</strong> ·
+            Remaining: <strong>${remaining.toLocaleString()}</strong>
+          </span>`;
+        stcEls.list.appendChild(row);
+      });
+    }catch(err){
+      stcEls.list.innerHTML = `<p class="status bad">${escapeHtmlAc(err.message || 'Failed to load student credits.')}</p>`;
+    }
+  }
+
+  stcEls.refreshBtn.addEventListener('click', refreshStudentCredits);
 
   async function refreshStudentsList(){
     acEls.list.innerHTML = '<p class="helptext">Loading…</p>';
@@ -2615,9 +2713,9 @@ function renderAcademyCourses(){
       rows.forEach(reqDoc => {
         const row = document.createElement('div');
         row.className = 'academy-student-row';
-        row.innerHTML = `<span><strong>${escapeHtmlAc(reqDoc.displayName || 'No name')}</strong><br>
+        row.innerHTML = `<span><strong>${escapeHtmlAc(reqDoc.displayName || 'No name')}</strong>${reqDoc.packageName ? ' · ' + escapeHtmlAc(reqDoc.packageName) : ''}<br>
           <small>${escapeHtmlAc(reqDoc.email || reqDoc.uid)}</small><br>
-          <small>$${Number(reqDoc.usd || 0).toFixed(2)} → ${Number(reqDoc.credits || 0).toLocaleString()} credits · ref: ${escapeHtmlAc(reqDoc.reference || '—')}${reqDoc.note ? ' · ' + escapeHtmlAc(reqDoc.note) : ''}</small></span>
+          <small>$${Number(reqDoc.usd || 0).toFixed(2)} → ${Number(reqDoc.credits || 0).toLocaleString()} credits${reqDoc.bonusCredits ? ' + ' + Number(reqDoc.bonusCredits).toLocaleString() + ' bonus' : ''} · ref: ${escapeHtmlAc(reqDoc.reference || '—')}${reqDoc.note ? ' · ' + escapeHtmlAc(reqDoc.note) : ''}</small></span>
           <span style="display:flex;gap:6px;">
             <button class="small primary" data-act="approve" type="button">Approve</button>
             <button class="small danger" data-act="reject" type="button">Reject</button>
@@ -2626,14 +2724,22 @@ function renderAcademyCourses(){
           row.querySelectorAll('button').forEach(b => b.disabled = true);
           try{
             if(!reqDoc.uid) throw new Error('Request has no linked user id.');
+            const planAmount = Number(reqDoc.credits || 0);
+            const bonusAmount = Number(reqDoc.bonusCredits || 0);
             await runTransaction(acDb, async (tx) => {
               const userRef = doc(acDb, 'users', reqDoc.uid);
               const userSnap = await tx.get(userRef);
-              const current = userSnap.exists() ? (userSnap.data().credits || 0) : 0;
-              tx.set(userRef, { credits: current + Number(reqDoc.credits || 0) }, { merge: true });
+              const data = userSnap.exists() ? userSnap.data() : {};
+              const current = data.credits || 0;
+              tx.set(userRef, {
+                credits: current + planAmount + bonusAmount,
+                planCredits: (data.planCredits || 0) + planAmount,
+                bonusCredits: (data.bonusCredits || 0) + bonusAmount
+              }, { merge: true });
               tx.set(doc(acDb, 'creditRequests', reqDoc.id), { status: 'approved', reviewedAt: new Date().toISOString() }, { merge: true });
             });
             await refreshCreditsList();
+            await refreshStudentCredits();
           }catch(err){ alert(err.message || 'Failed to approve top-up.'); row.querySelectorAll('button').forEach(b => b.disabled = false); }
         });
         row.querySelector('[data-act="reject"]').addEventListener('click', async () => {
@@ -2671,11 +2777,18 @@ function renderAcademyCourses(){
       const snap = await getDocs(query(collection(acDb, 'users'), where('email', '==', email)));
       if(snap.empty) throw new Error('No student found with that email — they need to sign in to the Academy at least once first.');
       const userDoc = snap.docs[0];
-      const current = userDoc.data().credits || 0;
-      await setDoc(doc(acDb, 'users', userDoc.id), { credits: current + amount }, { merge: true });
+      const data = userDoc.data();
+      const current = data.credits || 0;
+      // Manual adjustments (bonuses, refunds, corrections) aren't tied to a package
+      // purchase, so a positive amount is tracked as bonus credits; a negative
+      // correction just lowers the balance without touching the bonus/plan totals.
+      const update = { credits: current + amount };
+      if(amount > 0) update.bonusCredits = (data.bonusCredits || 0) + amount;
+      await setDoc(doc(acDb, 'users', userDoc.id), update, { merge: true });
       crEls.manualStatus.textContent = `Done — new balance: ${(current + amount).toLocaleString()} credits.`;
       crEls.manualStatus.className = 'status ok';
       crEls.manualEmail.value = ''; crEls.manualAmount.value = '';
+      await refreshStudentCredits();
     }catch(err){
       crEls.manualStatus.textContent = err.message || 'Failed to adjust credits.';
       crEls.manualStatus.className = 'status bad';
@@ -2686,7 +2799,11 @@ function renderAcademyCourses(){
 
   const DEFAULT_PRICING = {
     creditsPerMinute: 20,
-    packages: [ { id: 'starter', usd: 2.99, credits: 5000 } ],
+    packages: [
+      { id: 'beginner', name: { en: 'Beginner Package', km: 'កញ្ចប់ចាប់ផ្តើម' }, usd: 2.99, credits: 5000, bonusCredits: 0 },
+      { id: 'intermediate', name: { en: 'Intermediate Package', km: 'កញ្ចប់មធ្យម' }, usd: 6.99, credits: 12000, bonusCredits: 1500 },
+      { id: 'advance', name: { en: 'Advance Package', km: 'កញ្ចប់កម្រិតខ្ពស់' }, usd: 11.99, credits: 21000, bonusCredits: 4000 }
+    ],
     paymentInfo: {
       en: "Transfer to:\nABA Bank — Meatika Trading\nAccount: 000 000 000\nAfter paying, enter the transaction reference below.",
       km: "ផ្ទេរប្រាក់មកកាន់៖\nABA Bank — Meatika Trading\nលេខគណនី៖ 000 000 000\nបន្ទាប់ពីបង់រួច សូមបញ្ចូលលេខយោងប្រតិបត្តិការខាងក្រោម។"
@@ -2698,10 +2815,14 @@ function renderAcademyCourses(){
     try{
       const snap = await getDoc(doc(acDb, 'config', 'pricing'));
       const cfg = snap.exists() ? snap.data() : DEFAULT_PRICING;
-      const pkg = (Array.isArray(cfg.packages) && cfg.packages[0]) ? cfg.packages[0] : DEFAULT_PRICING.packages[0];
+      const pkgs = Array.isArray(cfg.packages) && cfg.packages.length ? cfg.packages : DEFAULT_PRICING.packages;
       prEls.creditsPerMinute.value = cfg.creditsPerMinute ?? DEFAULT_PRICING.creditsPerMinute;
-      prEls.packageUsd.value = pkg.usd ?? DEFAULT_PRICING.packages[0].usd;
-      prEls.packageCredits.value = pkg.credits ?? DEFAULT_PRICING.packages[0].credits;
+      PACKAGE_TIERS.forEach((tier, i) => {
+        const pkg = pkgs.find(p => p.id === tier.id) || pkgs[i] || DEFAULT_PRICING.packages[i];
+        tier.usd.value = pkg?.usd ?? DEFAULT_PRICING.packages[i].usd;
+        tier.credits.value = pkg?.credits ?? DEFAULT_PRICING.packages[i].credits;
+        tier.bonus.value = pkg?.bonusCredits ?? DEFAULT_PRICING.packages[i].bonusCredits;
+      });
       prEls.paymentEn.value = cfg.paymentInfo?.en ?? DEFAULT_PRICING.paymentInfo.en;
       prEls.paymentKm.value = cfg.paymentInfo?.km ?? DEFAULT_PRICING.paymentInfo.km;
       if(!snap.exists()){
@@ -2716,24 +2837,29 @@ function renderAcademyCourses(){
 
   prEls.saveBtn.addEventListener('click', async () => {
     const creditsPerMinute = Number(prEls.creditsPerMinute.value);
-    const usd = Number(prEls.packageUsd.value);
-    const credits = Number(prEls.packageCredits.value);
     prEls.status.textContent = '';
     if(!creditsPerMinute || creditsPerMinute <= 0){
       prEls.status.textContent = 'Enter a credits-per-minute rate greater than 0.';
       prEls.status.className = 'status bad';
       return;
     }
-    if(!usd || usd <= 0 || !credits || credits <= 0){
-      prEls.status.textContent = 'Enter a package price and credit amount greater than 0.';
-      prEls.status.className = 'status bad';
-      return;
+    const packages = [];
+    for(const tier of PACKAGE_TIERS){
+      const usd = Number(tier.usd.value);
+      const credits = Number(tier.credits.value);
+      const bonusCredits = Number(tier.bonus.value) || 0;
+      if(!usd || usd <= 0 || !credits || credits <= 0){
+        prEls.status.textContent = `Enter a price and credit amount greater than 0 for the ${tier.name.en}.`;
+        prEls.status.className = 'status bad';
+        return;
+      }
+      packages.push({ id: tier.id, name: tier.name, usd, credits, bonusCredits });
     }
     prEls.saveBtn.disabled = true;
     try{
       await setDoc(doc(acDb, 'config', 'pricing'), {
         creditsPerMinute,
-        packages: [ { id: 'starter', usd, credits } ],
+        packages,
         paymentInfo: {
           en: prEls.paymentEn.value.trim(),
           km: prEls.paymentKm.value.trim()
