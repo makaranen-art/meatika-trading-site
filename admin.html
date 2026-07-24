@@ -303,6 +303,95 @@
       </div>
 
       <div class="panel">
+        <h2>Academy — Credit Top-ups</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Students buy credits by paying via ABA/Bakong transfer (details are set in
+          <code>academy/academy.js</code>, near <code>PAYMENT_INFO</code>) and submitting their
+          transaction reference in the Academy app. Nothing is credited automatically — review each
+          request below against your bank/e-wallet statement, then Approve or Reject. Approving adds the
+          credits straight to that student's balance; the student sees the result next time they open the
+          Academy. This uses the same Firebase connection as the Approved Students panel above.
+        </p>
+        <div id="creditsSignedOut">
+          <p class="helptext">Sign in above (Academy — Approved Students) to manage credit top-ups too — both panels share the same sign-in.</p>
+        </div>
+        <div id="creditsSignedIn" style="display:none;">
+          <div class="toolbar" style="margin-bottom:12px;">
+            <button class="small" id="creditsRefreshBtn" type="button">Refresh</button>
+            <span class="status" id="creditsStatus"></span>
+          </div>
+          <h3 style="margin:0 0 8px;">Pending top-up requests</h3>
+          <div id="creditsRequestsList" style="margin-bottom:18px;"></div>
+          <h3 style="margin:0 0 8px;">Manually add credits</h3>
+          <p class="helptext" style="margin-bottom:10px;">For edge cases (bonuses, refunds, fixing a mistake) — look up a student by the email they sign in with.</p>
+          <div class="row">
+            <div class="field" style="flex:1;">
+              <label>Student's Google email</label>
+              <input type="text" id="creditsManualEmail" placeholder="student@gmail.com" autocomplete="off">
+            </div>
+            <div class="field" style="width:140px;">
+              <label>Credits (+/-)</label>
+              <input type="number" id="creditsManualAmount" placeholder="5000">
+            </div>
+          </div>
+          <div class="toolbar" style="margin-bottom:6px;">
+            <button class="primary" id="creditsManualBtn" type="button">+ Adjust credits</button>
+            <span class="status" id="creditsManualStatus"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Academy — Pricing</h2>
+        <p class="helptext" style="margin-bottom:14px;">
+          Controls how much lessons cost and what students get when they top up. This uses the
+          same Firebase connection as the two panels above — sign in there first. Saves to
+          Firestore immediately (no separate GitHub publish step, and it doesn't touch
+          <code>data.json</code>). If you never save anything here, the Academy falls back to the
+          defaults built into <code>academy/academy.js</code>.
+        </p>
+        <div id="pricingSignedOut">
+          <p class="helptext">Sign in above (Academy — Approved Students) to manage pricing too — all three panels share the same sign-in.</p>
+        </div>
+        <div id="pricingSignedIn" style="display:none;">
+          <div class="row">
+            <div class="field" style="width:220px;">
+              <label>Credits per minute of video</label>
+              <input type="number" id="pricingCreditsPerMinute" placeholder="20">
+            </div>
+          </div>
+          <p class="helptext" style="margin:2px 0 14px;">A lesson's price = its video length (in minutes) × this number, rounded, minimum 1 credit.</p>
+          <h3 style="margin:0 0 8px;">Top-up package</h3>
+          <p class="helptext" style="margin-bottom:10px;">What a student gets when they buy credits — shown in the Academy's top-up modal.</p>
+          <div class="row">
+            <div class="field" style="width:160px;">
+              <label>Price (USD)</label>
+              <input type="number" id="pricingPackageUsd" placeholder="2.99" step="0.01">
+            </div>
+            <div class="field" style="width:160px;">
+              <label>Credits granted</label>
+              <input type="number" id="pricingPackageCredits" placeholder="5000">
+            </div>
+          </div>
+          <h3 style="margin:14px 0 8px;">Payment instructions shown in the top-up modal</h3>
+          <div class="row">
+            <div class="field" style="flex:1;">
+              <label>English</label>
+              <textarea id="pricingPaymentEn" rows="4" placeholder="Transfer to: ABA Bank — Meatika Trading&#10;Account: 000 000 000&#10;After paying, enter the transaction reference below."></textarea>
+            </div>
+            <div class="field" style="flex:1;">
+              <label>Khmer</label>
+              <textarea id="pricingPaymentKm" rows="4" placeholder="ផ្ទេរប្រាក់មកកាន់៖ ABA Bank — Meatika Trading..."></textarea>
+            </div>
+          </div>
+          <div class="toolbar" style="margin-top:10px;margin-bottom:6px;">
+            <button class="primary" id="pricingSaveBtn" type="button">Save pricing</button>
+            <span class="status" id="pricingStatus"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Sections & cards</h2>
         <div id="sectionsList"></div>
         <button id="addSection">+ Add section</button>
@@ -2352,7 +2441,7 @@ function renderAcademyCourses(){
     getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
   import {
-    getFirestore, collection, getDocs, doc, setDoc, deleteDoc
+    getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, query, where, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const acApp = initializeApp(firebaseConfig, 'academyAdmin');
@@ -2374,6 +2463,28 @@ function renderAcademyCourses(){
     requests: document.getElementById('academyRequestsList'),
   };
 
+  const crEls = {
+    refreshBtn: document.getElementById('creditsRefreshBtn'),
+    status: document.getElementById('creditsStatus'),
+    list: document.getElementById('creditsRequestsList'),
+    manualEmail: document.getElementById('creditsManualEmail'),
+    manualAmount: document.getElementById('creditsManualAmount'),
+    manualBtn: document.getElementById('creditsManualBtn'),
+    manualStatus: document.getElementById('creditsManualStatus'),
+  };
+
+  const prEls = {
+    signedOut: document.getElementById('pricingSignedOut'),
+    signedIn: document.getElementById('pricingSignedIn'),
+    creditsPerMinute: document.getElementById('pricingCreditsPerMinute'),
+    packageUsd: document.getElementById('pricingPackageUsd'),
+    packageCredits: document.getElementById('pricingPackageCredits'),
+    paymentEn: document.getElementById('pricingPaymentEn'),
+    paymentKm: document.getElementById('pricingPaymentKm'),
+    saveBtn: document.getElementById('pricingSaveBtn'),
+    status: document.getElementById('pricingStatus'),
+  };
+
   if(firebaseConfig.apiKey.startsWith('PASTE_')){
     acEls.connectStatus.textContent = 'Academy Firebase project not configured yet — see academy/README-academy.md.';
     acEls.connectStatus.className = 'status bad';
@@ -2393,15 +2504,26 @@ function renderAcademyCourses(){
   acEls.signOutBtn.addEventListener('click', () => signOut(acAuth));
 
   onAuthStateChanged(acAuth, async (user) => {
+    const creditsSignedOutEl = document.getElementById('creditsSignedOut'), creditsSignedInEl = document.getElementById('creditsSignedIn');
     if(user){
       acEls.signedOut.style.display = 'none';
       acEls.signedIn.style.display = 'block';
+      creditsSignedOutEl.style.display = 'none';
+      creditsSignedInEl.style.display = 'block';
+      prEls.signedOut.style.display = 'none';
+      prEls.signedIn.style.display = 'block';
       acEls.whoami.textContent = 'Signed in as ' + (user.email || 'unknown');
       acEls.whoami.className = 'status ok';
       await refreshStudentsList();
+      await refreshCreditsList();
+      await loadPricing();
     } else {
       acEls.signedOut.style.display = 'block';
       acEls.signedIn.style.display = 'none';
+      creditsSignedOutEl.style.display = 'block';
+      creditsSignedInEl.style.display = 'none';
+      prEls.signedOut.style.display = 'block';
+      prEls.signedIn.style.display = 'none';
     }
   });
 
@@ -2479,6 +2601,152 @@ function renderAcademyCourses(){
       acEls.addStatus.className = 'status bad';
     }finally{
       acEls.addBtn.disabled = false;
+    }
+  });
+
+  async function refreshCreditsList(){
+    crEls.list.innerHTML = '<p class="helptext">Loading…</p>';
+    try{
+      const snap = await getDocs(query(collection(acDb, 'creditRequests'), where('status', '==', 'pending')));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      rows.sort((a,b) => String(a.requestedAt || '').localeCompare(String(b.requestedAt || '')));
+      crEls.list.innerHTML = rows.length ? '' : '<p class="helptext">No pending top-up requests.</p>';
+      rows.forEach(reqDoc => {
+        const row = document.createElement('div');
+        row.className = 'academy-student-row';
+        row.innerHTML = `<span><strong>${escapeHtmlAc(reqDoc.displayName || 'No name')}</strong><br>
+          <small>${escapeHtmlAc(reqDoc.email || reqDoc.uid)}</small><br>
+          <small>$${Number(reqDoc.usd || 0).toFixed(2)} → ${Number(reqDoc.credits || 0).toLocaleString()} credits · ref: ${escapeHtmlAc(reqDoc.reference || '—')}${reqDoc.note ? ' · ' + escapeHtmlAc(reqDoc.note) : ''}</small></span>
+          <span style="display:flex;gap:6px;">
+            <button class="small primary" data-act="approve" type="button">Approve</button>
+            <button class="small danger" data-act="reject" type="button">Reject</button>
+          </span>`;
+        row.querySelector('[data-act="approve"]').addEventListener('click', async () => {
+          row.querySelectorAll('button').forEach(b => b.disabled = true);
+          try{
+            if(!reqDoc.uid) throw new Error('Request has no linked user id.');
+            await runTransaction(acDb, async (tx) => {
+              const userRef = doc(acDb, 'users', reqDoc.uid);
+              const userSnap = await tx.get(userRef);
+              const current = userSnap.exists() ? (userSnap.data().credits || 0) : 0;
+              tx.set(userRef, { credits: current + Number(reqDoc.credits || 0) }, { merge: true });
+              tx.set(doc(acDb, 'creditRequests', reqDoc.id), { status: 'approved', reviewedAt: new Date().toISOString() }, { merge: true });
+            });
+            await refreshCreditsList();
+          }catch(err){ alert(err.message || 'Failed to approve top-up.'); row.querySelectorAll('button').forEach(b => b.disabled = false); }
+        });
+        row.querySelector('[data-act="reject"]').addEventListener('click', async () => {
+          row.querySelectorAll('button').forEach(b => b.disabled = true);
+          try{
+            await setDoc(doc(acDb, 'creditRequests', reqDoc.id), { status: 'rejected', reviewedAt: new Date().toISOString() }, { merge: true });
+            await refreshCreditsList();
+          }catch(err){ alert(err.message || 'Failed to reject top-up.'); row.querySelectorAll('button').forEach(b => b.disabled = false); }
+        });
+        crEls.list.appendChild(row);
+      });
+    }catch(err){
+      crEls.list.innerHTML = `<p class="status bad">${escapeHtmlAc(err.message || 'Failed to load top-up requests.')}</p>`;
+    }
+  }
+
+  crEls.refreshBtn.addEventListener('click', refreshCreditsList);
+
+  crEls.manualBtn.addEventListener('click', async () => {
+    const email = (crEls.manualEmail.value || '').trim().toLowerCase();
+    const amount = Number(crEls.manualAmount.value);
+    crEls.manualStatus.textContent = '';
+    if(!email || !email.includes('@')){
+      crEls.manualStatus.textContent = 'Enter a valid email.';
+      crEls.manualStatus.className = 'status bad';
+      return;
+    }
+    if(!amount){
+      crEls.manualStatus.textContent = 'Enter a non-zero credit amount.';
+      crEls.manualStatus.className = 'status bad';
+      return;
+    }
+    crEls.manualBtn.disabled = true;
+    try{
+      const snap = await getDocs(query(collection(acDb, 'users'), where('email', '==', email)));
+      if(snap.empty) throw new Error('No student found with that email — they need to sign in to the Academy at least once first.');
+      const userDoc = snap.docs[0];
+      const current = userDoc.data().credits || 0;
+      await setDoc(doc(acDb, 'users', userDoc.id), { credits: current + amount }, { merge: true });
+      crEls.manualStatus.textContent = `Done — new balance: ${(current + amount).toLocaleString()} credits.`;
+      crEls.manualStatus.className = 'status ok';
+      crEls.manualEmail.value = ''; crEls.manualAmount.value = '';
+    }catch(err){
+      crEls.manualStatus.textContent = err.message || 'Failed to adjust credits.';
+      crEls.manualStatus.className = 'status bad';
+    }finally{
+      crEls.manualBtn.disabled = false;
+    }
+  });
+
+  const DEFAULT_PRICING = {
+    creditsPerMinute: 20,
+    packages: [ { id: 'starter', usd: 2.99, credits: 5000 } ],
+    paymentInfo: {
+      en: "Transfer to:\nABA Bank — Meatika Trading\nAccount: 000 000 000\nAfter paying, enter the transaction reference below.",
+      km: "ផ្ទេរប្រាក់មកកាន់៖\nABA Bank — Meatika Trading\nលេខគណនី៖ 000 000 000\nបន្ទាប់ពីបង់រួច សូមបញ្ចូលលេខយោងប្រតិបត្តិការខាងក្រោម។"
+    }
+  };
+
+  async function loadPricing(){
+    prEls.status.textContent = '';
+    try{
+      const snap = await getDoc(doc(acDb, 'config', 'pricing'));
+      const cfg = snap.exists() ? snap.data() : DEFAULT_PRICING;
+      const pkg = (Array.isArray(cfg.packages) && cfg.packages[0]) ? cfg.packages[0] : DEFAULT_PRICING.packages[0];
+      prEls.creditsPerMinute.value = cfg.creditsPerMinute ?? DEFAULT_PRICING.creditsPerMinute;
+      prEls.packageUsd.value = pkg.usd ?? DEFAULT_PRICING.packages[0].usd;
+      prEls.packageCredits.value = pkg.credits ?? DEFAULT_PRICING.packages[0].credits;
+      prEls.paymentEn.value = cfg.paymentInfo?.en ?? DEFAULT_PRICING.paymentInfo.en;
+      prEls.paymentKm.value = cfg.paymentInfo?.km ?? DEFAULT_PRICING.paymentInfo.km;
+      if(!snap.exists()){
+        prEls.status.textContent = 'Showing built-in defaults — nothing saved yet.';
+        prEls.status.className = 'status';
+      }
+    }catch(err){
+      prEls.status.textContent = err.message || 'Failed to load pricing.';
+      prEls.status.className = 'status bad';
+    }
+  }
+
+  prEls.saveBtn.addEventListener('click', async () => {
+    const creditsPerMinute = Number(prEls.creditsPerMinute.value);
+    const usd = Number(prEls.packageUsd.value);
+    const credits = Number(prEls.packageCredits.value);
+    prEls.status.textContent = '';
+    if(!creditsPerMinute || creditsPerMinute <= 0){
+      prEls.status.textContent = 'Enter a credits-per-minute rate greater than 0.';
+      prEls.status.className = 'status bad';
+      return;
+    }
+    if(!usd || usd <= 0 || !credits || credits <= 0){
+      prEls.status.textContent = 'Enter a package price and credit amount greater than 0.';
+      prEls.status.className = 'status bad';
+      return;
+    }
+    prEls.saveBtn.disabled = true;
+    try{
+      await setDoc(doc(acDb, 'config', 'pricing'), {
+        creditsPerMinute,
+        packages: [ { id: 'starter', usd, credits } ],
+        paymentInfo: {
+          en: prEls.paymentEn.value.trim(),
+          km: prEls.paymentKm.value.trim()
+        },
+        updatedAt: new Date().toISOString()
+      });
+      prEls.status.textContent = 'Saved — students will see this next time they load the Academy.';
+      prEls.status.className = 'status ok';
+    }catch(err){
+      prEls.status.textContent = err.message || 'Failed to save pricing.';
+      prEls.status.className = 'status bad';
+    }finally{
+      prEls.saveBtn.disabled = false;
     }
   });
 
