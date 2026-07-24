@@ -27,7 +27,15 @@ reads/writes than a course site like this will use).
        }
 
        match /users/{userId} {
-         allow read, write: if request.auth != null && request.auth.uid == userId;
+         allow read: if request.auth != null && request.auth.uid == userId;
+         // A student can save their own progress and *spend* credits (unlocking a
+         // lesson only ever lowers their own balance), but can never raise their own
+         // balance — only isAdmin() can increase `credits`, via the top-up approval flow.
+         allow write: if request.auth != null && request.auth.uid == userId &&
+           (!('credits' in request.resource.data) ||
+            !('credits' in resource.data) ||
+            request.resource.data.credits <= resource.data.credits);
+         allow write: if isAdmin();
        }
        match /approvedStudents/{email} {
          allow read: if request.auth != null &&
@@ -39,13 +47,33 @@ reads/writes than a course site like this will use).
            request.auth.token.email.lower() == email;
          allow read, delete: if isAdmin();
        }
+       match /creditRequests/{requestId} {
+         // A student can create their own top-up request and read only their own
+         // requests (to see pending/approved/rejected status); only isAdmin() can
+         // list every request or change its status (i.e. actually grant credits).
+         allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+         allow read: if request.auth != null &&
+           (resource.data.uid == request.auth.uid || isAdmin());
+         allow update, delete: if isAdmin();
+       }
+       match /config/{docId} {
+         // Pricing (credits-per-minute, top-up packages, payment info) is stored
+         // here so admin.html can edit it without a code change. Any signed-in
+         // student can read it (they need it to see prices in the app), but only
+         // isAdmin() can change it.
+         allow read: if request.auth != null;
+         allow write: if isAdmin();
+       }
      }
    }
    ```
 
    This means: a student can only check *their own* email against the approved list, and
    only the admin email(s) you list can view the full list or add/remove anyone — nobody
-   can approve themselves from the browser.
+   can approve themselves from the browser. It also means a student can spend their own
+   credits to unlock a lesson, and can submit/view their own top-up requests, but the
+   only way a balance ever goes *up* is through the admin approval flow in `admin.html` —
+   editing `credits` upward from the browser console is blocked by the rules above.
 
 5. Click the **gear icon → Project settings**, scroll to "Your apps," click the **Web (`</>`)** icon, register an app (any nickname), and copy the `firebaseConfig` object it shows you.
 6. Open `academy/firebase-config.js` in this repo and paste your values into the `firebaseConfig` object. Both `academy.js` (the student page) and `admin.html` (the approval panel) import this same file.
@@ -83,6 +111,53 @@ show "No video attached to this lesson yet" instead of a broken player.
 The Learning Center's old registration form (Full Name/Phone/Email/Trading Experience,
 which logged to a Google Sheet) has been removed — that content is free and open to
 everyone now.
+
+## Credits & paid lessons
+
+The Main Course can charge credits per lesson instead of being entirely free. This is
+**manual billing**, matching how student approval already works — there's no payment
+gateway, so no card numbers or bank credentials ever touch this codebase.
+
+**How it works for a student:**
+1. They click the credit-balance pill (top right, once signed in) to open the top-up modal.
+2. They pay by ABA/Bakong transfer using the details shown there, then submit the
+   transaction reference (or phone number used) — this creates a pending request, visible
+   to them under "Your top-up requests."
+3. Once you approve it (see below), their balance updates automatically the next time
+   they open or refresh the Academy.
+4. Locked lessons show a 🔒 badge with their price; the first lesson of every course is
+   free (marked `"free": true` in `academy-data.json`) so students can preview a course
+   before spending anything. Unlocking a lesson spends credits once — re-watching it later
+   is free.
+
+**Pricing knobs** — `CREDITS_PER_MINUTE` (lesson price = video length in minutes × this
+number), the top-up package (`$` price → credits granted), and `PAYMENT_INFO` (the
+ABA/Bakong details shown in the top-up modal, in English and Khmer) all live in Firestore
+now, under a single `config/pricing` document, and can be edited from **`admin.html` →
+Academy — Pricing** — sign in the same way as the Approved Students/Credit Top-ups panels
+(shared sign-in), edit the fields, and click **Save pricing**. Changes take effect for
+students the next time they load `/academy/`.
+
+`academy/academy.js` still has the same values as hardcoded fallback constants near the
+top of the file (`CREDITS_PER_MINUTE`, `PACKAGES`, `PAYMENT_INFO`) — these are only used
+if the `config/pricing` document doesn't exist yet (e.g. right after setup, before you've
+saved anything from the admin panel), so the site keeps working even before you touch the
+Pricing panel. Once you save from `admin.html` at least once, the Firestore values take
+over.
+
+**Approving top-ups (`admin.html` → Academy — Credit Top-ups):**
+1. Sign in the same way as the Approved Students panel above (shared sign-in).
+2. Each pending request shows the student, amount paid, credits requested, and the
+   transaction reference/note they entered. Check it against your bank/e-wallet statement.
+3. Click **Approve** to add the credits to their balance, or **Reject** if it doesn't check
+   out — both remove it from the pending list (rejected requests are kept, marked
+   `rejected`, for your records).
+4. **Manually add credits** further down lets you adjust any student's balance directly by
+   email (bonuses, refunds, fixing a mistake) without going through a request.
+
+This depends on the Firestore rules in the setup section above (specifically the
+`creditRequests` rule and the updated `users` rule) — a student's balance can only ever be
+raised by the admin-approval path, never directly from their own browser.
 
 ## What this does and doesn't protect
 

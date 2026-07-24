@@ -18,6 +18,7 @@
             "km": "សូមស្វាគមន៍មកកាន់ Academy"
           },
           "duration": "5 min",
+          "free": true,
           "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "A quick overview of what you'll learn and how to use this platform.",
@@ -70,6 +71,7 @@
             "km": "មូលដ្ឋាននៃការកំណត់ទំហំមុខតំណែង"
           },
           "duration": "10 min",
+          "free": true,
           "videoUrl": "https://www.youtube.com/embed/kIu9ymxrT4E",
           "description": {
             "en": "A simple formula to size every trade to your account.",
