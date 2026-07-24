@@ -17,6 +17,12 @@
     return card.link || '#';
   }
 
+  /* The YouTube channel card is intentionally not clickable — it stays
+     visible on the site but never opens the external channel. */
+  function isLocked(card){
+    return card.platform === 'youtube';
+  }
+
   function cardHtml(card){
     const iconSvg = window.mthIconSvg(card.icon, card.iconColor);
     const wideClass = card.wide ? ' wide' : '';
@@ -25,8 +31,16 @@
     const internal = isInternal(card);
     const targetAttrs = internal ? '' : ' target="_blank" rel="noopener"';
     const desc = card.desc || {};
+    const locked = isLocked(card);
+    const action = locked
+      ? `<button type="button" class="locked" disabled title="Locked" aria-label="Locked">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="5.5" y="10.5" width="13" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>`
+      : `<a href="${href}"${targetAttrs} title="${internal ? 'Open page' : 'Open link'}">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>`;
     return `
-      <div class="card${wideClass}${socialClass}">
+      <div class="card${wideClass}${socialClass}${locked ? ' is-locked' : ''}">
         <div class="avatar" style="background:${escapeHtml(card.color || '#24262b')};">
           <svg viewBox="0 0 24 24" fill="none">${iconSvg}</svg>
         </div>
@@ -36,9 +50,7 @@
           <p data-en="${escapeHtml(desc.en)}" data-km="${escapeHtml(desc.km || desc.en)}">${escapeHtml(desc.en)}</p>
         </div>
         <div class="card-actions">
-          <a href="${href}"${targetAttrs} title="${internal ? 'Open page' : 'Open link'}">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
+          ${action}
         </div>
       </div>`;
   }
